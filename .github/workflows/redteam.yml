@@ -1,0 +1,180 @@
+# mosip-vivid nightly red team (PLAN.md 17.5, reduced scope)
+#
+# Renders simulated presentation attacks from device-mock's drawn synthetic faces (no real media), scores them with
+# the real liveness-core orchestrator and ONNX engine (passive and challenge replay), appends APCER per species /
+# BPCER / ACER to a trend file and fails when an attack variant that the committed baseline records as rejected is
+# now accepted. Each such bypass is uploaded as a regression fixture and reported on a GitHub issue labelled
+# redteam-bypass. What this does and does not measure: docs/testing/redteam-trend.md.
+name: redteam
+
+on:
+  schedule:
+    - cron: '17 2 * * *'        # nightly, 02:17 UTC
+  workflow_dispatch:
+    inputs:
+      subjects:
+        description: Synthetic subjects (each gives 2 bona fide takes + 7 attack variants)
+        required: false
+        default: '12'
+
+# contents:read to check out; issues:write to open/comment the redteam-bypass issue (and create the label);
+# actions:read only to download the previous run's trend artifact so the trend accumulates across nights.
+permissions:
+  contents: read
+  issues: write
+  actions: read
+
+concurrency:
+  group: redteam
+  cancel-in-progress: false
+
+env:
+  MAVEN_OPTS: -Dmaven.repo.local=${{ github.workspace }}/.m2/repository
+
+jobs:
+  redteam:
+    name: Red team (synthetic attacks, regression gate, trend)
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Cache ~/.m2
+        uses: actions/cache@v4
+        with:
+          path: ${{ github.workspace }}/.m2/repository
+          key: m2-${{ runner.os }}-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            m2-${{ runner.os }}-
+
+      # Models are not committed. Their sources and SHA-256 sums are in liveness-engine-onnx/models/README.md;
+      # the cache key follows that file, so a model change there invalidates the cache.
+      - name: Cache ONNX models
+        id: models-cache
+        uses: actions/cache@v4
+        with:
+          path: liveness-engine-onnx/models/*.onnx
+          key: onnx-models-${{ hashFiles('liveness-engine-onnx/models/README.md') }}
+
+      - name: Download ONNX models
+        id: models
+        working-directory: liveness-engine-onnx/models
+        run: |
+          set +e
+          if [ "${{ steps.models-cache.outputs.cache-hit }}" != "true" ]; then
+            curl -fsSL --retry 3 -o face_detection_yunet_2023mar.onnx  https://github.com/opencv/opencv_zoo/raw/main/models/face_detection_yunet/face_detection_yunet_2023mar.onnx
+            curl -fsSL --retry 3 -o antispoof_minifasnetv2se_128.onnx  https://github.com/facenox/face-antispoof-onnx/raw/main/models/best/98.20/best_model.onnx
+            curl -fsSL --retry 3 -o face_recognition_sface_2021dec.onnx https://github.com/opencv/opencv_zoo/raw/main/models/face_recognition_sface/face_recognition_sface_2021dec.onnx
+          fi
+          sha256sum -c <<'SUMS'
+          8f2383e4dd3cfbb4553ea8718107fc0423210dc964f9f4280604804ed2552fa4  face_detection_yunet_2023mar.onnx
+          af2381b88f38769222ed93379e12444e2a50814575de1c46170de570c55a42b6  antispoof_minifasnetv2se_128.onnx
+          0ba9fbfa01b5270c96627c4ef784da859931e02f04419c829e83484087c34e79  face_recognition_sface_2021dec.onnx
+          SUMS
+          if [ $? -eq 0 ]; then
+            echo "ok=true" >> "$GITHUB_OUTPUT"
+          else
+            rm -f ./*.onnx      # never run on unverified weights (and never cache them)
+            echo "ok=false" >> "$GITHUB_OUTPUT"
+            echo "::notice title=Red team skipped::ONNX models could not be downloaded or failed their SHA-256 check (see liveness-engine-onnx/models/README.md). Nothing was scored."
+          fi
+
+      - name: Restore previous trend
+        if: steps.models.outputs.ok == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p target/redteam
+          for id in $(gh run list --repo "$GITHUB_REPOSITORY" --workflow redteam.yml --limit 20 --json databaseId,status \
+                       -q '.[] | select(.status == "completed") | .databaseId'); do
+            if gh run download "$id" --repo "$GITHUB_REPOSITORY" -n redteam-trend -D target/redteam 2>/dev/null; then
+              echo "trend restored from run $id"; break
+            fi
+          done
+          # first run, or artifacts expired: run-redteam.sh seeds from docs/testing/redteam/trend.jsonl
+          test -f target/redteam/trend.jsonl && wc -l target/redteam/trend.jsonl || echo "no previous trend artifact"
+
+      - name: Run red team
+        id: run
+        if: steps.models.outputs.ok == 'true'
+        env:
+          MVN_ARGS: -B -ntp
+          JAVA_OPTS: -Xmx2g
+        run: |
+          set +e
+          tools/redteam/run-redteam.sh --out target/redteam --source ci --threads 3 --subjects "${{ github.event.inputs.subjects || '12' }}"
+          code=$?
+          echo "exit=$code" >> "$GITHUB_OUTPUT"
+          if [ -f target/redteam/summary.md ]; then cat target/redteam/summary.md >> "$GITHUB_STEP_SUMMARY"; fi
+          if [ $code -eq 2 ]; then exit 2; fi
+          exit 0
+
+      - name: Upload trend
+        if: always() && steps.models.outputs.ok == 'true' && hashFiles('target/redteam/trend.jsonl') != ''
+        uses: actions/upload-artifact@v4
+        with:
+          name: redteam-trend
+          path: |
+            target/redteam/trend.jsonl
+            target/redteam/trend.md
+          retention-days: 90
+
+      # Scores, reports and render parameters only; the synthetic frames are not uploaded (they re-render from variants.jsonl).
+      - name: Upload report
+        if: always() && steps.models.outputs.ok == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: redteam-report
+          path: |
+            target/redteam/summary.md
+            target/redteam/summary.json
+            target/redteam/scores_*.jsonl
+            target/redteam/corpus/variants.jsonl
+            target/redteam/corpus/capture-log.csv
+            target/redteam/iso-*/**
+          if-no-files-found: ignore
+          retention-days: 30
+
+      - name: Upload regression fixtures
+        if: steps.run.outputs.exit == '1'
+        uses: actions/upload-artifact@v4
+        with:
+          name: redteam-regression-fixtures
+          path: target/redteam/fixtures/*.json
+          retention-days: 90
+
+      - name: Open or update the redteam-bypass issue
+        if: steps.run.outputs.exit == '1'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh label create redteam-bypass --repo "$GITHUB_REPOSITORY" --color B60205 \
+            --description "Nightly red team: a previously rejected attack variant is now accepted" 2>/dev/null || true
+          run_url="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
+          {
+            echo "The nightly red team found attack variants that the committed baseline records as rejected and that are now accepted ($run_url, commit ${GITHUB_SHA::7})."
+            echo
+            echo "Regression fixtures (render parameters, score and decision; no media) are in the run's \`redteam-regression-fixtures\` artifact."
+            echo "Copy them to \`testkit/src/test/resources/redteam/fixtures/\`: \`RedTeamFixtureReplayTest\` then re-renders each one and requires it to be rejected."
+            echo "Only if the bypass is accepted as a known limitation, set \`knownBypass: true\` with the reason. Synthetic drawn faces are weak proxies (docs/testing/redteam-trend.md)."
+            echo
+            cat target/redteam/summary.md
+          } > "$RUNNER_TEMP/issue.md"
+          existing=$(gh issue list --repo "$GITHUB_REPOSITORY" --label redteam-bypass --state open --limit 1 --json number -q '.[0].number')
+          if [ -n "$existing" ]; then
+            gh issue comment "$existing" --repo "$GITHUB_REPOSITORY" --body-file "$RUNNER_TEMP/issue.md"
+          else
+            gh issue create --repo "$GITHUB_REPOSITORY" --label redteam-bypass \
+              --title "Red team: previously rejected attack variant(s) now accepted" --body-file "$RUNNER_TEMP/issue.md"
+          fi
+
+      - name: Fail on regression
+        if: steps.run.outputs.exit == '1'
+        run: |
+          echo "::error title=Red-team regression::Previously rejected attack variant(s) are now accepted; see the job summary and the redteam-bypass issue."
+          exit 1

@@ -1,0 +1,37 @@
+TLC2 Version 2026.10.24.013619 (rev: 2ef2af8)
+Running breadth-first search Model-Checking with fp 65 and seed 4921294957488456308 with 4 workers on 4 cores with 910MB heap and 64MB offheap memory [pid: 2896921] (Linux 7.0.12+kali-amd64 amd64, Debian 25.0.4 64bit, MSBDiskFPSet, DiskStateQueue).
+Parsing file formal/LivenessOrchestrator.tla
+Parsing file /tmp/tlc-13545723880552695363/Naturals.tla (jar:file:Naturals.tla)
+Parsing file /tmp/tlc-13545723880552695363/FiniteSets.tla (jar:file:FiniteSets.tla)
+Parsing file /tmp/tlc-13545723880552695363/_TLCTrace.tla (jar:file:_TLCTrace.tla)
+Parsing file /tmp/tlc-13545723880552695363/Sequences.tla (jar:file:Sequences.tla)
+Parsing file /tmp/tlc-13545723880552695363/TLC.tla (jar:file:TLC.tla)
+Parsing file /tmp/tlc-13545723880552695363/TLCExt.tla (jar:file:TLCExt.tla)
+Parsing file /tmp/tlc-13545723880552695363/Integers.tla (jar:file:Integers.tla)
+Semantic processing of module Naturals
+Semantic processing of module Sequences
+Semantic processing of module FiniteSets
+Semantic processing of module TLC
+Semantic processing of module Integers
+Semantic processing of module TLCExt
+Semantic processing of module _TLCTrace
+Semantic processing of module LivenessOrchestrator
+Linting of module TLCExt
+Linting of module _TLCTrace
+Linting of module LivenessOrchestrator
+Starting... (2026-10-24 23:35:57)
+Implied-temporal checking--satisfiability problem has 1 branches.
+Computing initial states...
+Computed 2 initial states...
+Finished computing initial states: 3 distinct states generated at 2026-10-24 23:35:57.
+Progress(18) at 2026-10-24 23:35:58: 44,783 states generated, 11,463 distinct states found, 0 states left on queue.
+Checking temporal properties for the complete state space with 11463 total distinct states at (2026-10-24 23:35:58)
+Finished checking temporal properties in 00s at 2026-10-24 23:35:58
+Model checking completed. No error has been found.
+  Estimates of the probability that TLC did not check all reachable states
+  because two distinct states had the same fingerprint:
+  calculated (optimistic):  val = 2.1E-11
+44783 states generated, 11463 distinct states found, 0 states left on queue.
+The depth of the complete state graph search is 18.
+The average outdegree of the complete state graph is 1 (minimum is 0, the maximum 31 and the 95th percentile is 2).
+Finished in 01s at (2026-10-24 23:35:58)

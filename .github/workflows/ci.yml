@@ -1,0 +1,240 @@
+# mosip-vivid continuous integration
+#
+# Jobs
+#   build        Maven build + unit/integration tests on JDK 17 (the Registration Client baseline),
+#                surefire reports uploaded as an artefact.
+#   formal       TLC model check of formal/LivenessOrchestrator.tla with both configurations, then
+#                model-based trace conformance of liveness-core against the TLC state graphs.
+#   iso-report   Runs CorpusScoreMain (corpus -> scores.jsonl) and IsoReportMain
+#                (scores.jsonl -> iso30107.json/.html) when model files and a corpus are present
+#                on the runner; skips cleanly otherwise (neither is committed).
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  MAVEN_OPTS: -Dmaven.repo.local=${{ github.workspace }}/.m2/repository
+  MAVEN_ARGS: -B -ntp -Dstyle.color=always
+
+jobs:
+  build:
+    name: Maven build and test (JDK 17)
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Cache ~/.m2
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.m2/repository
+            ${{ github.workspace }}/.m2/repository
+          key: m2-${{ runner.os }}-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            m2-${{ runner.os }}-
+
+      - name: Build and test
+        run: mvn $MAVEN_ARGS verify
+
+      - name: Upload surefire reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: surefire-reports
+          path: |
+            **/target/surefire-reports/**
+            **/target/failsafe-reports/**
+          if-no-files-found: ignore
+          retention-days: 14
+
+      - name: Upload built jars
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: jars
+          path: '**/target/*.jar'
+          if-no-files-found: ignore
+          retention-days: 7
+
+  formal:
+    name: TLA+ model check (TLC)
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Cache tla2tools.jar
+        id: tlc-cache
+        uses: actions/cache@v4
+        with:
+          path: ~/tlc/tla2tools.jar
+          key: tla2tools-v1.8.0
+
+      - name: Download tla2tools.jar
+        if: steps.tlc-cache.outputs.cache-hit != 'true'
+        run: |
+          mkdir -p ~/tlc
+          curl -fsSL --retry 3 -o ~/tlc/tla2tools.jar \
+            https://github.com/tlaplus/tlaplus/releases/download/v1.8.0/tla2tools.jar
+
+      - name: TLC default configuration
+        working-directory: formal
+        run: |
+          java -XX:+UseParallelGC -cp ~/tlc/tla2tools.jar tlc2.TLC \
+            -workers auto -nowarning -deadlock \
+            -config LivenessOrchestrator.cfg LivenessOrchestrator.tla | tee ../tlc-default.log
+          grep -q "Model checking completed. No error has been found." ../tlc-default.log
+
+      - name: TLC supervisor configuration
+        working-directory: formal
+        run: |
+          java -XX:+UseParallelGC -cp ~/tlc/tla2tools.jar tlc2.TLC \
+            -workers auto -nowarning -deadlock \
+            -config LivenessOrchestrator-supervisor.cfg LivenessOrchestrator.tla | tee ../tlc-supervisor.log
+          grep -q "Model checking completed. No error has been found." ../tlc-supervisor.log
+
+      - name: Cache ~/.m2
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.m2/repository
+            ${{ github.workspace }}/.m2/repository
+          key: m2-${{ runner.os }}-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            m2-${{ runner.os }}-
+
+      # Model-based trace conformance (formal/README.md, "Checking the Java against the spec"):
+      # TLC dumps both state graphs, GeneratedSpecTables.java is regenerated and must match the
+      # committed copy, the Java transliteration of Next must equal TLC's graph, and 10,000 random
+      # traces per configuration are replayed against the real LivenessOrchestrator.
+      - name: Trace conformance (spec vs liveness-core)
+        env:
+          MVN_FLAGS: ${{ env.MAVEN_ARGS }}
+        run: |
+          export TLA2TOOLS="$HOME/tlc/tla2tools.jar"
+          formal/conformance.sh --check-generated 10000
+
+      - name: Upload TLC logs and conformance report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: tlc-logs
+          path: |
+            tlc-*.log
+            formal/target/*.log
+            formal/target/conformance-report.txt
+          retention-days: 14
+
+  iso-report:
+    name: ISO/IEC 30107-3 evaluation (testkit)
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    needs: build
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Cache ~/.m2
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.m2/repository
+            ${{ github.workspace }}/.m2/repository
+          key: m2-${{ runner.os }}-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            m2-${{ runner.os }}-
+
+      # Models are not committed (see .gitignore). A corpus is never committed either:
+      # it contains face data and lives on an encrypted volume (docs/corpus-ethics.md
+      # section 7), so this job only does real work on a self-hosted runner that has
+      # both. The corpus is a directory of frame folders, one per item named
+      # <participant>-<label>-<lighting>-<device>-T<take>, plus capture-log.csv
+      # (docs/corpus-ethics.md section 10.2).
+      - name: Detect models and corpus
+        id: detect
+        run: |
+          models=$(ls liveness-engine-onnx/models/*.onnx 2>/dev/null | wc -l)
+          corpus=""
+          for c in "$CORPUS_DIR" corpus testkit/corpus; do
+            if [ -n "$c" ] && [ -d "$c" ] && [ -n "$(find "$c" -type f \( -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.png' \) -print -quit)" ]; then
+              corpus="$c"; break
+            fi
+          done
+          echo "models=$models" >> "$GITHUB_OUTPUT"
+          echo "corpus=$corpus" >> "$GITHUB_OUTPUT"
+          echo "found $models model file(s); corpus: '${corpus:-none}'"
+        env:
+          CORPUS_DIR: ${{ vars.VIVID_CORPUS_DIR }}
+
+      - name: Skip notice
+        if: steps.detect.outputs.models == '0' || steps.detect.outputs.corpus == ''
+        run: |
+          echo "::notice title=ISO report skipped::Model files or corpus frames not present on this runner; the ISO/IEC 30107-3 report is only produced on runners that have both. See docs/testing/test-plan.md section 6."
+
+      - name: Build testkit and resolve its classpath
+        if: steps.detect.outputs.models != '0' && steps.detect.outputs.corpus != ''
+        run: |
+          mvn $MAVEN_ARGS -pl testkit -am -DskipTests install
+          mvn $MAVEN_ARGS -q -pl testkit dependency:build-classpath -Dmdep.outputFile="$RUNNER_TEMP/testkit.cp"
+
+      # CLI contract: docs/testing/test-plan.md section 6.
+      - name: Score corpus (CorpusScoreMain, passive replay)
+        if: steps.detect.outputs.models != '0' && steps.detect.outputs.corpus != ''
+        run: |
+          mkdir -p target/iso-report
+          java -Xmx2g -cp "testkit/target/classes:$(cat "$RUNNER_TEMP/testkit.cp")" \
+            io.mosip.vivid.testkit.corpus.CorpusScoreMain \
+            --corpus "${{ steps.detect.outputs.corpus }}" \
+            --models liveness-engine-onnx/models \
+            --mode passive --workflow RESIDENT \
+            --out "$RUNNER_TEMP/scores.jsonl"
+          test -s "$RUNNER_TEMP/scores.jsonl"
+
+      - name: Run ISO report (IsoReportMain)
+        if: steps.detect.outputs.models != '0' && steps.detect.outputs.corpus != ''
+        run: |
+          java -cp "testkit/target/classes:$(cat "$RUNNER_TEMP/testkit.cp")" \
+            io.mosip.vivid.testkit.metrics.IsoReportMain \
+            --scores "$RUNNER_TEMP/scores.jsonl" \
+            --out target/iso-report \
+            --threshold 0.80 \
+            --title "mosip-vivid self-evaluation (CI), passive replay, RESIDENT" \
+            --context engine=onnx --context mode=passive-replay \
+            --context commit=${GITHUB_SHA::7}
+          test -f target/iso-report/iso30107.json
+          test -f target/iso-report/iso30107.html
+          # scores.jsonl stays in RUNNER_TEMP: it holds pseudonymous ids and is not uploaded
+
+      - name: Upload ISO report
+        if: steps.detect.outputs.models != '0' && steps.detect.outputs.corpus != ''
+        uses: actions/upload-artifact@v4
+        with:
+          name: iso-30107-3-report
+          path: target/iso-report/**
+          retention-days: 30

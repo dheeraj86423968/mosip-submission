@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Security vulnerability (PAD bypass, policy bypass, data leak)
+    url: https://github.com/mosip/mosip-vivid/security/advisories/new
+    about: Please report privately. See SECURITY.md.
+  - name: MOSIP community
+    url: https://community.mosip.io/
+    about: Questions about the Registration Client itself belong in the MOSIP community.
