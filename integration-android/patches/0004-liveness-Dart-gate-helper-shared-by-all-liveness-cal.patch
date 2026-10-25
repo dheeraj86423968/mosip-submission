@@ -1,0 +1,203 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: mosip-vivid <vivid@localhost>
+Date: Sat, 24 Oct 2026 18:26:08 +0530
+Subject: [PATCH 4/8] liveness: Dart gate helper shared by all liveness call
+ sites
+
+runLivenessGate(context, workflow, matchUserId:) reads the effective policy,
+requests the camera permission, runs LivenessOverlay full screen and, for
+operator/supervisor authentication, matches the live face against the
+user's enrolled face. Needs lib/liveness/liveness_{controller,overlay,
+messages}.dart from mosip-vivid integration-android/flutter.
+---
+ lib/liveness/liveness_flow.dart | 181 ++++++++++++++++++++++++++++++++
+ 1 file changed, 181 insertions(+)
+ create mode 100644 lib/liveness/liveness_flow.dart
+
+diff --git a/lib/liveness/liveness_flow.dart b/lib/liveness/liveness_flow.dart
+new file mode 100644
+index 0000000..0631b9c
+--- /dev/null
++++ b/lib/liveness/liveness_flow.dart
+@@ -0,0 +1,181 @@
++/*
++ * Copyright (c) Modular Open Source Identity Platform
++ * This source code is licensed under the MIT license found in the
++ * LICENSE file in the root directory of this source tree.
++ *
++*/
++
++// One entry point for every screen that gates on mosip-vivid face liveness:
++// resident face capture, operator onboarding, operator login, supervisor / packet authentication.
++//
++// liveness_controller.dart, liveness_overlay.dart and liveness_messages.dart are copied from
++// mosip-vivid integration-android/flutter/lib/liveness; this file is the registration-client glue.
++
++import 'dart:async';
++
++import 'package:flutter/material.dart';
++import 'package:permission_handler/permission_handler.dart';
++import 'package:registration_client/pigeon/liveness_pigeon.dart';
++import 'package:registration_client/platform_spi/audit_service.dart';
++
++import 'liveness_controller.dart';
++import 'liveness_messages.dart';
++import 'liveness_overlay.dart';
++
++/// Components.LIVENESS in clientmanager.
++const String livenessComponentId = 'REG-MOD-111';
++
++enum LivenessGateOutcome {
++  /// Liveness passed (and, when requested, the face matched or policy allowed a missing enrolment).
++  passed,
++
++  /// Liveness is switched off for this workflow by policy.
++  disabled,
++
++  /// The person gave up, or the session FAILED / LOCKED.
++  failed,
++
++  /// Liveness passed but the live face did not match the user's enrolled face.
++  faceMismatch,
++
++  /// Liveness passed but the user has no usable enrolled face and policy requires one.
++  noEnrolment,
++
++  /// Face matching could not run (models, channel or lookup error). Fails closed.
++  faceUnavailable,
++
++  /// Camera permission refused.
++  permissionDenied,
++
++  /// The native liveness module is unavailable or could not start a session.
++  engineError,
++}
++
++class LivenessGateResult {
++  const LivenessGateResult(this.outcome, {this.sessionId, this.faceMatch});
++
++  final LivenessGateOutcome outcome;
++  final String? sessionId;
++  final FaceMatchDto? faceMatch;
++
++  bool get ok =>
++      outcome == LivenessGateOutcome.passed ||
++      outcome == LivenessGateOutcome.disabled;
++
++  /// Dotted i18n key (see LivenessMessages) for the message to show when [ok] is false.
++  String get messageKey {
++    switch (outcome) {
++      case LivenessGateOutcome.faceMismatch:
++        return 'liveness.face_match_failed';
++      case LivenessGateOutcome.noEnrolment:
++        return 'liveness.face_match_no_enrolment';
++      case LivenessGateOutcome.faceUnavailable:
++        return 'liveness.face_match_unavailable';
++      case LivenessGateOutcome.permissionDenied:
++      case LivenessGateOutcome.engineError:
++        return 'liveness.failure.device';
++      case LivenessGateOutcome.failed:
++        return 'liveness.failure.generic';
++      case LivenessGateOutcome.passed:
++      case LivenessGateOutcome.disabled:
++        return 'liveness.phase.passed';
++    }
++  }
++}
++
++/// Runs a liveness session for [workflow] in a full-screen overlay.
++///
++/// When [matchUserId] is given (operator login, supervisor authentication), a PASSED session's anchor
++/// embedding is then matched natively against that user's enrolled face (ARC `user_biometric`); the policy
++/// decides what a missing enrolment means. Session, face-match and capture-binding events are audited
++/// natively; this function only audits what the native side cannot see (policy off, camera refused).
++Future<LivenessGateResult> runLivenessGate(
++  BuildContext context,
++  LivenessWorkflow workflow, {
++  bool assisted = false,
++  String? matchUserId,
++}) async {
++  // Taken before the first await so no BuildContext is used across an async gap.
++  final navigator = Navigator.of(context);
++  final controller = LivenessController();
++  try {
++    final summary = await controller.policySummary(workflow);
++    if (summary == null) {
++      _audit('LIVENESS_DEVICE_FAULT', [workflow.wireName, 'native liveness module unavailable']);
++      return const LivenessGateResult(LivenessGateOutcome.engineError);
++    }
++    if (!summary.enabled) {
++      _audit('LIVENESS_POLICY_DISABLED', [workflow.wireName, summary.policyVersion]);
++      return const LivenessGateResult(LivenessGateOutcome.disabled);
++    }
++    final permission = await Permission.camera.request();
++    if (!permission.isGranted) {
++      _audit('LIVENESS_DEVICE_FAULT', [workflow.wireName, 'camera permission ${permission.name}']);
++      return const LivenessGateResult(LivenessGateOutcome.permissionDenied);
++    }
++    final sessionId = await controller.start(workflow, assisted: assisted);
++    if (sessionId == null) {
++      _audit('LIVENESS_DEVICE_FAULT', [workflow.wireName, controller.error ?? 'startSession failed']);
++      return const LivenessGateResult(LivenessGateOutcome.engineError);
++    }
++    if (!navigator.mounted) {
++      await controller.cancel();
++      return LivenessGateResult(LivenessGateOutcome.failed, sessionId: sessionId);
++    }
++    final passed = await navigator.push<bool>(
++      MaterialPageRoute<bool>(
++        fullscreenDialog: true,
++        builder: (routeContext) => LivenessOverlay(
++          controller: controller,
++          onPassed: (_) => Navigator.of(routeContext).pop(true),
++          onGaveUp: (_) => Navigator.of(routeContext).pop(false),
++        ),
++      ),
++    );
++    if (passed != true) {
++      return LivenessGateResult(LivenessGateOutcome.failed, sessionId: sessionId);
++    }
++    if (matchUserId == null || !summary.faceMatchEnabled) {
++      return LivenessGateResult(LivenessGateOutcome.passed, sessionId: sessionId);
++    }
++    final match = await controller.matchEnrolledFace(matchUserId);
++    if (match == null) {
++      return LivenessGateResult(LivenessGateOutcome.faceUnavailable, sessionId: sessionId);
++    }
++    if (match.accepted) {
++      return LivenessGateResult(LivenessGateOutcome.passed, sessionId: sessionId, faceMatch: match);
++    }
++    final LivenessGateOutcome outcome;
++    switch (match.status) {
++      case 'NOT_MATCHED':
++        outcome = LivenessGateOutcome.faceMismatch;
++        break;
++      case 'NO_ENROLLED_FACE':
++      case 'ENROLMENT_UNUSABLE':
++        outcome = LivenessGateOutcome.noEnrolment;
++        break;
++      default:
++        outcome = LivenessGateOutcome.faceUnavailable;
++    }
++    return LivenessGateResult(outcome, sessionId: sessionId, faceMatch: match);
++  } finally {
++    controller.dispose();
++  }
++}
++
++/// Shows the localised reason for a failed gate in a SnackBar.
++void showLivenessGateMessage(BuildContext context, LivenessGateResult result) {
++  if (result.ok || !context.mounted) return;
++  ScaffoldMessenger.of(context).showSnackBar(
++    SnackBar(content: Text(LivenessMessages.text(context, result.messageKey))),
++  );
++}
++
++/// Value BiometricsApi.invokeDiscoverSbi resolves with when the signed face capture does not match the
++/// liveness session that preceded it (LivenessCaptureBinder in the Android host).
++const String livenessCaptureMismatch = 'LIVENESS_CAPTURE_MISMATCH';
++
++void _audit(String event, List<String> args) {
++  // AuditResponseApi.audit never completes its Pigeon reply on Android, so do not await it.
++  unawaited(Audit().performAudit(event, livenessComponentId, args));
++}

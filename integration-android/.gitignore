@@ -1,0 +1,19 @@
+# Gradle / Android build state (never commit)
+.gradle/
+.kotlin/
+build/
+**/build/
+local.properties
+*.iml
+.idea/
+captures/
+.cxx/
+# SDKs and toolchains must live outside the repo
+sdk/
+android-sdk/
+flutter-sdk/
+.dart_tool/
+.pub-cache/
+# Model binaries are fetched/bundled at build time, not committed
+vivid-android/src/main/assets/vivid/models/*.tflite
+vivid-android/src/main/assets/vivid/models/*.task

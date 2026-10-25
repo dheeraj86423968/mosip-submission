@@ -1,0 +1,247 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: mosip-vivid <vivid@localhost>
+Date: Sat, 24 Oct 2026 18:25:33 +0530
+Subject: [PATCH 3/8] liveness: l10n strings (en, fr, ar)
+
+Flat liveness_* identifiers from mosip-vivid integration-android/flutter/
+lib/liveness/l10n, merged into the single-template ARBs. hi, kn and ta
+fall back to English through gen-l10n until translated.
+---
+ assets/l10n/app_ar.arb | 69 ++++++++++++++++++++++++++++++++++++++++--
+ assets/l10n/app_en.arb | 68 ++++++++++++++++++++++++++++++++++++++++-
+ assets/l10n/app_fr.arb | 69 ++++++++++++++++++++++++++++++++++++++++--
+ 3 files changed, 201 insertions(+), 5 deletions(-)
+
+diff --git a/assets/l10n/app_ar.arb b/assets/l10n/app_ar.arb
+index b90ca06..b57c0b8 100644
+--- a/assets/l10n/app_ar.arb
++++ b/assets/l10n/app_ar.arb
+@@ -420,6 +420,71 @@
+         "type": "int"
+       }
+     }
+-  }
++  },
++  "liveness_title": "التحقق من حيوية الوجه",
++  "liveness_hint_none": "",
++  "liveness_hint_move_closer": "اقترب قليلاً",
++  "liveness_hint_move_back": "ابتعد قليلاً",
++  "liveness_hint_center_face": "أبقِ وجهك داخل الشكل البيضاوي",
++  "liveness_hint_look_at_camera": "انظر إلى الكاميرا",
++  "liveness_hint_improve_lighting": "يرجى مواجهة الضوء؛ الصورة مظلمة جداً أو ساطعة جداً",
++  "liveness_hint_hold_still": "ابقَ ثابتاً",
++  "liveness_hint_only_one_face": "يجب أن يكون شخص واحد فقط أمام الكاميرا",
++  "liveness_hint_checking": "جارٍ التحقق من الحيوية...",
++  "liveness_hint_please_continue": "يرجى المتابعة",
++  "liveness_hint_action_detected": "رائع، تم",
++  "liveness_hint_captured_ok": "تم تأكيد الحيوية",
++  "liveness_hint_try_again": "لم ينجح ذلك، لنحاول مرة أخرى",
++  "liveness_hint_retry_available": "يمكنك المحاولة مرة أخرى",
++  "liveness_hint_max_retries_reached": "لا توجد محاولات متبقية",
++  "liveness_hint_device_reconnecting": "جارٍ إعادة الاتصال بالكاميرا...",
++  "liveness_hint_device_disconnected": "تم فصل الكاميرا",
++  "liveness_phase_idle": "جاهز",
++  "liveness_phase_device_connecting": "جارٍ تشغيل الكاميرا...",
++  "liveness_phase_face_acquiring": "ضع وجهك داخل الشكل البيضاوي",
++  "liveness_phase_passive_evaluating": "جارٍ التحقق من الحيوية...",
++  "liveness_phase_active_challenge": "اتبع التعليمات",
++  "liveness_phase_passed": "تم تأكيد الحيوية",
++  "liveness_phase_failed": "فشل التحقق من الحيوية",
++  "liveness_phase_locked": "تم قفل التحقق من الحيوية",
++  "liveness_phase_cancelled": "تم الإلغاء",
++  "liveness_challenge_blink": "ارمش",
++  "liveness_challenge_blink_twice": "ارمش مرتين",
++  "liveness_challenge_smile": "ابتسم",
++  "liveness_challenge_open_mouth": "افتح فمك",
++  "liveness_challenge_raise_eyebrows": "ارفع حاجبيك",
++  "liveness_challenge_turn_left": "أدر رأسك إلى اليسار",
++  "liveness_challenge_turn_right": "أدر رأسك إلى اليمين",
++  "liveness_challenge_look_up": "انظر إلى الأعلى",
++  "liveness_challenge_look_down": "انظر إلى الأسفل",
++  "liveness_challenge_nod": "أومئ برأسك",
++  "liveness_challenge_hold_still": "ابقَ ثابتاً للحظة",
++  "liveness_failure_generic": "تعذر إكمال التحقق من الحيوية. يرجى المحاولة مرة أخرى.",
++  "liveness_failure_pad_generic": "لم ينجح التحقق من الحيوية. يرجى التأكد من وجود شخص حقيقي أمام الكاميرا والمحاولة مرة أخرى.",
++  "liveness_failure_device": "الكاميرا غير متاحة. تحقق من الجهاز وحاول مرة أخرى.",
++  "liveness_failure_face_not_detected": "لم يتم اكتشاف أي وجه.",
++  "liveness_failure_multiple_faces": "تم اكتشاف أكثر من وجه.",
++  "liveness_failure_poor_quality": "جودة الصورة منخفضة جداً. حسّن الإضاءة وحاول مرة أخرى.",
++  "liveness_failure_below_threshold": "تعذر تأكيد الحيوية.",
++  "liveness_failure_challenge_failed": "لم يتم اكتشاف الإجراء المطلوب.",
++  "liveness_failure_challenge_timeout": "لم يكتمل الإجراء في الوقت المحدد.",
++  "liveness_failure_max_retries": "تم الوصول إلى الحد الأقصى لعدد المحاولات.",
++  "liveness_failure_session_timeout": "انتهت مهلة التحقق من الحيوية.",
++  "liveness_failure_cancelled": "تم إلغاء التحقق من الحيوية.",
++  "liveness_failure_policy_disabled": "التحقق من الحيوية معطل بموجب السياسة.",
++  "liveness_failure_engine": "حدث خطأ داخلي في محرك الحيوية.",
++  "liveness_failure_locked": "تم الوصول إلى الحد الأقصى لعدد المحاولات. يلزم وجود مشرف للمتابعة.",
++  "liveness_button_retry": "حاول مرة أخرى",
++  "liveness_button_cancel": "إلغاء",
++  "liveness_button_continue": "متابعة",
++  "liveness_button_supervisor": "المشرف",
++  "liveness_attempt_of": "المحاولة {attempt} من {max}",
++  "liveness_device_chip": "الكاميرا:",
++  "liveness_offline_chip": "غير متصل",
++  "liveness_assisted_mode": "التقاط بمساعدة",
++  "liveness_face_match_checking": "جارٍ مطابقة وجهك مع صورتك المسجلة...",
++  "liveness_face_match_failed": "وجهك لا يطابق الصورة المسجلة لهذا المستخدم.",
++  "liveness_face_match_unavailable": "تعذر إكمال التحقق من الوجه. تواصل مع المسؤول.",
++  "liveness_face_match_no_enrolment": "لم يتم العثور على وجه مسجل لهذا المستخدم. أكمل تسجيل المشغل مع التقاط صورة الوجه.",
++  "liveness_capture_binding_failed": "الصورة الملتقطة لا تطابق الشخص الذي اجتاز فحص الحيوية. يرجى إعادة الالتقاط."
+ }
+-
+diff --git a/assets/l10n/app_en.arb b/assets/l10n/app_en.arb
+index 7bff9bf..2a1ab60 100644
+--- a/assets/l10n/app_en.arb
++++ b/assets/l10n/app_en.arb
+@@ -420,5 +420,71 @@
+         "type": "int"
+       }
+     }
+-  }
++  },
++  "liveness_title": "Face liveness check",
++  "liveness_hint_none": "",
++  "liveness_hint_move_closer": "Move a little closer",
++  "liveness_hint_move_back": "Move a little further away",
++  "liveness_hint_center_face": "Keep your face inside the oval",
++  "liveness_hint_look_at_camera": "Look at the camera",
++  "liveness_hint_improve_lighting": "Please face the light; the image is too dark or too bright",
++  "liveness_hint_hold_still": "Hold still",
++  "liveness_hint_only_one_face": "Only one person should be in front of the camera",
++  "liveness_hint_checking": "Checking liveness...",
++  "liveness_hint_please_continue": "Please continue",
++  "liveness_hint_action_detected": "Great, got it",
++  "liveness_hint_captured_ok": "Liveness confirmed",
++  "liveness_hint_try_again": "That did not work, let's try again",
++  "liveness_hint_retry_available": "You can try again",
++  "liveness_hint_max_retries_reached": "No more attempts are available",
++  "liveness_hint_device_reconnecting": "Reconnecting to the camera...",
++  "liveness_hint_device_disconnected": "Camera disconnected",
++  "liveness_phase_idle": "Ready",
++  "liveness_phase_device_connecting": "Starting camera...",
++  "liveness_phase_face_acquiring": "Position your face in the oval",
++  "liveness_phase_passive_evaluating": "Checking liveness...",
++  "liveness_phase_active_challenge": "Follow the instruction",
++  "liveness_phase_passed": "Liveness confirmed",
++  "liveness_phase_failed": "Liveness check failed",
++  "liveness_phase_locked": "Liveness check locked",
++  "liveness_phase_cancelled": "Cancelled",
++  "liveness_challenge_blink": "Blink",
++  "liveness_challenge_blink_twice": "Blink twice",
++  "liveness_challenge_smile": "Smile",
++  "liveness_challenge_open_mouth": "Open your mouth",
++  "liveness_challenge_raise_eyebrows": "Raise your eyebrows",
++  "liveness_challenge_turn_left": "Turn your head to the left",
++  "liveness_challenge_turn_right": "Turn your head to the right",
++  "liveness_challenge_look_up": "Look up",
++  "liveness_challenge_look_down": "Look down",
++  "liveness_challenge_nod": "Nod your head",
++  "liveness_challenge_hold_still": "Hold still for a moment",
++  "liveness_failure_generic": "The liveness check could not be completed. Please try again.",
++  "liveness_failure_pad_generic": "The liveness check did not pass. Please make sure a real person is in front of the camera and try again.",
++  "liveness_failure_device": "The camera is not available. Check the device and try again.",
++  "liveness_failure_face_not_detected": "No face was detected.",
++  "liveness_failure_multiple_faces": "More than one face was detected.",
++  "liveness_failure_poor_quality": "The image quality was too low. Improve the lighting and try again.",
++  "liveness_failure_below_threshold": "Liveness could not be confirmed.",
++  "liveness_failure_challenge_failed": "The requested action was not detected.",
++  "liveness_failure_challenge_timeout": "The action was not completed in time.",
++  "liveness_failure_max_retries": "The maximum number of attempts has been reached.",
++  "liveness_failure_session_timeout": "The liveness check timed out.",
++  "liveness_failure_cancelled": "The liveness check was cancelled.",
++  "liveness_failure_policy_disabled": "Liveness checking is disabled by policy.",
++  "liveness_failure_engine": "An internal error occurred in the liveness engine.",
++  "liveness_failure_locked": "The maximum number of attempts has been reached. A supervisor is required to continue.",
++  "liveness_button_retry": "Try again",
++  "liveness_button_cancel": "Cancel",
++  "liveness_button_continue": "Continue",
++  "liveness_button_supervisor": "Supervisor",
++  "liveness_attempt_of": "Attempt {attempt} of {max}",
++  "liveness_device_chip": "Camera:",
++  "liveness_offline_chip": "Offline",
++  "liveness_assisted_mode": "Assisted capture",
++  "liveness_face_match_checking": "Checking your face against your enrolled photo...",
++  "liveness_face_match_failed": "Your face does not match the enrolled photo for this user.",
++  "liveness_face_match_unavailable": "Face verification could not be completed. Contact your administrator.",
++  "liveness_face_match_no_enrolment": "No enrolled face was found for this user. Complete operator onboarding with a face capture.",
++  "liveness_capture_binding_failed": "The captured photo does not match the person who passed the liveness check. Please capture again."
+ }
+diff --git a/assets/l10n/app_fr.arb b/assets/l10n/app_fr.arb
+index 6e788f3..c63d4ac 100644
+--- a/assets/l10n/app_fr.arb
++++ b/assets/l10n/app_fr.arb
+@@ -420,6 +420,71 @@
+         "type": "int"
+       }
+     }
+-  }
++  },
++  "liveness_title": "Vérification de vivacité du visage",
++  "liveness_hint_none": "",
++  "liveness_hint_move_closer": "Rapprochez-vous un peu",
++  "liveness_hint_move_back": "Éloignez-vous un peu",
++  "liveness_hint_center_face": "Gardez votre visage dans l'ovale",
++  "liveness_hint_look_at_camera": "Regardez la caméra",
++  "liveness_hint_improve_lighting": "Tournez-vous vers la lumière ; l'image est trop sombre ou trop claire",
++  "liveness_hint_hold_still": "Ne bougez pas",
++  "liveness_hint_only_one_face": "Une seule personne doit être devant la caméra",
++  "liveness_hint_checking": "Vérification de la vivacité...",
++  "liveness_hint_please_continue": "Veuillez continuer",
++  "liveness_hint_action_detected": "Parfait, c'est noté",
++  "liveness_hint_captured_ok": "Vivacité confirmée",
++  "liveness_hint_try_again": "Cela n'a pas fonctionné, réessayons",
++  "liveness_hint_retry_available": "Vous pouvez réessayer",
++  "liveness_hint_max_retries_reached": "Plus aucune tentative disponible",
++  "liveness_hint_device_reconnecting": "Reconnexion à la caméra...",
++  "liveness_hint_device_disconnected": "Caméra déconnectée",
++  "liveness_phase_idle": "Prêt",
++  "liveness_phase_device_connecting": "Démarrage de la caméra...",
++  "liveness_phase_face_acquiring": "Placez votre visage dans l'ovale",
++  "liveness_phase_passive_evaluating": "Vérification de la vivacité...",
++  "liveness_phase_active_challenge": "Suivez l'instruction",
++  "liveness_phase_passed": "Vivacité confirmée",
++  "liveness_phase_failed": "Échec de la vérification de vivacité",
++  "liveness_phase_locked": "Vérification de vivacité verrouillée",
++  "liveness_phase_cancelled": "Annulé",
++  "liveness_challenge_blink": "Clignez des yeux",
++  "liveness_challenge_blink_twice": "Clignez des yeux deux fois",
++  "liveness_challenge_smile": "Souriez",
++  "liveness_challenge_open_mouth": "Ouvrez la bouche",
++  "liveness_challenge_raise_eyebrows": "Levez les sourcils",
++  "liveness_challenge_turn_left": "Tournez la tête vers la gauche",
++  "liveness_challenge_turn_right": "Tournez la tête vers la droite",
++  "liveness_challenge_look_up": "Regardez vers le haut",
++  "liveness_challenge_look_down": "Regardez vers le bas",
++  "liveness_challenge_nod": "Hochez la tête",
++  "liveness_challenge_hold_still": "Restez immobile un instant",
++  "liveness_failure_generic": "La vérification de vivacité n'a pas pu être effectuée. Veuillez réessayer.",
++  "liveness_failure_pad_generic": "La vérification de vivacité a échoué. Assurez-vous qu'une personne réelle se trouve devant la caméra et réessayez.",
++  "liveness_failure_device": "La caméra n'est pas disponible. Vérifiez l'appareil et réessayez.",
++  "liveness_failure_face_not_detected": "Aucun visage détecté.",
++  "liveness_failure_multiple_faces": "Plusieurs visages ont été détectés.",
++  "liveness_failure_poor_quality": "La qualité de l'image est insuffisante. Améliorez l'éclairage et réessayez.",
++  "liveness_failure_below_threshold": "La vivacité n'a pas pu être confirmée.",
++  "liveness_failure_challenge_failed": "L'action demandée n'a pas été détectée.",
++  "liveness_failure_challenge_timeout": "L'action n'a pas été effectuée à temps.",
++  "liveness_failure_max_retries": "Le nombre maximal de tentatives est atteint.",
++  "liveness_failure_session_timeout": "La vérification de vivacité a expiré.",
++  "liveness_failure_cancelled": "La vérification de vivacité a été annulée.",
++  "liveness_failure_policy_disabled": "La vérification de vivacité est désactivée par la politique.",
++  "liveness_failure_engine": "Une erreur interne s'est produite dans le moteur de vivacité.",
++  "liveness_failure_locked": "Le nombre maximal de tentatives est atteint. Un superviseur est requis pour continuer.",
++  "liveness_button_retry": "Réessayer",
++  "liveness_button_cancel": "Annuler",
++  "liveness_button_continue": "Continuer",
++  "liveness_button_supervisor": "Superviseur",
++  "liveness_attempt_of": "Tentative {attempt} sur {max}",
++  "liveness_device_chip": "Caméra :",
++  "liveness_offline_chip": "Hors ligne",
++  "liveness_assisted_mode": "Capture assistée",
++  "liveness_face_match_checking": "Comparaison de votre visage avec votre photo enregistrée...",
++  "liveness_face_match_failed": "Votre visage ne correspond pas à la photo enregistrée pour cet utilisateur.",
++  "liveness_face_match_unavailable": "La vérification du visage n'a pas pu être effectuée. Contactez votre administrateur.",
++  "liveness_face_match_no_enrolment": "Aucun visage enregistré n'a été trouvé pour cet utilisateur. Terminez l'intégration de l'opérateur avec une capture du visage.",
++  "liveness_capture_binding_failed": "La photo capturée ne correspond pas à la personne qui a passé le contrôle de vivacité. Veuillez recommencer la capture."
+ }
+-

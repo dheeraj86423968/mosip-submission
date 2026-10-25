@@ -1,0 +1,348 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: mosip-vivid <vivid@localhost>
+Date: Sat, 24 Oct 2026 18:27:06 +0530
+Subject: [PATCH 5/8] liveness: resident face capture gated on liveness and
+ bound to it
+
+- BiometricCaptureScanBlockPortrait._scanBlock: for the Face attribute,
+  run a RESIDENT liveness session before BiometricsApi.invokeDiscoverSbi;
+  nothing is captured unless it passes (or policy disables it).
+- BiometricsDetailsApi.parseRCaptureResponse: for Modality.FACE, the
+  signed ISO 19794-5 image is decoded (IsoFaceImages) and matched off
+  the main thread against the anchor embedding of the RESIDENT session
+  that just passed (LivenessCaptureBinder -> LivenessPigeonApi.bindCapture).
+  On a mismatch nothing is stored and invokeDiscoverSbi resolves with
+  LIVENESS_CAPTURE_MISMATCH, which the widget reports.
+- The landscape scan block (biometric_scan_middle_block.dart) is dead
+  code in release-1.2.x and is not patched.
+---
+ .../registration_client/HostApiModule.java    |  7 ++
+ .../registration_client/MainActivity.java     |  5 ++
+ .../api_services/BiometricsDetailsApi.java    | 51 ++++++++++----
+ .../liveness/IsoFaceImages.java               | 62 ++++++++++++++++
+ .../liveness/LivenessCaptureBinder.java       | 70 +++++++++++++++++++
+ ...biometric_capture_scan_block_portrait.dart | 27 ++++++-
+ 6 files changed, 206 insertions(+), 16 deletions(-)
+ create mode 100644 android/app/src/main/java/io/mosip/registration_client/liveness/IsoFaceImages.java
+ create mode 100644 android/app/src/main/java/io/mosip/registration_client/liveness/LivenessCaptureBinder.java
+
+diff --git a/android/app/src/main/java/io/mosip/registration_client/HostApiModule.java b/android/app/src/main/java/io/mosip/registration_client/HostApiModule.java
+index d800348..f9afa70 100644
+--- a/android/app/src/main/java/io/mosip/registration_client/HostApiModule.java
++++ b/android/app/src/main/java/io/mosip/registration_client/HostApiModule.java
+@@ -80,6 +80,7 @@ import io.mosip.registration_client.api_services.SecureScreenApi;
+ import io.mosip.registration_client.api_services.UserDetailsApi;
+ import io.mosip.registration.clientmanager.util.BioSdkProviderFactory;
+ import io.mosip.registration_client.liveness.ArcLiveness;
++import io.mosip.registration_client.liveness.LivenessCaptureBinder;
+ import io.mosip.vivid.android.bridge.LivenessPigeonApi;
+ 
+ @Module
+@@ -341,4 +342,10 @@ public class HostApiModule {
+                                            GlobalParamRepository globalParamRepository) {
+         return ArcLiveness.create(appContext, auditManagerService, globalParamRepository, null);
+     }
++
++    @Provides
++    @Singleton
++    LivenessCaptureBinder getLivenessCaptureBinder(LivenessPigeonApi livenessPigeonApi) {
++        return new LivenessCaptureBinder(livenessPigeonApi);
++    }
+ }
+diff --git a/android/app/src/main/java/io/mosip/registration_client/MainActivity.java b/android/app/src/main/java/io/mosip/registration_client/MainActivity.java
+index b7335e8..cc8cbb9 100644
+--- a/android/app/src/main/java/io/mosip/registration_client/MainActivity.java
++++ b/android/app/src/main/java/io/mosip/registration_client/MainActivity.java
+@@ -107,6 +107,7 @@ import io.mosip.registration_client.model.UserPigeon;
+ import io.mosip.registration_client.model.DocumentDataPigeon;
+ import io.mosip.registration_client.utils.BatchJob;
+ import io.mosip.registration_client.utils.CustomToast;
++import io.mosip.registration_client.liveness.LivenessCaptureBinder;
+ import io.mosip.vivid.android.bridge.LivenessPigeonApi;
+ import io.mosip.vivid.android.bridge.gen.LivenessHostApi;
+ 
+@@ -204,6 +205,9 @@ public class MainActivity extends FlutterActivity {
+     @Inject
+     LivenessPigeonApi livenessPigeonApi;
+ 
++    @Inject
++    LivenessCaptureBinder livenessCaptureBinder;
++
+     @Inject
+     GlobalConfigSettingsApi globalConfigSettingsApi;
+ 
+@@ -411,6 +415,7 @@ public class MainActivity extends FlutterActivity {
+         ProcessSpecPigeon.ProcessSpecApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), processSpecDetailsApi);
+         BiometricsPigeon.BiometricsApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(),biometricsDetailsApi);
+         biometricsDetailsApi.setCallbackActivity(this);
++        biometricsDetailsApi.setLivenessCaptureBinder(livenessCaptureBinder);
+         RegistrationDataPigeon.RegistrationDataApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), registrationApi);
+         PacketAuthPigeon.PacketAuthApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), packetAuthenticationApi);
+         packetAuthenticationApi.setCallbackActivity(this);
+diff --git a/android/app/src/main/java/io/mosip/registration_client/api_services/BiometricsDetailsApi.java b/android/app/src/main/java/io/mosip/registration_client/api_services/BiometricsDetailsApi.java
+index 640ac66..56ed86e 100644
+--- a/android/app/src/main/java/io/mosip/registration_client/api_services/BiometricsDetailsApi.java
++++ b/android/app/src/main/java/io/mosip/registration_client/api_services/BiometricsDetailsApi.java
+@@ -61,6 +61,7 @@ import io.mosip.registration.keymanager.util.CryptoUtil;
+ import io.mosip.registration.packetmanager.cbeffutil.jaxbclasses.SingleType;
+ import io.mosip.registration_client.MainActivity;
+ import io.mosip.registration_client.model.BiometricsPigeon;
++import io.mosip.registration_client.liveness.LivenessCaptureBinder;
+ 
+ @Singleton
+ public class BiometricsDetailsApi implements BiometricsPigeon.BiometricsApi {
+@@ -91,6 +92,12 @@ public class BiometricsDetailsApi implements BiometricsPigeon.BiometricsApi {
+     public List<String> OPERATOR_EXCEPTIONS=new ArrayList<>();
+ 
+     private static final String OPERATOR_BIOMETRICS = "operatorBiometrics";
++    /** mosip-vivid: binds a resident's signed face capture to the preceding liveness session; null = off. */
++    private LivenessCaptureBinder livenessCaptureBinder;
++
++    public void setLivenessCaptureBinder(LivenessCaptureBinder livenessCaptureBinder) {
++        this.livenessCaptureBinder = livenessCaptureBinder;
++    }
+     private static final String LEFT_INDEX_FINGER = "Left IndexFinger";
+     private static final String LEFT_MIDDLE_FINGER = "Left MiddleFinger";
+     private static final String LEFT_RING_FINGER = "Left RingFinger";
+@@ -1110,21 +1117,35 @@ public class BiometricsDetailsApi implements BiometricsPigeon.BiometricsApi {
+                     return;
+                 }
+ 
+-                biometricsDtoList.forEach(dto -> {
+-                    try {
+-                        this.registrationService.getRegistrationDto().addBiometric(
+-                                fieldId,
+-                                (currentModality == Modality.EXCEPTION_PHOTO) || (currentModality == Modality.FACE)
+-                                        ? currentModality.getAttributes().get(0)
+-                                        : Modality.getBioAttribute(dto.getBioSubType()),
+-                                currentAttempt,
+-                                dto
+-                        );
+-                    } catch (Exception ex) {
+-                        Log.e(TAG, ex.getMessage(), ex);
+-                    }
+-                });
+-                biometricResult.success("Ok");
++                // Captured state is copied so a deferred store (liveness capture binding) uses this capture's values.
++                final String capturedFieldId = fieldId;
++                final Modality capturedModality = currentModality;
++                final int capturedAttempt = currentAttempt;
++                final BiometricsPigeon.Result<String> pending = biometricResult;
++                Runnable storeCapture = () -> {
++                    biometricsDtoList.forEach(dto -> {
++                        try {
++                            this.registrationService.getRegistrationDto().addBiometric(
++                                    capturedFieldId,
++                                    (capturedModality == Modality.EXCEPTION_PHOTO) || (capturedModality == Modality.FACE)
++                                            ? capturedModality.getAttributes().get(0)
++                                            : Modality.getBioAttribute(dto.getBioSubType()),
++                                    capturedAttempt,
++                                    dto
++                            );
++                        } catch (Exception ex) {
++                            Log.e(TAG, ex.getMessage(), ex);
++                        }
++                    });
++                    pending.success("Ok");
++                };
++                if (capturedModality == Modality.FACE && livenessCaptureBinder != null) {
++                    // mosip-vivid: keep the capture only if its face matches the liveness session that preceded it.
++                    livenessCaptureBinder.verifyThen(biometricsDtoList, storeCapture,
++                            () -> pending.success(LivenessCaptureBinder.CAPTURE_MISMATCH));
++                } else {
++                    storeCapture.run();
++                }
+             }
+ 
+         } catch (BiometricsServiceException e) {
+diff --git a/android/app/src/main/java/io/mosip/registration_client/liveness/IsoFaceImages.java b/android/app/src/main/java/io/mosip/registration_client/liveness/IsoFaceImages.java
+new file mode 100644
+index 0000000..c464207
+--- /dev/null
++++ b/android/app/src/main/java/io/mosip/registration_client/liveness/IsoFaceImages.java
+@@ -0,0 +1,62 @@
++/*
++ * Copyright (c) Modular Open Source Identity Platform
++ * This source code is licensed under the MIT license found in the
++ * LICENSE file in the root directory of this source tree.
++ *
++ */
++
++package io.mosip.registration_client.liveness;
++
++import android.graphics.Bitmap;
++import android.graphics.BitmapFactory;
++import android.util.Log;
++
++import com.gemalto.jp2.JP2Decoder;
++
++import java.io.ByteArrayInputStream;
++import java.io.DataInputStream;
++
++import io.mosip.biometrics.util.face.FaceBDIR;
++import io.mosip.registration.keymanager.util.CryptoUtil;
++
++/**
++ * Decodes an ISO/IEC 19794-5 face record (what SBI {@code rcapture} returns in {@code bioValue} and what operator
++ * onboarding stores in {@code user_biometric.bio_template}) into a {@link Bitmap}, the same way
++ * {@code BiometricsDetailsApi.extractImageValues} does for display: {@link FaceBDIR} for the record, then
++ * {@link JP2Decoder} for JPEG 2000 image data. JPEG image data (also allowed by 19794-5) goes to {@link BitmapFactory}.
++ */
++public final class IsoFaceImages {
++
++    private static final String TAG = "IsoFaceImages";
++
++    private IsoFaceImages() {
++    }
++
++    /** @param bioValue base64url ISO face record as carried by {@code BiometricsDto.getBioValue()} */
++    public static Bitmap fromBioValue(String bioValue) {
++        if (bioValue == null || bioValue.isEmpty()) return null;
++        try {
++            return fromIso(CryptoUtil.base64decoder.decode(bioValue));
++        } catch (IllegalArgumentException e) {
++            Log.w(TAG, "bioValue is not base64url", e);
++            return null;
++        }
++    }
++
++    /** @return the decoded face image, or null when the record or its image cannot be decoded */
++    public static Bitmap fromIso(byte[] iso) {
++        if (iso == null || iso.length == 0) return null;
++        try (DataInputStream in = new DataInputStream(new ByteArrayInputStream(iso))) {
++            FaceBDIR faceBDIR = new FaceBDIR(in);
++            byte[] image = faceBDIR.getRepresentation().getRepresentationData().getImageData().getImage();
++            if (image == null || image.length == 0) return null;
++            if (image.length > 2 && (image[0] & 0xff) == 0xff && (image[1] & 0xff) == 0xd8) {
++                return BitmapFactory.decodeByteArray(image, 0, image.length);
++            }
++            return new JP2Decoder(image).decode();
++        } catch (Exception e) {
++            Log.w(TAG, "Not a decodable ISO 19794-5 face record: " + e.getMessage());
++            return null;
++        }
++    }
++}
+diff --git a/android/app/src/main/java/io/mosip/registration_client/liveness/LivenessCaptureBinder.java b/android/app/src/main/java/io/mosip/registration_client/liveness/LivenessCaptureBinder.java
+new file mode 100644
+index 0000000..e449cda
+--- /dev/null
++++ b/android/app/src/main/java/io/mosip/registration_client/liveness/LivenessCaptureBinder.java
+@@ -0,0 +1,70 @@
++/*
++ * Copyright (c) Modular Open Source Identity Platform
++ * This source code is licensed under the MIT license found in the
++ * LICENSE file in the root directory of this source tree.
++ *
++ */
++
++package io.mosip.registration_client.liveness;
++
++import android.graphics.Bitmap;
++import android.os.Handler;
++import android.os.Looper;
++import android.util.Log;
++
++import java.util.List;
++import java.util.concurrent.ExecutorService;
++import java.util.concurrent.Executors;
++
++import io.mosip.registration.clientmanager.dto.registration.BiometricsDto;
++import io.mosip.vivid.android.bridge.LivenessPigeonApi;
++import io.mosip.vivid.android.face.FaceMatchOutcome;
++
++/**
++ * Binds a resident's signed SBI face capture to the liveness session that ran just before it: the face in the
++ * {@code rcapture} image must match the anchor embedding of the most recent PASSED RESIDENT session
++ * ({@link LivenessPigeonApi#bindCapture}). This stops a passed liveness check being followed by a capture of
++ * someone (or something) else. Decoding and embedding take a few hundred ms, so they run off the main thread;
++ * the callbacks run on the main thread. The outcome is audited by the bridge (LIVENESS_CAPTURE_BOUND /
++ * LIVENESS_IDENTITY_DRIFT). When liveness or face matching is disabled by policy, every capture is accepted.
++ */
++public class LivenessCaptureBinder {
++
++    private static final String TAG = "LivenessCaptureBinder";
++    /** What {@code BiometricsApi.invokeDiscoverSbi} resolves with when the capture is rejected (see liveness_flow.dart). */
++    public static final String CAPTURE_MISMATCH = "LIVENESS_CAPTURE_MISMATCH";
++
++    private final LivenessPigeonApi livenessPigeonApi;
++    private final ExecutorService executor = Executors.newSingleThreadExecutor();
++    private final Handler mainHandler = new Handler(Looper.getMainLooper());
++
++    public LivenessCaptureBinder(LivenessPigeonApi livenessPigeonApi) {
++        this.livenessPigeonApi = livenessPigeonApi;
++    }
++
++    public void verifyThen(List<BiometricsDto> faceCaptures, Runnable onAccepted, Runnable onRejected) {
++        String bioValue = null;
++        if (faceCaptures != null) {
++            for (BiometricsDto dto : faceCaptures) {
++                if (dto != null && dto.getBioValue() != null && !dto.getBioValue().isEmpty()) {
++                    bioValue = dto.getBioValue();
++                    break;
++                }
++            }
++        }
++        final String probe = bioValue;
++        executor.execute(() -> {
++            boolean accepted;
++            try {
++                Bitmap image = IsoFaceImages.fromBioValue(probe);
++                FaceMatchOutcome outcome = livenessPigeonApi.bindCapture(image);
++                Log.i(TAG, "capture binding: " + outcome.getStatus() + " accepted=" + outcome.getAccepted());
++                accepted = outcome.getAccepted();
++            } catch (Exception e) {
++                Log.e(TAG, "capture binding failed; rejecting the capture", e);
++                accepted = false;
++            }
++            mainHandler.post(accepted ? onAccepted : onRejected);
++        });
++    }
++}
+diff --git a/lib/ui/process_ui/widgets_mobile/biometric_capture_scan_block_portrait.dart b/lib/ui/process_ui/widgets_mobile/biometric_capture_scan_block_portrait.dart
+index 7146ff4..d8808d6 100644
+--- a/lib/ui/process_ui/widgets_mobile/biometric_capture_scan_block_portrait.dart
++++ b/lib/ui/process_ui/widgets_mobile/biometric_capture_scan_block_portrait.dart
+@@ -22,6 +22,9 @@ import 'package:registration_client/pigeon/biometrics_pigeon.dart';
+ import 'package:registration_client/provider/biometric_capture_control_provider.dart';
+ import 'package:registration_client/provider/global_provider.dart';
+ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
++import 'package:registration_client/liveness/liveness_controller.dart';
++import 'package:registration_client/liveness/liveness_flow.dart';
++import 'package:registration_client/liveness/liveness_messages.dart';
+ 
+ import 'package:registration_client/utils/app_config.dart';
+ import 'package:registration_client/utils/biometrics_utils.dart';
+@@ -596,9 +599,31 @@ class _BiometricCaptureScanBlockPortraitState
+             if (biometricAttributeData.exceptions.contains(false)) {
+               if (biometricAttributeData.attemptNo <
+                   biometricAttributeData.noOfCapturesAllowed) {
++                // mosip-vivid: face liveness / PAD before the SBI face capture. The capture that follows is
++                // bound natively to this session (LivenessCaptureBinder); a mismatch rejects the capture.
++                final bool isFace = biometricAttributeData.title == "Face";
++                if (isFace) {
++                  final gate = await runLivenessGate(
++                      context, LivenessWorkflow.resident);
++                  if (!gate.ok) {
++                    if (context.mounted) showLivenessGateMessage(context, gate);
++                    setState(() {});
++                    return;
++                  }
++                }
+                 List<Uint8List?> tempImageList = [];
+-                await BiometricsApi().invokeDiscoverSbi(widget.field.id!,
++                final String sbiResult = await BiometricsApi().invokeDiscoverSbi(
++                    widget.field.id!,
+                     biometricAttributeData.title.replaceAll(" ", ""));
++                if (isFace && sbiResult == livenessCaptureMismatch) {
++                  if (context.mounted) {
++                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
++                        content: Text(LivenessMessages.text(
++                            context, 'liveness.capture_binding_failed'))));
++                  }
++                  setState(() {});
++                  return;
++                }
+                 await BiometricsApi()
+                     .getBestBiometrics(widget.field.id!,
+                     biometricAttributeData.title.replaceAll(" ", ""))

@@ -1,0 +1,602 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: mosip-vivid <vivid@localhost>
+Date: Sat, 24 Oct 2026 18:25:10 +0530
+Subject: [PATCH 2/8] liveness: native wiring for the mosip-vivid vivid-android
+ module
+
+- settings.gradle / app build.gradle: include and depend on :vivid-android
+  (copied from mosip-vivid integration-android); io.mosip.vivid jars from
+  mavenLocal (group-restricted); keep .tflite/.task uncompressed; pick one
+  libtensorflowlite_jni.
+- app build.gradle: exclude protobuf-java 3.16.3 (pulled by
+  biometrics-util 1.3.0, referenced by neither it nor ARC); it duplicates
+  the protobuf-javalite 4.26.1 MediaPipe needs (checkDebugDuplicateClasses).
+- Manifest: CAMERA permission, optional front camera feature.
+- Pigeon: pigeon/liveness.dart (HostApi + first FlutterApi), Kotlin output
+  into the vivid-android module, added to pigeon.sh.
+- MainActivity: attach LivenessPigeonApi to the activity lifecycle, the
+  Flutter texture registry and messenger; LivenessHostApi.setUp; shutdown
+  in onDestroy.
+- HostApiModule/ArcLiveness: engine factory, network state, audit into
+  Components.LIVENESS, policy from mosip.registration.liveness.* global
+  params (LivenessPolicySource).
+---
+ android/app/build.gradle                      |  16 ++
+ android/app/src/main/AndroidManifest.xml      |   3 +
+ .../registration_client/HostApiModule.java    |  11 +-
+ .../registration_client/MainActivity.java     |  11 +
+ .../liveness/ArcLiveness.java                 |  76 +++++++
+ .../liveness/LivenessPolicySource.java        | 108 ++++++++++
+ android/build.gradle                          |   4 +
+ android/settings.gradle                       |   3 +
+ pigeon.sh                                     |   3 +
+ pigeon/liveness.dart                          | 190 ++++++++++++++++++
+ 10 files changed, 424 insertions(+), 1 deletion(-)
+ create mode 100644 android/app/src/main/java/io/mosip/registration_client/liveness/ArcLiveness.java
+ create mode 100644 android/app/src/main/java/io/mosip/registration_client/liveness/LivenessPolicySource.java
+ create mode 100644 pigeon/liveness.dart
+
+diff --git a/android/app/build.gradle b/android/app/build.gradle
+index 8e17558..ee2b295 100644
+--- a/android/app/build.gradle
++++ b/android/app/build.gradle
+@@ -60,6 +60,11 @@ android {
+         buildConfig true
+     }
+ 
++    androidResources {
++        // mosip-vivid models are memory-mapped by TFLite / MediaPipe and must stay uncompressed in the APK
++        noCompress 'tflite', 'task'
++    }
++
+     jacoco {
+         version = "0.8.12"
+     }
+@@ -109,6 +114,9 @@ android {
+         }
+     }
+     packagingOptions {
++        // MediaPipe and TFLite both ship libtensorflowlite_jni (vivid-android)
++        jniLibs.pickFirsts.add("**/libtensorflowlite_jni.so")
++        jniLibs.pickFirsts.add("**/libtensorflowlite_gpu_jni.so")
+         resources.merges.add("git.properties")
+         resources.excludes.add("META-INF/LICENSE*")
+         resources.excludes.add("META-INF/NOTICE*")
+@@ -146,6 +154,12 @@ flutter {
+     source '../..'
+ }
+ 
++configurations.configureEach {
++    // biometrics-util 1.3.0 drags in protobuf-java 3.16.3, which neither it nor ARC uses (no com/google/protobuf
++    // reference in its classes or in ARC); it duplicates the protobuf-javalite 4.26.1 MediaPipe needs (vivid-android).
++    exclude group: 'com.google.protobuf', module: 'protobuf-java'
++}
++
+ dependencies {
+     coreLibraryDesugaring "com.android.tools:desugar_jdk_libs:${rootProject.ext.desugarJdkLibsVersion}"
+ 
+@@ -235,6 +249,8 @@ dependencies {
+     implementation project(':keymanager')
+     implementation project(':packetmanager')
+     implementation project(':transliterationmanager')
++    // mosip-vivid on-device liveness (CameraX + MediaPipe + TFLite) and its api/core jars (transitive)
++    implementation project(':vivid-android')
+ 
+     androidTestImplementation "androidx.test.ext:junit:${rootProject.ext.androidxJunitVersion}"
+     androidTestImplementation "androidx.test.espresso:espresso-core:${rootProject.ext.espressoVersion}"
+diff --git a/android/app/src/main/AndroidManifest.xml b/android/app/src/main/AndroidManifest.xml
+index 7004ae5..f7c4d44 100644
+--- a/android/app/src/main/AndroidManifest.xml
++++ b/android/app/src/main/AndroidManifest.xml
+@@ -16,6 +16,9 @@
+     <!-- GPS Location Permissions -->
+     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
++    <!-- mosip-vivid face liveness: front camera preview/analysis (CameraX). -->
++    <uses-permission android:name="android.permission.CAMERA" />
++    <uses-feature android:name="android.hardware.camera.front" android:required="false" />
+     <application
+         android:label="Registration Client"
+         android:name="${applicationName}"
+diff --git a/android/app/src/main/java/io/mosip/registration_client/HostApiModule.java b/android/app/src/main/java/io/mosip/registration_client/HostApiModule.java
+index 5193848..d800348 100644
+--- a/android/app/src/main/java/io/mosip/registration_client/HostApiModule.java
++++ b/android/app/src/main/java/io/mosip/registration_client/HostApiModule.java
+@@ -79,6 +79,8 @@ import io.mosip.registration_client.api_services.RegistrationApi;
+ import io.mosip.registration_client.api_services.SecureScreenApi;
+ import io.mosip.registration_client.api_services.UserDetailsApi;
+ import io.mosip.registration.clientmanager.util.BioSdkProviderFactory;
++import io.mosip.registration_client.liveness.ArcLiveness;
++import io.mosip.vivid.android.bridge.LivenessPigeonApi;
+ 
+ @Module
+ public class HostApiModule {
+@@ -331,5 +333,12 @@ public class HostApiModule {
+                 keyStoreRepository
+         );
+     }
+-}
+ 
++    /** mosip-vivid face liveness host API (one per process: it owns the camera session and the models). */
++    @Provides
++    @Singleton
++    LivenessPigeonApi getLivenessPigeonApi(AuditManagerService auditManagerService,
++                                           GlobalParamRepository globalParamRepository) {
++        return ArcLiveness.create(appContext, auditManagerService, globalParamRepository, null);
++    }
++}
+diff --git a/android/app/src/main/java/io/mosip/registration_client/MainActivity.java b/android/app/src/main/java/io/mosip/registration_client/MainActivity.java
+index 27a9833..b7335e8 100644
+--- a/android/app/src/main/java/io/mosip/registration_client/MainActivity.java
++++ b/android/app/src/main/java/io/mosip/registration_client/MainActivity.java
+@@ -107,6 +107,8 @@ import io.mosip.registration_client.model.UserPigeon;
+ import io.mosip.registration_client.model.DocumentDataPigeon;
+ import io.mosip.registration_client.utils.BatchJob;
+ import io.mosip.registration_client.utils.CustomToast;
++import io.mosip.vivid.android.bridge.LivenessPigeonApi;
++import io.mosip.vivid.android.bridge.gen.LivenessHostApi;
+ 
+ import android.net.Uri;
+ 
+@@ -199,6 +201,9 @@ public class MainActivity extends FlutterActivity {
+     @Inject
+     BatchJob batchJob;
+ 
++    @Inject
++    LivenessPigeonApi livenessPigeonApi;
++
+     @Inject
+     GlobalConfigSettingsApi globalConfigSettingsApi;
+ 
+@@ -313,6 +318,9 @@ public class MainActivity extends FlutterActivity {
+     @Override
+     protected void onDestroy() {
+         super.onDestroy();
++        if (livenessPigeonApi != null) {
++            livenessPigeonApi.shutdown();
++        }
+         unregisterReceiver(broadcastReceiver);
+         try {
+             unregisterReceiver(rescheduleReceiver);
+@@ -420,6 +428,9 @@ public class MainActivity extends FlutterActivity {
+         GlobalConfigSettingsPigeon.GlobalConfigSettingsApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), globalConfigSettingsApi);
+         SecureScreenPigeon.SecureScreenApi.setup(flutterEngine.getDartExecutor().getBinaryMessenger(), secureScreenApi);
+         secureScreenApi.setCallbackActivity(this);
++        // mosip-vivid face liveness: CameraX binds to this activity's lifecycle, preview goes to a Flutter texture.
++        livenessPigeonApi.attach(this, flutterEngine.getRenderer(), flutterEngine.getDartExecutor().getBinaryMessenger());
++        LivenessHostApi.Companion.setUp(flutterEngine.getDartExecutor().getBinaryMessenger(), livenessPigeonApi);
+     }
+ 
+     @Override
+diff --git a/android/app/src/main/java/io/mosip/registration_client/liveness/ArcLiveness.java b/android/app/src/main/java/io/mosip/registration_client/liveness/ArcLiveness.java
+new file mode 100644
+index 0000000..b483fe4
+--- /dev/null
++++ b/android/app/src/main/java/io/mosip/registration_client/liveness/ArcLiveness.java
+@@ -0,0 +1,76 @@
++/*
++ * Copyright (c) Modular Open Source Identity Platform
++ * This source code is licensed under the MIT license found in the
++ * LICENSE file in the root directory of this source tree.
++ *
++ */
++
++package io.mosip.registration_client.liveness;
++
++import android.content.Context;
++import android.net.ConnectivityManager;
++import android.net.NetworkCapabilities;
++import android.util.Log;
++
++import io.mosip.registration.clientmanager.constant.AuditEvent;
++import io.mosip.registration.clientmanager.constant.Components;
++import io.mosip.registration.clientmanager.repository.GlobalParamRepository;
++import io.mosip.registration.clientmanager.spi.AuditManagerService;
++import io.mosip.vivid.android.bridge.LivenessPigeonApi;
++import io.mosip.vivid.android.engine.MediaPipeLivenessEngine;
++import io.mosip.vivid.android.engine.ModelAssets;
++import io.mosip.vivid.android.face.EnrolledFaceProvider;
++import kotlin.Unit;
++
++/**
++ * Wires the mosip-vivid {@link LivenessPigeonApi} into the registration client: the MediaPipe/TFLite engine
++ * (models from an installed bundle in {@code filesDir/vivid/models/current}, else the APK assets), network state,
++ * the client's audit log ({@link Components#LIVENESS}) and policy from global params ({@link LivenessPolicySource}).
++ */
++public final class ArcLiveness {
++
++    private static final String TAG = "ArcLiveness";
++
++    private ArcLiveness() {
++    }
++
++    public static LivenessPigeonApi create(Context appContext, AuditManagerService auditManagerService,
++                                           GlobalParamRepository globalParamRepository,
++                                           EnrolledFaceProvider enrolledFaceProvider) {
++        LivenessPolicySource policySource = new LivenessPolicySource(globalParamRepository);
++        return new LivenessPigeonApi(
++                appContext,
++                (ctx, governor) -> new MediaPipeLivenessEngine(ctx,
++                        ModelAssets.Companion.load(ctx, ModelAssets.Companion.defaultBundleDir(ctx)), governor, true),
++                () -> isOnline(appContext),
++                (event, sessionId, detail) -> {
++                    audit(auditManagerService, event, sessionId, detail);
++                    return Unit.INSTANCE;
++                },
++                policySource::policyJson,
++                enrolledFaceProvider);
++    }
++
++    /** Maps a vivid {@code LIVENESS_*} event name onto {@link AuditEvent}; unknown names are logged, not dropped silently. */
++    public static void audit(AuditManagerService auditManagerService, String event, String sessionId, String detail) {
++        try {
++            AuditEvent auditEvent = AuditEvent.valueOf(event);
++            auditManagerService.auditWithArguments(auditEvent, Components.LIVENESS.getId(), Components.LIVENESS.getName(),
++                    sessionId == null ? "" : sessionId, detail == null ? "" : detail);
++        } catch (IllegalArgumentException e) {
++            Log.w(TAG, "No AuditEvent for liveness event " + event + " (session " + sessionId + ", " + detail + ")");
++        } catch (Exception e) {
++            Log.e(TAG, "Liveness audit failed for " + event, e);
++        }
++    }
++
++    private static boolean isOnline(Context context) {
++        try {
++            ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
++            NetworkCapabilities caps = cm == null ? null : cm.getNetworkCapabilities(cm.getActiveNetwork());
++            return caps != null && caps.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET);
++        } catch (Exception e) {
++            return false;
++        }
++    }
++}
+diff --git a/android/app/src/main/java/io/mosip/registration_client/liveness/LivenessPolicySource.java b/android/app/src/main/java/io/mosip/registration_client/liveness/LivenessPolicySource.java
+new file mode 100644
+index 0000000..4956719
+--- /dev/null
++++ b/android/app/src/main/java/io/mosip/registration_client/liveness/LivenessPolicySource.java
+@@ -0,0 +1,108 @@
++/*
++ * Copyright (c) Modular Open Source Identity Platform
++ * This source code is licensed under the MIT license found in the
++ * LICENSE file in the root directory of this source tree.
++ *
++ */
++
++package io.mosip.registration_client.liveness;
++
++import android.util.Log;
++
++import org.json.JSONArray;
++import org.json.JSONException;
++import org.json.JSONObject;
++
++import java.util.Locale;
++import java.util.Map;
++
++import io.mosip.registration.clientmanager.repository.GlobalParamRepository;
++
++/**
++ * Builds the per-workflow liveness policy JSON (the format read by vivid-android's {@code PolicyJson} and
++ * {@code FaceMatchPolicy}) from synced global params. Nothing is required: absent keys keep the compiled-in
++ * {@code LivenessPolicy.defaults(workflow)}.
++ *
++ * <pre>
++ * mosip.registration.liveness.enabled                         = false      master switch for all workflows
++ * mosip.registration.liveness.&lt;workflow&gt;.policy               = {...}      full JSON document (optional base)
++ * mosip.registration.liveness.&lt;workflow&gt;.&lt;field&gt;              = value      e.g. operator.passiveThreshold=0.88
++ * mosip.registration.liveness.&lt;workflow&gt;.faceMatch.&lt;field&gt;    = value      e.g. operator.faceMatch.threshold=0.55
++ * </pre>
++ * {@code <workflow>} is resident, operator or supervisor. Values "true"/"false" become booleans, numbers become
++ * numbers, values starting with '[' or '{' are parsed as JSON, anything else stays a string.
++ */
++public class LivenessPolicySource {
++
++    private static final String TAG = "LivenessPolicySource";
++    static final String PREFIX = "mosip.registration.liveness.";
++
++    private final GlobalParamRepository globalParamRepository;
++
++    public LivenessPolicySource(GlobalParamRepository globalParamRepository) {
++        this.globalParamRepository = globalParamRepository;
++    }
++
++    /** @return the policy JSON for {@code workflow} (RESIDENT, OPERATOR, SUPERVISOR), or null when nothing is configured. */
++    public String policyJson(String workflow) {
++        String wf = workflow.trim().toLowerCase(Locale.ROOT);
++        try {
++            Map<String, Object> params = globalParamRepository.getGlobalParamsByPattern(PREFIX + "%");
++            return build(wf, params);
++        } catch (Exception e) {
++            Log.e(TAG, "Failed to read liveness policy for " + wf + "; using compiled-in defaults", e);
++            return null;
++        }
++    }
++
++    static String build(String wf, Map<String, Object> params) throws JSONException {
++        if (params == null || params.isEmpty()) return null;
++        String wfPrefix = PREFIX + wf + ".";
++        JSONObject root = new JSONObject();
++        Object base = params.get(wfPrefix + "policy");
++        if (base != null && !base.toString().trim().isEmpty()) {
++            root = new JSONObject(base.toString().trim());
++        }
++        boolean any = root.length() > 0;
++        for (Map.Entry<String, Object> e : params.entrySet()) {
++            String key = e.getKey();
++            if (!key.startsWith(wfPrefix) || key.equals(wfPrefix + "policy") || e.getValue() == null) continue;
++            String[] path = key.substring(wfPrefix.length()).split("\\.");
++            JSONObject node = root;
++            for (int i = 0; i < path.length - 1; i++) {
++                JSONObject child = node.optJSONObject(path[i]);
++                if (child == null) {
++                    child = new JSONObject();
++                    node.put(path[i], child);
++                }
++                node = child;
++            }
++            node.put(path[path.length - 1], parseValue(e.getValue().toString().trim()));
++            any = true;
++        }
++        Object master = params.get(PREFIX + "enabled");
++        if (master != null && "false".equalsIgnoreCase(master.toString().trim())) {
++            root.put("enabled", false);
++            any = true;
++        }
++        return any ? root.toString() : null;
++    }
++
++    static Object parseValue(String v) {
++        if ("true".equalsIgnoreCase(v)) return Boolean.TRUE;
++        if ("false".equalsIgnoreCase(v)) return Boolean.FALSE;
++        try {
++            if (v.startsWith("[")) return new JSONArray(v);
++            if (v.startsWith("{")) return new JSONObject(v);
++        } catch (JSONException ignored) {
++            return v;
++        }
++        try {
++            if (v.matches("-?\\d+")) return Long.parseLong(v);
++            if (v.matches("-?\\d*\\.\\d+([eE]-?\\d+)?")) return Double.parseDouble(v);
++        } catch (NumberFormatException ignored) {
++            // fall through
++        }
++        return v;
++    }
++}
+diff --git a/android/build.gradle b/android/build.gradle
+index 861964d..2aa1b81 100644
+--- a/android/build.gradle
++++ b/android/build.gradle
+@@ -47,6 +47,10 @@ allprojects {
+         mavenCentral()
+         maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
+         maven { url 'https://jitpack.io' }
++        // mosip-vivid api/core jars (`mvn install` in mosip-vivid); restricted to that group.
++        mavenLocal {
++            content { includeGroup 'io.mosip.vivid' }
++        }
+     }
+ }
+ 
+diff --git a/android/settings.gradle b/android/settings.gradle
+index 2ec4312..754e349 100644
+--- a/android/settings.gradle
++++ b/android/settings.gradle
+@@ -20,3 +20,6 @@ def flutterSdkPath = properties.getProperty("flutter.sdk")
+ assert flutterSdkPath != null, "flutter.sdk not set in local.properties"
+ apply from: "$flutterSdkPath/packages/flutter_tools/gradle/app_plugin_loader.gradle"
+ include ':transliterationmanager'
++// mosip-vivid face liveness / PAD (copied from mosip-vivid/integration-android/vivid-android)
++include ':vivid-android'
++project(':vivid-android').projectDir = new File('vivid-android')
+diff --git a/pigeon.sh b/pigeon.sh
+index dea5aef..1dacf10 100644
+--- a/pigeon.sh
++++ b/pigeon.sh
+@@ -61,5 +61,8 @@ dart run pigeon --input pigeon/dash_board.dart --dart_out lib/pigeon/dash_board_
+ # Generate global config settings files
+ dart run pigeon --input pigeon/global_config_settings.dart --dart_out lib/pigeon/global_config_settings_pigeon.dart --objc_header_out ios/Runner/pigeon.h --objc_source_out ios/Runner/pigeon.m --java_out ./android/app/src/main/java/io/mosip/registration_client/model/GlobalConfigSettingsPigeon.java --java_package "io.mosip.registration_client.model"
+ 
++# Generate mosip-vivid liveness files (Kotlin host side lives in the vivid-android module)
++dart run pigeon --input pigeon/liveness.dart --dart_out lib/pigeon/liveness_pigeon.dart --kotlin_out ./android/vivid-android/src/main/kotlin/io/mosip/vivid/android/bridge/gen/LivenessPigeon.kt --kotlin_package "io.mosip.vivid.android.bridge.gen"
++
+ # Generate secure screen files
+ dart run pigeon --input pigeon/secure_screen.dart --dart_out lib/pigeon/secure_screen_pigeon.dart --objc_header_out ios/Runner/pigeon.h --objc_source_out ios/Runner/pigeon.m --java_out ./android/app/src/main/java/io/mosip/registration_client/model/SecureScreenPigeon.java --java_package "io.mosip.registration_client.model"
+\ No newline at end of file
+diff --git a/pigeon/liveness.dart b/pigeon/liveness.dart
+new file mode 100644
+index 0000000..3698a83
+--- /dev/null
++++ b/pigeon/liveness.dart
+@@ -0,0 +1,190 @@
++// Pigeon definition for the Vivid liveness bridge.
++//
++// Generate (from the android-registration-client repo root, after copying this file to
++// pigeon/liveness.dart and the vivid-android module to android/vivid-android):
++//
++//   dart run pigeon --input pigeon/liveness.dart \
++//     --dart_out lib/pigeon/liveness_pigeon.dart \
++//     --kotlin_out android/vivid-android/src/main/kotlin/io/mosip/vivid/android/bridge/gen/LivenessPigeon.kt \
++//     --kotlin_package io.mosip.vivid.android.bridge.gen
++//
++// Pigeon ^10 (as pinned by the registration client's pubspec) emits `LivenessHostApi` (interface,
++// `LivenessHostApi.setUp(binaryMessenger, api)`) and `LivenessFlutterApi` (class with
++// `onState(sessionId, state) { }` callback) in Kotlin, and `LivenessHostApi` / `LivenessFlutterApi`
++// in Dart.
++import 'package:pigeon/pigeon.dart';
++
++/// Mirrors io.mosip.vivid.api.SessionState (enum names are passed as strings so Dart does not
++/// need to track the Java enums; unknown values degrade gracefully in the overlay).
++class SessionStateDto {
++  SessionStateDto({
++    required this.phase,
++    required this.hint,
++    this.challengeType,
++    this.challengeIndex,
++    this.challengeTotal,
++    this.failureReason,
++    this.failureSecuritySensitive,
++    required this.attempt,
++    required this.maxAttempts,
++    required this.progress,
++    required this.passiveScore,
++    required this.remainingChallengeMillis,
++    this.deviceHealth,
++    this.deviceReason,
++    this.faceBox,
++  });
++
++  /// IDLE, DEVICE_CONNECTING, FACE_ACQUIRING, PASSIVE_EVALUATING, ACTIVE_CHALLENGE, PASSED, FAILED, LOCKED, CANCELLED
++  final String phase;
++  /// SessionState.Hint name, e.g. MOVE_CLOSER, CHECKING_LIVENESS
++  final String hint;
++  /// ChallengeType name when phase == ACTIVE_CHALLENGE
++  final String? challengeType;
++  final int? challengeIndex;
++  final int? challengeTotal;
++  /// FailureReason name when phase == FAILED / LOCKED
++  final String? failureReason;
++  /// true when the failure must be shown generically (PAD, identity drift)
++  final bool? failureSecuritySensitive;
++  final int attempt;
++  final int maxAttempts;
++  final double progress;
++  final double passiveScore;
++  final int remainingChallengeMillis;
++  /// DeviceHealth.State name (CONNECTING, CONNECTED, DEGRADED, RECONNECTING, DISCONNECTED, FAILED)
++  final String? deviceHealth;
++  final String? deviceReason;
++  /// [x, y, w, h] normalised to the (unmirrored) analysis frame, for the oval guide feedback
++  final List<double?>? faceBox;
++}
++
++class ChallengeOutcomeDto {
++  ChallengeOutcomeDto({required this.type, required this.result, required this.latencyMillis, required this.durationMillis});
++  final String type;
++  /// PASSED, FAILED, TIMEOUT, ABORTED
++  final String result;
++  final int latencyMillis;
++  final int durationMillis;
++}
++
++/// Mirrors io.mosip.vivid.api.LivenessResult minus the anchor embedding (stays native-side for
++/// the rcapture identity-continuity check).
++class LivenessResultDto {
++  LivenessResultDto({
++    required this.sessionId,
++    required this.workflow,
++    required this.decision,
++    this.failureReason,
++    required this.fusedLivenessScore,
++    required this.signalScores,
++    this.vetoSignal,
++    this.attackClass,
++    required this.challenges,
++    required this.attemptsUsed,
++    required this.passiveMillis,
++    required this.totalMillis,
++    required this.framesAnalyzed,
++    required this.engineId,
++    required this.modelBundleVersion,
++    required this.policyVersion,
++    required this.nonceHex,
++    required this.evidenceHash,
++  });
++  final String sessionId;
++  final String workflow;
++  /// LIVE, NOT_LIVE, ATTACK, ERROR, CANCELLED
++  final String decision;
++  final String? failureReason;
++  final double fusedLivenessScore;
++  final Map<String?, double?> signalScores;
++  final String? vetoSignal;
++  final String? attackClass;
++  final List<ChallengeOutcomeDto?> challenges;
++  final int attemptsUsed;
++  final int passiveMillis;
++  final int totalMillis;
++  final int framesAnalyzed;
++  final String engineId;
++  final String modelBundleVersion;
++  final String policyVersion;
++  final String nonceHex;
++  final String evidenceHash;
++}
++
++/// What the Dart side needs to know about the effective policy of a workflow before starting a session.
++class PolicySummaryDto {
++  PolicySummaryDto({
++    required this.enabled,
++    required this.faceMatchEnabled,
++    required this.faceMatchThreshold,
++    required this.requireEnrolment,
++    required this.policyVersion,
++  });
++  final bool enabled;
++  final bool faceMatchEnabled;
++  /// Cosine similarity threshold for the enrolled-face / capture-binding match.
++  final double faceMatchThreshold;
++  final bool requireEnrolment;
++  final String policyVersion;
++}
++
++/// Result of matching a PASSED session's anchor embedding with a user's enrolled face.
++class FaceMatchDto {
++  FaceMatchDto({
++    required this.status,
++    required this.accepted,
++    required this.similarity,
++    required this.threshold,
++    required this.referencesCompared,
++    this.detail,
++  });
++  /// MATCHED, NOT_MATCHED, NO_ENROLLED_FACE, ENROLMENT_UNUSABLE, NO_ANCHOR, NO_FACE, DISABLED, UNAVAILABLE
++  final String status;
++  /// The policy decision: true lets the login / authentication continue.
++  final bool accepted;
++  /// Best cosine similarity, or -2 when nothing was compared.
++  final double similarity;
++  final double threshold;
++  final int referencesCompared;
++  final String? detail;
++}
++
++@HostApi()
++abstract class LivenessHostApi {
++  /// Starts a session for [workflow] (RESIDENT | OPERATOR | SUPERVISOR). [policyJson] is the
++  /// effective policy (see policy module schema; "{}" means compiled-in defaults). [assisted]
++  /// restricts challenges to the accessibility pool. Returns the session id; state arrives via
++  /// [LivenessFlutterApi.onState].
++  @async
++  String startSession(String workflow, String policyJson, bool assisted);
++
++  @async
++  void cancel(String sessionId);
++
++  /// Begins another attempt after FAILED. Returns false if policy forbids it.
++  @async
++  bool retry(String sessionId);
++
++  /// Available once the session is FAILED or terminal.
++  @async
++  LivenessResultDto result(String sessionId);
++
++  /// Flutter texture id carrying the CameraX preview for the active session, or -1 if none.
++  @async
++  int previewTextureId(String sessionId);
++
++  /// Effective policy for [workflow] (host-app overrides merged over compiled-in defaults).
++  @async
++  PolicySummaryDto policySummary(String workflow);
++
++  /// Compares the anchor embedding of PASSED session [sessionId] with the enrolled face of [userId]
++  /// (operator login, supervisor authentication). Audited natively.
++  @async
++  FaceMatchDto matchEnrolledFace(String sessionId, String userId);
++}
++
++@FlutterApi()
++abstract class LivenessFlutterApi {
++  void onState(String sessionId, SessionStateDto state);
++}

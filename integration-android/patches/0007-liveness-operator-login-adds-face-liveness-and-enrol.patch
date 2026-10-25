@@ -1,0 +1,158 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: mosip-vivid <vivid@localhost>
+Date: Sat, 24 Oct 2026 18:28:29 +0530
+Subject: [PATCH 7/8] liveness: operator login adds face liveness and
+ enrolled-face matching
+
+- LoginPage._getLoginAction: after the password is accepted, run an
+  OPERATOR liveness session and match the live face (anchor embedding)
+  against the operator's onboarded face. On failure the session is
+  logged out and the reason is shown.
+- ArcEnrolledFaceProvider: reads user_biometric FACE rows for the user,
+  decodes the stored ISO 19794-5 record (IsoFaceImages); the bridge
+  embeds it with the same MobileFaceNet and compares cosine similarity
+  with mosip.registration.liveness.operator.faceMatch.threshold
+  (default 0.50). faceMatch.requireEnrolment (default false) decides
+  whether an operator without an enrolled face may log in on liveness
+  alone; both outcomes are audited (LIVENESS_FACE_MATCH_*).
+---
+ .../registration_client/HostApiModule.java    |  8 ++-
+ .../liveness/ArcEnrolledFaceProvider.java     | 68 +++++++++++++++++++
+ lib/ui/login_page.dart                        | 16 +++++
+ 3 files changed, 90 insertions(+), 2 deletions(-)
+ create mode 100644 android/app/src/main/java/io/mosip/registration_client/liveness/ArcEnrolledFaceProvider.java
+
+diff --git a/android/app/src/main/java/io/mosip/registration_client/HostApiModule.java b/android/app/src/main/java/io/mosip/registration_client/HostApiModule.java
+index f9afa70..b867f65 100644
+--- a/android/app/src/main/java/io/mosip/registration_client/HostApiModule.java
++++ b/android/app/src/main/java/io/mosip/registration_client/HostApiModule.java
+@@ -79,6 +79,7 @@ import io.mosip.registration_client.api_services.RegistrationApi;
+ import io.mosip.registration_client.api_services.SecureScreenApi;
+ import io.mosip.registration_client.api_services.UserDetailsApi;
+ import io.mosip.registration.clientmanager.util.BioSdkProviderFactory;
++import io.mosip.registration_client.liveness.ArcEnrolledFaceProvider;
+ import io.mosip.registration_client.liveness.ArcLiveness;
+ import io.mosip.registration_client.liveness.LivenessCaptureBinder;
+ import io.mosip.vivid.android.bridge.LivenessPigeonApi;
+@@ -339,8 +340,11 @@ public class HostApiModule {
+     @Provides
+     @Singleton
+     LivenessPigeonApi getLivenessPigeonApi(AuditManagerService auditManagerService,
+-                                           GlobalParamRepository globalParamRepository) {
+-        return ArcLiveness.create(appContext, auditManagerService, globalParamRepository, null);
++                                           GlobalParamRepository globalParamRepository,
++                                           UserBiometricRepository userBiometricRepository) {
++        // Operator login / supervisor authentication match the live face against the onboarded face.
++        return ArcLiveness.create(appContext, auditManagerService, globalParamRepository,
++                new ArcEnrolledFaceProvider(userBiometricRepository));
+     }
+ 
+     @Provides
+diff --git a/android/app/src/main/java/io/mosip/registration_client/liveness/ArcEnrolledFaceProvider.java b/android/app/src/main/java/io/mosip/registration_client/liveness/ArcEnrolledFaceProvider.java
+new file mode 100644
+index 0000000..b01971d
+--- /dev/null
++++ b/android/app/src/main/java/io/mosip/registration_client/liveness/ArcEnrolledFaceProvider.java
+@@ -0,0 +1,68 @@
++/*
++ * Copyright (c) Modular Open Source Identity Platform
++ * This source code is licensed under the MIT license found in the
++ * LICENSE file in the root directory of this source tree.
++ *
++ */
++
++package io.mosip.registration_client.liveness;
++
++import android.graphics.Bitmap;
++import android.util.Log;
++
++import androidx.annotation.NonNull;
++
++import java.util.ArrayList;
++import java.util.List;
++
++import io.mosip.registration.clientmanager.entity.UserBiometric;
++import io.mosip.registration.clientmanager.repository.UserBiometricRepository;
++import io.mosip.vivid.android.face.EnrolledFaceProvider;
++
++/**
++ * Enrolled operator / supervisor faces for mosip-vivid's login face match.
++ *
++ * <p>Operator onboarding ({@code UserOnboardService.save}) stores one {@code user_biometric} row per captured
++ * attribute; for the face the {@code bio_template} column holds the raw ISO/IEC 19794-5 record from the SBI
++ * ({@code BIR.getBdb()} = base64url-decoded {@code bioValue}), not a vendor template: ARC 1.2.x has no Android
++ * extraction SDK ({@code getExtractedTemplates} keeps the BIRs as they are). The database is SQLCipher-encrypted
++ * at rest, but Room hands back plaintext, so the record can be decoded ({@link IsoFaceImages}) and embedded with the
++ * same MobileFaceNet as the live session.
++ *
++ * <p>Rows are matched to the user case-insensitively on {@code usr_id}. Rows written before the
++ * {@code UserOnboardService} fix in this patch series have {@code usr_id = ""} and cannot be attributed to anyone; they
++ * are ignored, so those operators count as "no enrolled face" until they onboard again.
++ */
++public class ArcEnrolledFaceProvider implements EnrolledFaceProvider {
++
++    private static final String TAG = "ArcEnrolledFaceProvider";
++    private static final String FACE = "Face";
++
++    private final UserBiometricRepository userBiometricRepository;
++
++    public ArcEnrolledFaceProvider(UserBiometricRepository userBiometricRepository) {
++        this.userBiometricRepository = userBiometricRepository;
++    }
++
++    @NonNull
++    @Override
++    public Enrolled enrolledFaces(@NonNull String userId) {
++        String id = userId.trim();
++        List<Bitmap> images = new ArrayList<>();
++        int records = 0;
++        if (id.isEmpty()) return new Enrolled(0, images);
++        List<UserBiometric> rows = userBiometricRepository.findAllOperatorBiometrics(FACE);
++        if (rows == null) return new Enrolled(0, images);
++        for (UserBiometric row : rows) {
++            if (row == null || !id.equalsIgnoreCase(row.getUsrId()) || Boolean.TRUE.equals(row.getIsDeleted())) continue;
++            records++;
++            Bitmap image = IsoFaceImages.fromIso(row.getBioTemplate());
++            if (image != null) {
++                images.add(image);
++            } else {
++                Log.w(TAG, "Enrolled face record " + row.getBioAttributeCode() + " could not be decoded");
++            }
++        }
++        return new Enrolled(records, images);
++    }
++}
+diff --git a/lib/ui/login_page.dart b/lib/ui/login_page.dart
+index 179ebe5..e033170 100644
+--- a/lib/ui/login_page.dart
++++ b/lib/ui/login_page.dart
+@@ -32,6 +32,8 @@ import 'package:registration_client/utils/app_config.dart';
+ import 'package:registration_client/utils/responsive.dart';
+ import 'package:registration_client/ui/widgets/password_component.dart';
+ import 'package:registration_client/ui/widgets/username_component.dart';
++import 'package:registration_client/liveness/liveness_controller.dart';
++import 'package:registration_client/liveness/liveness_flow.dart';
+ import 'package:colorful_progress_indicators/colorful_progress_indicators.dart';
+ import 'package:url_launcher/url_launcher.dart';
+ 
+@@ -305,6 +307,20 @@ class _LoginPageState extends State<LoginPage> with WidgetsBindingObserver {
+       return;
+     }
+ 
++    // mosip-vivid: password is not enough. OPERATOR face liveness, then the live face is matched against
++    // the operator's onboarded face (user_biometric). Policy decides whether an operator who has not
++    // onboarded a face yet may continue on liveness alone (default) or is refused.
++    if (!mounted) return;
++    final livenessGate = await runLivenessGate(context, LivenessWorkflow.operator,
++        matchUserId: username);
++    if (!livenessGate.ok) {
++      await authProvider.logoutUser();
++      authProvider.setIsLoggedIn(false);
++      authProvider.setIsSyncing(false);
++      if (mounted) showLivenessGateMessage(context, livenessGate);
++      return;
++    }
++
+     await syncProvider.getLastSyncTime();
+     debugPrint(syncProvider.lastSuccessfulSyncTime);
+ 

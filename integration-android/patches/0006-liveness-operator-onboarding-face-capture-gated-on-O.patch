@@ -1,0 +1,165 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: mosip-vivid <vivid@localhost>
+Date: Sat, 24 Oct 2026 18:28:00 +0530
+Subject: [PATCH 6/8] liveness: operator onboarding face capture gated on
+ OPERATOR liveness
+
+- OperatorBiometricCaptureScanBlockView._scanBlock: for the Face
+  attribute, run an OPERATOR liveness session (stricter policy) before
+  invokeDiscoverSbi("operatorBiometrics", ...).
+- BiometricsDetailsApi.parseRCaptureResponse (operator branch): the
+  onboarding face is stored only if it matches that session's anchor
+  (LivenessCaptureBinder with Workflow.OPERATOR); it becomes the
+  reference for login face matching.
+- UserOnboardService.onboardOperator: nothing in release-1.2.x writes
+  the "user_id" preference, so templates were saved under usr_id ""
+  and each onboarding deleted the previous operator's rows. Fall back to
+  preferred_username (the IDA individual id and user_detail id).
+---
+ .../api_services/BiometricsDetailsApi.java    | 16 +++++++++--
+ .../liveness/LivenessCaptureBinder.java       |  9 +++++-
+ .../service/UserOnboardService.java           | 11 ++++++--
+ ...tor_biometric_capture_scan_block_view.dart | 28 ++++++++++++++++++-
+ 4 files changed, 58 insertions(+), 6 deletions(-)
+
+diff --git a/android/app/src/main/java/io/mosip/registration_client/api_services/BiometricsDetailsApi.java b/android/app/src/main/java/io/mosip/registration_client/api_services/BiometricsDetailsApi.java
+index 56ed86e..73439dc 100644
+--- a/android/app/src/main/java/io/mosip/registration_client/api_services/BiometricsDetailsApi.java
++++ b/android/app/src/main/java/io/mosip/registration_client/api_services/BiometricsDetailsApi.java
+@@ -1084,7 +1084,10 @@ public class BiometricsDetailsApi implements BiometricsPigeon.BiometricsApi {
+                     getExceptionAttributes(), transactionId, isOperatorOnboarding);
+             // if attempts is zero, there is no need to maintain the counter
+             if (fieldId.equals(OPERATOR_BIOMETRICS)) {
+-                removeDuplicatesFromOperatorBiometricList(currentModality);
++                final Modality operatorModality = currentModality;
++                final BiometricsPigeon.Result<String> operatorResult = biometricResult;
++                Runnable storeOperatorCapture = () -> {
++                removeDuplicatesFromOperatorBiometricList(operatorModality);
+                 biometricsDtoList.forEach(biometricsDto -> {userOnboardService.getOperatorBiometrics().add(biometricsDto);});
+                 List<BiometricsDto> biometricsDtoListCopy=new ArrayList<>();
+                 biometricsDtoListCopy.addAll(biometricsDtoList);
+@@ -1104,7 +1107,16 @@ public class BiometricsDetailsApi implements BiometricsPigeon.BiometricsApi {
+                 }
+ 
+ 
+-                biometricResult.success("Ok");
++                operatorResult.success("Ok");
++                };
++                if (operatorModality == Modality.FACE && livenessCaptureBinder != null && !biometricsDtoList.isEmpty()) {
++                    // mosip-vivid: the onboarding face becomes the operator's login reference, so it must match
++                    // the OPERATOR liveness session that preceded it.
++                    livenessCaptureBinder.verifyThen(biometricsDtoList, io.mosip.vivid.api.Workflow.OPERATOR,
++                            storeOperatorCapture, () -> operatorResult.success(LivenessCaptureBinder.CAPTURE_MISMATCH));
++                } else {
++                    storeOperatorCapture.run();
++                }
+             } else {
+                 currentAttempt = this.registrationService.getRegistrationDto().getBioAttempt(fieldId, currentModality);
+ 
+diff --git a/android/app/src/main/java/io/mosip/registration_client/liveness/LivenessCaptureBinder.java b/android/app/src/main/java/io/mosip/registration_client/liveness/LivenessCaptureBinder.java
+index e449cda..0e7d27e 100644
+--- a/android/app/src/main/java/io/mosip/registration_client/liveness/LivenessCaptureBinder.java
++++ b/android/app/src/main/java/io/mosip/registration_client/liveness/LivenessCaptureBinder.java
+@@ -19,6 +19,7 @@ import java.util.concurrent.Executors;
+ import io.mosip.registration.clientmanager.dto.registration.BiometricsDto;
+ import io.mosip.vivid.android.bridge.LivenessPigeonApi;
+ import io.mosip.vivid.android.face.FaceMatchOutcome;
++import io.mosip.vivid.api.Workflow;
+ 
+ /**
+  * Binds a resident's signed SBI face capture to the liveness session that ran just before it: the face in the
+@@ -42,7 +43,13 @@ public class LivenessCaptureBinder {
+         this.livenessPigeonApi = livenessPigeonApi;
+     }
+ 
++    /** Resident registration capture. */
+     public void verifyThen(List<BiometricsDto> faceCaptures, Runnable onAccepted, Runnable onRejected) {
++        verifyThen(faceCaptures, Workflow.RESIDENT, onAccepted, onRejected);
++    }
++
++    /** @param workflow RESIDENT for registration, OPERATOR for the operator's own onboarding capture */
++    public void verifyThen(List<BiometricsDto> faceCaptures, Workflow workflow, Runnable onAccepted, Runnable onRejected) {
+         String bioValue = null;
+         if (faceCaptures != null) {
+             for (BiometricsDto dto : faceCaptures) {
+@@ -57,7 +64,7 @@ public class LivenessCaptureBinder {
+             boolean accepted;
+             try {
+                 Bitmap image = IsoFaceImages.fromBioValue(probe);
+-                FaceMatchOutcome outcome = livenessPigeonApi.bindCapture(image);
++                FaceMatchOutcome outcome = livenessPigeonApi.bindCapture(image, workflow);
+                 Log.i(TAG, "capture binding: " + outcome.getStatus() + " accepted=" + outcome.getAccepted());
+                 accepted = outcome.getAccepted();
+             } catch (Exception e) {
+diff --git a/android/clientmanager/src/main/java/io/mosip/registration/clientmanager/service/UserOnboardService.java b/android/clientmanager/src/main/java/io/mosip/registration/clientmanager/service/UserOnboardService.java
+index b3c8fc9..ceaede3 100644
+--- a/android/clientmanager/src/main/java/io/mosip/registration/clientmanager/service/UserOnboardService.java
++++ b/android/clientmanager/src/main/java/io/mosip/registration/clientmanager/service/UserOnboardService.java
+@@ -184,10 +184,17 @@ public class UserOnboardService {
+                     ClientManagerError.REG_BIOMETRIC_DTO_NULL.getErrorMessage());
+ 
+         String userId = sharedPreferences.getString(USER_ID, "");
+-        validateWithIDA(userId, biometrics, () -> {
++        if (userId == null || userId.trim().isEmpty()) {
++            // Nothing in release-1.2.x writes "user_id", so templates were stored under usr_id "" and every
++            // onboarding overwrote the previous operator's. Key them by the IDA individual id (preferred_username,
++            // also the user_detail id) so they can be looked up per operator (mosip-vivid login face match).
++            userId = sharedPreferences.getString(PREFERRED_USERNAME, "");
++        }
++        final String operatorId = userId;
++        validateWithIDA(operatorId, biometrics, () -> {
+             if(isIdaResponse()) {
+                 Log.i(TAG, "User onboarding success");
+-                isOnboardSuccess = save(biometrics, userId);
++                isOnboardSuccess = save(biometrics, operatorId);
+                 userDetailRepository.updateUserDetail(sharedPreferences.getString(PREFERRED_USERNAME,""));
+                 onFinish.run();
+             }
+diff --git a/lib/ui/onboard/widgets/operator_biometric_capture_scan_block_view.dart b/lib/ui/onboard/widgets/operator_biometric_capture_scan_block_view.dart
+index d74d2af..7b8d9a5 100644
+--- a/lib/ui/onboard/widgets/operator_biometric_capture_scan_block_view.dart
++++ b/lib/ui/onboard/widgets/operator_biometric_capture_scan_block_view.dart
+@@ -18,6 +18,9 @@ import 'package:registration_client/utils/biometrics_utils.dart';
+ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+ 
+ import 'package:registration_client/provider/auth_provider.dart';
++import 'package:registration_client/liveness/liveness_controller.dart';
++import 'package:registration_client/liveness/liveness_flow.dart';
++import 'package:registration_client/liveness/liveness_messages.dart';
+ 
+ class OperatorBiometricCaptureScanBlockView extends StatefulWidget {
+   const OperatorBiometricCaptureScanBlockView({super.key});
+@@ -380,9 +383,32 @@ class _OperatorBiometricCaptureScanBlockViewState
+         ElevatedButton.icon(
+           onPressed: () async {
+             if (biometricAttributeData.exceptions.contains(false)) {
++              // mosip-vivid: the onboarding face becomes the operator's reference for login face matching,
++              // so it is taken only after an OPERATOR liveness session (stricter policy than RESIDENT) and
++              // is bound natively to that session.
++              final bool isFace = biometricAttributeData.title == "Face";
++              if (isFace) {
++                final gate = await runLivenessGate(
++                    context, LivenessWorkflow.operator);
++                if (!gate.ok) {
++                  if (context.mounted) showLivenessGateMessage(context, gate);
++                  setState(() {});
++                  return;
++                }
++              }
+               List<Uint8List?> tempImageList = [];
+-              await BiometricsApi().invokeDiscoverSbi("operatorBiometrics",
++              final String sbiResult = await BiometricsApi().invokeDiscoverSbi(
++                  "operatorBiometrics",
+                   biometricAttributeData.title.replaceAll(" ", ""));
++              if (isFace && sbiResult == livenessCaptureMismatch) {
++                if (context.mounted) {
++                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
++                      content: Text(LivenessMessages.text(
++                          context, 'liveness.capture_binding_failed'))));
++                }
++                setState(() {});
++                return;
++              }
+               await BiometricsApi()
+                   .getBestBiometrics("operatorBiometrics",
+                       biometricAttributeData.title.replaceAll(" ", ""))

@@ -1,0 +1,85 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: mosip-vivid <vivid@localhost>
+Date: Sat, 24 Oct 2026 18:28:48 +0530
+Subject: [PATCH 8/8] liveness: supervisor packet approval and operator packet
+ auth
+
+- AuthenticateDialogBox._authenticatePacketPassword (packet approval,
+  supervisor_auth_heading): after the password check, SUPERVISOR face
+  liveness plus a match against the supervisor's onboarded face;
+  failures are shown in the dialog's error line.
+- GenericProcess._authenticatePacket (operator authentication before
+  packet creation, REG_OPERATOR_AUTH_PASSWORD): OPERATOR liveness and
+  face match for the same username.
+These are the only two password dialogs in release-1.2.x besides login.
+---
+ .../widget/authenticate_dialogbox.dart           | 16 ++++++++++++++++
+ lib/ui/process_ui/generic_process.dart           | 14 ++++++++++++++
+ 2 files changed, 30 insertions(+)
+
+diff --git a/lib/ui/approve_packet/widget/authenticate_dialogbox.dart b/lib/ui/approve_packet/widget/authenticate_dialogbox.dart
+index 94425ad..31ef962 100644
+--- a/lib/ui/approve_packet/widget/authenticate_dialogbox.dart
++++ b/lib/ui/approve_packet/widget/authenticate_dialogbox.dart
+@@ -7,6 +7,9 @@ import 'package:registration_client/utils/app_config.dart';
+ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+ 
+ import '../../../provider/auth_provider.dart';
++import 'package:registration_client/liveness/liveness_controller.dart';
++import 'package:registration_client/liveness/liveness_flow.dart';
++import 'package:registration_client/liveness/liveness_messages.dart';
+ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+ 
+ class AuthenticateDialogBox extends StatefulWidget {
+@@ -70,6 +73,19 @@ class _AuthenticateDialogBoxState extends State<AuthenticateDialogBox> {
+         });
+         return false;
+       }
++      // mosip-vivid: supervisor approval needs SUPERVISOR face liveness (strictest policy) and the live
++      // face must match the supervisor's onboarded face.
++      if (!mounted) return false;
++      final gate = await runLivenessGate(context, LivenessWorkflow.supervisor,
++          matchUserId: username.text.trim());
++      if (!gate.ok) {
++        if (mounted) {
++          setState(() {
++            loginError = LivenessMessages.text(context, gate.messageKey);
++          });
++        }
++        return false;
++      }
+       return true;
+     }
+     return false;
+diff --git a/lib/ui/process_ui/generic_process.dart b/lib/ui/process_ui/generic_process.dart
+index 97a128c..1ee08f2 100644
+--- a/lib/ui/process_ui/generic_process.dart
++++ b/lib/ui/process_ui/generic_process.dart
+@@ -36,6 +36,9 @@ import 'package:registration_client/ui/process_ui/widgets/update_field_selector.
+ import 'package:registration_client/utils/app_config.dart';
+ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+ import 'package:registration_client/utils/app_style.dart';
++import 'package:registration_client/liveness/liveness_controller.dart';
++import 'package:registration_client/liveness/liveness_flow.dart';
++import 'package:registration_client/liveness/liveness_messages.dart';
+ 
+ import '../../utils/life_cycle_event_handler.dart';
+ 
+@@ -159,6 +162,17 @@ class _GenericProcessState extends State<GenericProcess>
+       _showErrorInSnackbar();
+       return false;
+     }
++    // mosip-vivid: the operator re-authenticates to create the packet (REG_OPERATOR_AUTH_PASSWORD);
++    // add OPERATOR face liveness and match against the operator's onboarded face.
++    if (!mounted) return false;
++    final gate = await runLivenessGate(context, LivenessWorkflow.operator,
++        matchUserId: username);
++    if (!gate.ok) {
++      if (mounted) {
++        _showInSnackBar(LivenessMessages.text(context, gate.messageKey));
++      }
++      return false;
++    }
+     return true;
+   }
+ 

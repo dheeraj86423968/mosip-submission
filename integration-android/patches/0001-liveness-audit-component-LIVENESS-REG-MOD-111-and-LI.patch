@@ -1,0 +1,57 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: mosip-vivid <vivid@localhost>
+Date: Sat, 24 Oct 2026 18:24:28 +0530
+Subject: [PATCH 1/8] liveness: audit component LIVENESS (REG-MOD-111) and
+ LIVENESS_* events
+
+mosip-vivid face liveness / PAD. Event ids reuse the desktop client's
+REG-LIV-0xx numbers where the meaning is the same; each description takes
+two arguments (session id, detail) for AuditManagerService.auditWithArguments.
+---
+ .../clientmanager/constant/AuditEvent.java       | 16 +++++++++++++++-
+ .../clientmanager/constant/Components.java       |  5 ++++-
+ 2 files changed, 19 insertions(+), 2 deletions(-)
+
+diff --git a/android/clientmanager/src/main/java/io/mosip/registration/clientmanager/constant/AuditEvent.java b/android/clientmanager/src/main/java/io/mosip/registration/clientmanager/constant/AuditEvent.java
+index 21afce0..94f0257 100644
+--- a/android/clientmanager/src/main/java/io/mosip/registration/clientmanager/constant/AuditEvent.java
++++ b/android/clientmanager/src/main/java/io/mosip/registration/clientmanager/constant/AuditEvent.java
+@@ -194,7 +194,21 @@ public enum AuditEvent {
+     BIO_SDK_DEDUPE_MATCH("REG-EVT-097", SYSTEM_EVENT.getCode(), "BIO_SDK_DEDUPE_MATCH", "Biometric data matched with existing operator biometrics"),
+ 
+     // Center remap
+-    MACHINE_REMAPPED("REG-REMAP-001", USER_EVENT.getCode(), "MACHINE_REMAPPED", "Machine has been remapped to a different center");
++    MACHINE_REMAPPED("REG-REMAP-001", USER_EVENT.getCode(), "MACHINE_REMAPPED", "Machine has been remapped to a different center"),
++
++    // mosip-vivid face liveness / PAD (component Components.LIVENESS, REG-MOD-111).
++    // Ids match the desktop client's REG-LIV-0xx events where the meaning is the same. Every description
++    // takes two arguments: the liveness session id and a detail string.
++    LIVENESS_SESSION_STARTED("REG-LIV-001", SYSTEM_EVENT.getCode(), "LIVENESS_SESSION_STARTED", "Liveness session %s started: %s"),
++    LIVENESS_IDENTITY_DRIFT("REG-LIV-008", SYSTEM_EVENT.getCode(), "LIVENESS_IDENTITY_DRIFT", "Signed face capture not bound to liveness session %s: %s"),
++    LIVENESS_PASSED("REG-LIV-009", SYSTEM_EVENT.getCode(), "LIVENESS_PASSED", "Liveness session %s passed %s"),
++    LIVENESS_FAILED("REG-LIV-010", SYSTEM_EVENT.getCode(), "LIVENESS_FAILED", "Liveness session %s failed: %s"),
++    LIVENESS_LOCKED("REG-LIV-011", SYSTEM_EVENT.getCode(), "LIVENESS_LOCKED", "Liveness session %s locked after max retries: %s"),
++    LIVENESS_DEVICE_FAULT("REG-LIV-013", SYSTEM_EVENT.getCode(), "LIVENESS_DEVICE_FAULT", "Liveness could not run (%s): %s"),
++    LIVENESS_POLICY_DISABLED("REG-LIV-017", SYSTEM_EVENT.getCode(), "LIVENESS_POLICY_DISABLED", "Liveness disabled by policy for %s %s"),
++    LIVENESS_CAPTURE_BOUND("REG-LIV-018", SYSTEM_EVENT.getCode(), "LIVENESS_CAPTURE_BOUND", "Signed face capture bound to liveness session %s: %s"),
++    LIVENESS_FACE_MATCH_PASSED("REG-LIV-019", SYSTEM_EVENT.getCode(), "LIVENESS_FACE_MATCH_PASSED", "Live face of session %s accepted against enrolled face: %s"),
++    LIVENESS_FACE_MATCH_FAILED("REG-LIV-020", SYSTEM_EVENT.getCode(), "LIVENESS_FACE_MATCH_FAILED", "Live face of session %s rejected against enrolled face: %s");
+ 
+     AuditEvent(String id, String type, String name, String description) {
+         this.id = id;
+diff --git a/android/clientmanager/src/main/java/io/mosip/registration/clientmanager/constant/Components.java b/android/clientmanager/src/main/java/io/mosip/registration/clientmanager/constant/Components.java
+index 241d15b..5f785e3 100644
+--- a/android/clientmanager/src/main/java/io/mosip/registration/clientmanager/constant/Components.java
++++ b/android/clientmanager/src/main/java/io/mosip/registration/clientmanager/constant/Components.java
+@@ -20,7 +20,10 @@ public enum Components {
+     PACKET_STATUS_SYNCHED("REG-MOD-107", "PacketStatusSynched"),
+     PACKET_SYNCHED("REG-MOD-108", "PacketSynched"),
+     PACKETS_UPLOADED("REG-MOD-109", "PacketsUploaded"),
+-    CLEAN_UP("REG-MOD-110", "CleanUp");
++    CLEAN_UP("REG-MOD-110", "CleanUp"),
++
++    // mosip-vivid face liveness / PAD
++    LIVENESS("REG-MOD-111", "Liveness");
+ 
+     Components(String id, String name) {
+         this.id = id;

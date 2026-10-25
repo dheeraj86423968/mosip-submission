@@ -1,0 +1,9 @@
+{
+  "bundleId": "vivid-android-models",
+  "version": "0.0.0-placeholder",
+  "models": {
+    "face_landmarker": { "file": "face_landmarker.task", "sha256": "REPLACE_WITH_SHA256" },
+    "minifasnet_int8":  { "file": "minifasnet_v2_80x80_int8.tflite", "sha256": "REPLACE_WITH_SHA256" },
+    "mobilefacenet":    { "file": "mobilefacenet_112_fp16.tflite", "sha256": "REPLACE_WITH_SHA256" }
+  }
+}
