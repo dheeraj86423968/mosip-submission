@@ -1,0 +1,16 @@
+target/
+*.class
+*.log
+.idea/
+*.iml
+.vscode/
+.DS_Store
+models/*.onnx
+models/*.tflite
+!models/README.md
+corpus/
+*.mp4
+*.avi
+build/
+.gradle/
+local.properties
