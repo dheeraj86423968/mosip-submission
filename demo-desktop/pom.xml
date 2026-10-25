@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent><groupId>io.mosip.vivid</groupId><artifactId>mosip-vivid-parent</artifactId><version>0.1.0-SNAPSHOT</version><relativePath>../pom.xml</relativePath></parent>
+  <artifactId>demo-desktop</artifactId>
+  <name>demo-desktop</name>
+  <description>Attack Lab: a Swing desktop demo that runs the real liveness-core orchestrator and the real ONNX engine
+    against device-mock subjects (live person, print, video replay, screen replay, injected stream), with a headless
+    recorder that writes screenshots and an MJPEG AVI.</description>
+  <!-- Test and tooling module, not shipped in a Registration Client: stays on Java 17. -->
+  <properties>
+    <maven.compiler.release>17</maven.compiler.release>
+    <maven.deploy.skip>true</maven.deploy.skip>
+    <maven.install.skip>true</maven.install.skip>
+    <exec.mainClass>io.mosip.vivid.demo.DemoApp</exec.mainClass>
+  </properties>
+  <dependencies>
+    <dependency><groupId>io.mosip.vivid</groupId><artifactId>liveness-core</artifactId></dependency>
+    <dependency><groupId>io.mosip.vivid</groupId><artifactId>liveness-engine-onnx</artifactId></dependency>
+    <dependency><groupId>io.mosip.vivid</groupId><artifactId>device-mock</artifactId></dependency>
+    <dependency><groupId>io.mosip.vivid</groupId><artifactId>device-sbi-stream</artifactId><version>${project.version}</version></dependency>
+    <dependency><groupId>io.mosip.vivid</groupId><artifactId>telemetry</artifactId></dependency>
+    <dependency><groupId>org.slf4j</groupId><artifactId>slf4j-simple</artifactId></dependency>
+    <dependency><groupId>org.junit.jupiter</groupId><artifactId>junit-jupiter</artifactId><scope>test</scope></dependency>
+    <dependency><groupId>org.assertj</groupId><artifactId>assertj-core</artifactId><scope>test</scope></dependency>
+  </dependencies>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <configuration><archive><manifest><mainClass>io.mosip.vivid.demo.DemoApp</mainClass></manifest></archive></configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <environmentVariables><MOSIP_VIVID_MODELS>${project.basedir}/../liveness-engine-onnx/models</MOSIP_VIVID_MODELS></environmentVariables>
+          <systemPropertyVariables>
+            <java.awt.headless>true</java.awt.headless>
+            <org.slf4j.simpleLogger.defaultLogLevel>warn</org.slf4j.simpleLogger.defaultLogLevel>
+          </systemPropertyVariables>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-shade-plugin</artifactId>
+        <version>3.6.0</version>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals><goal>shade</goal></goals>
+            <configuration>
+              <finalName>vivid-demo</finalName>
+              <createDependencyReducedPom>false</createDependencyReducedPom>
+              <transformers>
+                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                  <mainClass>io.mosip.vivid.demo.DemoApp</mainClass>
+                </transformer>
+                <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
+              </transformers>
+              <filters>
+                <filter>
+                  <artifact>*:*</artifact>
+                  <excludes><exclude>META-INF/*.SF</exclude><exclude>META-INF/*.DSA</exclude><exclude>META-INF/*.RSA</exclude><exclude>module-info.class</exclude><exclude>META-INF/versions/*/module-info.class</exclude></excludes>
+                </filter>
+              </filters>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <version>3.5.0</version>
+        <configuration><mainClass>io.mosip.vivid.demo.DemoApp</mainClass></configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>
