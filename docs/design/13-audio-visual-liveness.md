@@ -56,11 +56,11 @@ sequenceDiagram
         O->>A: analyze(frame)
         A->>E: analyze(frame)
         E-->>A: FaceObservation.mouthAspect
-        A->>A: MouthTrack.add(now, mouthAspect); endpoint check on audio snapshot
+        A->>A: MouthTrack.add(now, mouthAspect), endpoint check on audio snapshot
         A-->>O: signals + av_sync (confidence 0 while pending)
     end
     Note over A: speech ended (≥700 ms trailing silence) or 6 s window elapsed
-    A->>A: DigitRecognizer(audio) → digits; LipSyncScorer(audio, mouth)
+    A->>A: DigitRecognizer(audio) → digits, LipSyncScorer(audio, mouth)
     A->>M: close() (buffer zeroed)
     alt code matches and lips synchronised
         A-->>O: av_sync p=0.05, confidence 1

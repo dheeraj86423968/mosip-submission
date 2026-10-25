@@ -220,7 +220,7 @@ sequenceDiagram
     Orc->>Orc: quality gate → fusion → veto check → drift check → phase logic
     Orc-->>UI: onStateChanged(prev, SessionState)
     Orc-->>Aud: event(s) when a phase changes
-    Note over Orc: frame buffers are dropped here; nothing derived from pixels is retained except the session anchor embedding
+    Note over Orc: frame buffers are dropped here, nothing derived from pixels is retained except the session anchor embedding
 ```
 
 Threading: the adapter's delivery thread calls `feed`; the orchestrator does

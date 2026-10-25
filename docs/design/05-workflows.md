@@ -38,7 +38,7 @@ sequenceDiagram
     Int->>Aud: POLICY_LOADED(version, signatureOk)
     Int->>S: open(policy, ctx{RESIDENT, sessionId, nonce, locale, online, assisted=false})
     Int->>Aud: SESSION_STARTED
-    Int->>Src: capabilities(); start(sink → S.feed)
+    Int->>Src: capabilities(), start(sink → S.feed)
     Src->>SBI: GET /info, /device
     SBI-->>Src: digitalId, L0/L1, spec version
     Src->>SBI: POST /stream
@@ -72,7 +72,7 @@ sequenceDiagram
     else drift at capture
         Int->>Aud: IDENTITY_DRIFT(stage=CAPTURE)
         UI-->>Op: "Face verification could not be completed. Please try again."
-        Note over Int: treated as a FAILED attempt; retry path below
+        Note over Int: treated as a FAILED attempt, retry path below
     end
 ```
 
@@ -104,7 +104,7 @@ sequenceDiagram
     UI->>Int: openAssistedSession(supervisorId)
     Int->>Aud: SUPERVISOR_OVERRIDE(supervisorId, residentSessionId)
     Int->>S: open(policy, ctx{RESIDENT, assisted=true}) → accessibility pool, stricter threshold
-    Note over S: new session; must still reach PASSED on its own merits
+    Note over S: new session, must still reach PASSED on its own merits
     alt assisted session passes
         Int->>Int: rcapture + continuity + store BIR with assisted=true
     else assisted session also locks
@@ -165,7 +165,7 @@ sequenceDiagram
     opt attempt 3 fails
         S-->>UI: LOCKED
         S->>Aud: MAX_RETRIES_REACHED(LOCK_AND_ALERT)
-        Int->>Int: lock face auth for this user for lockoutMillis; alert event
+        Int->>Int: lock face auth for this user for lockoutMillis, alert event
         UI-->>Op: "Face authentication is locked. Use password authentication or contact your supervisor."
     end
 ```
@@ -219,8 +219,8 @@ sequenceDiagram
         S-->>UI: FAILED attempt 1/2 → retry once
         Note over S: attempt 2 fails → LOCKED
         S->>Aud: MAX_RETRIES_REACHED(LOCK_AND_ALERT)
-        Int->>Int: lock supervisor face auth; alert
-        Flow-->>UI: operation not approved; alternative supervisor or password path
+        Int->>Int: lock supervisor face auth, alert
+        Flow-->>UI: operation not approved, alternative supervisor or password path
     end
 ```
 

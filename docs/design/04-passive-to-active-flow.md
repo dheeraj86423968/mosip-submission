@@ -251,7 +251,7 @@ sequenceDiagram
         O->>E: analyze(frame)
         E-->>O: yaw −24°, parallax p=0.08 c=0.9
     end
-    Note over O: onset 640 ms ∈ [150, 3000] → CHALLENGE_PASSED; fused now 0.84 but 1 < minChallenges=2
+    Note over O: onset 640 ms ∈ [150, 3000] → CHALLENGE_PASSED, fused now 0.84 but 1 < minChallenges=2
     O-->>UI: ACTIVE_CHALLENGE BLINK [2/2] / ACTION_DETECTED → PLEASE_CONTINUE
     loop frames
         O->>E: analyze(frame)

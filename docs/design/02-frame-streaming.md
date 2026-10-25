@@ -176,7 +176,7 @@ sequenceDiagram
     P->>C: rcapture
     C-->>P: signed ISO image
     P->>O: verifyCaptureContinuity(signedImage)
-    O->>O: embed(signedImage); cosine distance to anchor
+    O->>O: embed(signedImage), cosine distance to anchor
     alt distance <= identityDriftThreshold (default 0.45)
         O-->>P: ACCEPT → store BIR / proceed to match
     else
