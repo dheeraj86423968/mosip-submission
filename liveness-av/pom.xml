@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>io.mosip.vivid</groupId>
+    <artifactId>mosip-vivid-parent</artifactId>
+    <version>0.1.0-SNAPSHOT</version>
+    <relativePath>../pom.xml</relativePath>
+  </parent>
+  <artifactId>liveness-av</artifactId>
+  <name>liveness-av</name>
+  <description>Spoken-code audio-visual liveness (PLAN.md 17.8): a random code read aloud, offline digit recognition and
+    lip-motion / speech-envelope synchrony, wired into the orchestrator through the engine SPI.</description>
+
+  <properties>
+    <vosk.version>0.3.45</vosk.version>
+  </properties>
+
+  <dependencies>
+    <dependency><groupId>io.mosip.vivid</groupId><artifactId>liveness-api</artifactId></dependency>
+    <dependency><groupId>io.mosip.vivid</groupId><artifactId>device-api</artifactId></dependency>
+    <dependency><groupId>io.mosip.vivid</groupId><artifactId>liveness-core</artifactId></dependency>
+    <dependency><groupId>org.slf4j</groupId><artifactId>slf4j-api</artifactId></dependency>
+    <dependency><groupId>com.fasterxml.jackson.core</groupId><artifactId>jackson-databind</artifactId></dependency>
+    <!-- Offline speech recognition, Apache-2.0. Ships libvosk for linux/windows/macos x86-64 and aarch64; uses JNA. -->
+    <dependency><groupId>com.alphacephei</groupId><artifactId>vosk</artifactId><version>${vosk.version}</version></dependency>
+    <dependency><groupId>org.junit.jupiter</groupId><artifactId>junit-jupiter</artifactId><scope>test</scope></dependency>
+    <dependency><groupId>org.assertj</groupId><artifactId>assertj-core</artifactId><scope>test</scope></dependency>
+    <dependency><groupId>org.slf4j</groupId><artifactId>slf4j-simple</artifactId><scope>test</scope></dependency>
+  </dependencies>
+</project>
