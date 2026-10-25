@@ -1,0 +1,1924 @@
+{
+  "generator" : "redteam-gen-1",
+  "threshold" : 0.8,
+  "commit" : "3587dbb-dirty",
+  "date" : "2026-10-24",
+  "variants" : 108,
+  "note" : "Per-variant outcomes of the red-team run the gate compares against. Regenerate with tools/redteam/run-redteam.sh --update-baseline only after reviewing the change.",
+  "modes" : {
+    "passive" : {
+      "BONA_FIDE-01203c498d" : {
+        "item" : "P11-BONA_FIDE-L0-D0-T1",
+        "species" : "BONA_FIDE",
+        "outcome" : "REJECTED",
+        "score" : 0.8825,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "ca536e9203e1db975f46ea667551a96e9a2755303072b1619f661d5a437090e9"
+      },
+      "BONA_FIDE-15888b83a5" : {
+        "item" : "P12-BONA_FIDE-L0-D0-T2",
+        "species" : "BONA_FIDE",
+        "outcome" : "REJECTED",
+        "score" : 0.8441,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "114854ec7fc00d1777e4c394b0e283e6bc33db421b1038872a41842696d7163d"
+      },
+      "BONA_FIDE-1e21fd31ad" : {
+        "item" : "P07-BONA_FIDE-L0-D0-T1",
+        "species" : "BONA_FIDE",
+        "outcome" : "REJECTED",
+        "score" : 0.8677,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "b620d18c5e44f1fc867b606b173e09115afe47356f812a7f23a7b5dcb04a0c61"
+      },
+      "BONA_FIDE-1ff4974272" : {
+        "item" : "P09-BONA_FIDE-L0-D0-T2",
+        "species" : "BONA_FIDE",
+        "outcome" : "REJECTED",
+        "score" : 0.9135,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "be8726c4fb0c91eaaa2445fb3683c63d5c9042421a42959951baa3a8aab7580b"
+      },
+      "BONA_FIDE-20677d3e20" : {
+        "item" : "P01-BONA_FIDE-L0-D0-T2",
+        "species" : "BONA_FIDE",
+        "outcome" : "REJECTED",
+        "score" : 0.9145,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "97e4181d4560255fbc00a881ed278c5b754a76f04833d975c5e0bf1074b88563"
+      },
+      "BONA_FIDE-2558c177b0" : {
+        "item" : "P08-BONA_FIDE-L0-D0-T2",
+        "species" : "BONA_FIDE",
+        "outcome" : "ACCEPTED",
+        "score" : 0.9388,
+        "decision" : "LIVE",
+        "framesSha256" : "091678842f2a4f64d3f96c4ada0d808d02952ef819093f9b420e22d8fcb2d5a4"
+      },
+      "BONA_FIDE-298e4bc2c6" : {
+        "item" : "P08-BONA_FIDE-L0-D0-T1",
+        "species" : "BONA_FIDE",
+        "outcome" : "ACCEPTED",
+        "score" : 0.9508,
+        "decision" : "LIVE",
+        "framesSha256" : "ee4daef50c9e55daf5b8d21d3e602c42615b8ba48f2b5312ce7f629d294384ea"
+      },
+      "BONA_FIDE-327e193cf4" : {
+        "item" : "P06-BONA_FIDE-L0-D0-T1",
+        "species" : "BONA_FIDE",
+        "outcome" : "ACCEPTED",
+        "score" : 0.9351,
+        "decision" : "LIVE",
+        "framesSha256" : "24daa63e697ffef67f427ca9ab07c17a5dcb484592e59a6b555b2574cf1b105f"
+      },
+      "BONA_FIDE-4505b7e6fd" : {
+        "item" : "P12-BONA_FIDE-L0-D0-T1",
+        "species" : "BONA_FIDE",
+        "outcome" : "ACCEPTED",
+        "score" : 0.9451,
+        "decision" : "LIVE",
+        "framesSha256" : "9afd0182b4f0e687e4b607b04580cd0d135f64377c33c472ae6bf6652f783ea3"
+      },
+      "BONA_FIDE-65e5d26940" : {
+        "item" : "P01-BONA_FIDE-L0-D0-T1",
+        "species" : "BONA_FIDE",
+        "outcome" : "ACCEPTED",
+        "score" : 0.9617,
+        "decision" : "LIVE",
+        "framesSha256" : "70e9f0348961132d7d4047f7f3a9560bae389d2b2f79f12619ca07549e8bb32a"
+      },
+      "BONA_FIDE-6aab9e962c" : {
+        "item" : "P05-BONA_FIDE-L0-D0-T2",
+        "species" : "BONA_FIDE",
+        "outcome" : "ACCEPTED",
+        "score" : 0.9373,
+        "decision" : "LIVE",
+        "framesSha256" : "5fdb8047d526d023348e4967df580d7346f833337128e127a3bb09156e8a8031"
+      },
+      "BONA_FIDE-730dfe3418" : {
+        "item" : "P11-BONA_FIDE-L0-D0-T2",
+        "species" : "BONA_FIDE",
+        "outcome" : "REJECTED",
+        "score" : 0.8661,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "4690b03c08b9cfca4bb3cf27e97c7767d9a29076ce74ba3bcd43e9ba60698123"
+      },
+      "BONA_FIDE-990b15c030" : {
+        "item" : "P07-BONA_FIDE-L0-D0-T2",
+        "species" : "BONA_FIDE",
+        "outcome" : "ACCEPTED",
+        "score" : 0.9636,
+        "decision" : "LIVE",
+        "framesSha256" : "61fa06e5a66cef26849964b599d6e5476b0e3f2d4d9c34112cd2c10b77045ace"
+      },
+      "BONA_FIDE-9a6f9beb24" : {
+        "item" : "P03-BONA_FIDE-L0-D0-T1",
+        "species" : "BONA_FIDE",
+        "outcome" : "REJECTED",
+        "score" : 0.7988,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "3db7920d264ba36a13d8314ca50b2b93f6cffc084529f71e8f6fdbe6e6bd8240"
+      },
+      "BONA_FIDE-9aa1380ee0" : {
+        "item" : "P02-BONA_FIDE-L0-D0-T1",
+        "species" : "BONA_FIDE",
+        "outcome" : "ACCEPTED",
+        "score" : 0.9293,
+        "decision" : "LIVE",
+        "framesSha256" : "cacf7259d3fceb26fb5b9881a9559fdc9ed289e3cd7801e74d605094eb41a893"
+      },
+      "BONA_FIDE-be82d39733" : {
+        "item" : "P03-BONA_FIDE-L0-D0-T2",
+        "species" : "BONA_FIDE",
+        "outcome" : "REJECTED",
+        "score" : 0.901,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "6290329eafcaf885595fbdcbf10bb3590214c1e2c2985e8228760c5f7f0854ce"
+      },
+      "BONA_FIDE-cb30750b11" : {
+        "item" : "P09-BONA_FIDE-L0-D0-T1",
+        "species" : "BONA_FIDE",
+        "outcome" : "REJECTED",
+        "score" : 0.8919,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "032fd773e74b91230dec602bbec4e738096212ac03271b5386b8415ba261b34e"
+      },
+      "BONA_FIDE-cbd6b52d71" : {
+        "item" : "P04-BONA_FIDE-L0-D0-T1",
+        "species" : "BONA_FIDE",
+        "outcome" : "REJECTED",
+        "score" : 0.9005,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "09f5b27091316f162c8fd025fa40301d244aca7df33dbac8561dbe615beaf71c"
+      },
+      "BONA_FIDE-d917f863e8" : {
+        "item" : "P02-BONA_FIDE-L0-D0-T2",
+        "species" : "BONA_FIDE",
+        "outcome" : "REJECTED",
+        "score" : 0.886,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "78db73b0d19f65b9ce10496190ed1a9bb8f6d284fd1e228553c25640fb77f604"
+      },
+      "BONA_FIDE-dbfef647a6" : {
+        "item" : "P10-BONA_FIDE-L0-D0-T1",
+        "species" : "BONA_FIDE",
+        "outcome" : "REJECTED",
+        "score" : 0.8354,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "9e38d5b82f9676e9ad8ff69b1119a4bdf298386c16af6fb3cf10e1f9da4395ed"
+      },
+      "BONA_FIDE-e58d282532" : {
+        "item" : "P05-BONA_FIDE-L0-D0-T1",
+        "species" : "BONA_FIDE",
+        "outcome" : "REJECTED",
+        "score" : 0.895,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "cdfb167279eca4cba1e4429f616f410bd91e9e59cbaf66bb4735810ab3307eb8"
+      },
+      "BONA_FIDE-ec6cbfb808" : {
+        "item" : "P10-BONA_FIDE-L0-D0-T2",
+        "species" : "BONA_FIDE",
+        "outcome" : "REJECTED",
+        "score" : 0.8191,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "0d1da43f6b3194ac49923fdf3f0690990b2577b82bc57c034da0c48db4305af1"
+      },
+      "BONA_FIDE-f4b1e3d332" : {
+        "item" : "P06-BONA_FIDE-L0-D0-T2",
+        "species" : "BONA_FIDE",
+        "outcome" : "ACCEPTED",
+        "score" : 0.9749,
+        "decision" : "LIVE",
+        "framesSha256" : "ee7e6ef6640dab0cc38121368e8859688e81792bad3b0619af0624efdbddcb8f"
+      },
+      "BONA_FIDE-ffa15ec69b" : {
+        "item" : "P04-BONA_FIDE-L0-D0-T2",
+        "species" : "BONA_FIDE",
+        "outcome" : "ACCEPTED",
+        "score" : 0.939,
+        "decision" : "LIVE",
+        "framesSha256" : "b789974b9b275d7c02d7348a11fb7d4d7f0ce5f14f6b94d8ebbe2f9227501e73"
+      },
+      "SIM_LOWRES_REPLAY-0b23d5660a" : {
+        "item" : "P02-SIM_LOWRES_REPLAY-L0-D0-T1",
+        "species" : "SIM_LOWRES_REPLAY",
+        "outcome" : "NO_RESPONSE",
+        "score" : 0.5,
+        "decision" : "NOT_LIVE",
+        "failure" : "POOR_FACE_QUALITY",
+        "framesSha256" : "1046ebe6e123c3b25fc4f82c6f4c4fb617921c65cabd9addde12a40cf48da797"
+      },
+      "SIM_LOWRES_REPLAY-1238e953ac" : {
+        "item" : "P07-SIM_LOWRES_REPLAY-L0-D0-T1",
+        "species" : "SIM_LOWRES_REPLAY",
+        "outcome" : "ACCEPTED",
+        "score" : 0.9178,
+        "decision" : "LIVE",
+        "framesSha256" : "6fefbcae3615907b0c4cb2bc9e7485531a300be3ca948dbf1fb8734aec1ddf06"
+      },
+      "SIM_LOWRES_REPLAY-1b466c8193" : {
+        "item" : "P11-SIM_LOWRES_REPLAY-L0-D0-T1",
+        "species" : "SIM_LOWRES_REPLAY",
+        "outcome" : "REJECTED",
+        "score" : 0.3491,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "e22f9eff76df7157ca914bf0c6ac33f60999008786e8f96dd1798fc1615d5700"
+      },
+      "SIM_LOWRES_REPLAY-66b2b11b4a" : {
+        "item" : "P05-SIM_LOWRES_REPLAY-L0-D0-T1",
+        "species" : "SIM_LOWRES_REPLAY",
+        "outcome" : "NO_RESPONSE",
+        "score" : 0.9769,
+        "decision" : "NOT_LIVE",
+        "failure" : "SESSION_TIMEOUT",
+        "framesSha256" : "7e35034a7884ced11660d5e0a0b59db1fdc3eb60082c4d8360c91028aae781af"
+      },
+      "SIM_LOWRES_REPLAY-a870fda4f7" : {
+        "item" : "P12-SIM_LOWRES_REPLAY-L0-D0-T1",
+        "species" : "SIM_LOWRES_REPLAY",
+        "outcome" : "REJECTED",
+        "score" : 0.7298,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "aa63ac284a36c8705683f0a020f02ffa336b30e08c7b39c2bbdc6bb498401ad5"
+      },
+      "SIM_LOWRES_REPLAY-b239e14c19" : {
+        "item" : "P08-SIM_LOWRES_REPLAY-L0-D0-T1",
+        "species" : "SIM_LOWRES_REPLAY",
+        "outcome" : "ACCEPTED",
+        "score" : 0.9691,
+        "decision" : "LIVE",
+        "framesSha256" : "d0808b1c7edf80c97945fe3d955980394ee7823152b7a09d1b0c4a91086d43cc"
+      },
+      "SIM_LOWRES_REPLAY-c05274c7d8" : {
+        "item" : "P01-SIM_LOWRES_REPLAY-L0-D0-T1",
+        "species" : "SIM_LOWRES_REPLAY",
+        "outcome" : "ACCEPTED",
+        "score" : 0.9131,
+        "decision" : "LIVE",
+        "framesSha256" : "676f287196e9f27b1fd7bed6df8fbe15c16a1b1751eb4e1e3e58ebcabe606bde"
+      },
+      "SIM_LOWRES_REPLAY-c7b1bc032d" : {
+        "item" : "P06-SIM_LOWRES_REPLAY-L0-D0-T1",
+        "species" : "SIM_LOWRES_REPLAY",
+        "outcome" : "ACCEPTED",
+        "score" : 0.9611,
+        "decision" : "LIVE",
+        "framesSha256" : "96b5b04a321cdd2bfe8e19169d54806484f243c91a9ed78d43e4a101c517d448"
+      },
+      "SIM_LOWRES_REPLAY-ccd79656e6" : {
+        "item" : "P10-SIM_LOWRES_REPLAY-L0-D0-T1",
+        "species" : "SIM_LOWRES_REPLAY",
+        "outcome" : "ACCEPTED",
+        "score" : 0.9398,
+        "decision" : "LIVE",
+        "framesSha256" : "83ecdc74f5dc8abc017e8443218290fc72bf8aa2fa45397e6ecabd032ddf1bf7"
+      },
+      "SIM_LOWRES_REPLAY-cf8f90e231" : {
+        "item" : "P04-SIM_LOWRES_REPLAY-L0-D0-T1",
+        "species" : "SIM_LOWRES_REPLAY",
+        "outcome" : "ACCEPTED",
+        "score" : 0.9393,
+        "decision" : "LIVE",
+        "framesSha256" : "a37784231eb320fcc954af8114522a4c8948bd9e4484ea892b98440d85e81bdb"
+      },
+      "SIM_LOWRES_REPLAY-dbb06cbeef" : {
+        "item" : "P09-SIM_LOWRES_REPLAY-L0-D0-T1",
+        "species" : "SIM_LOWRES_REPLAY",
+        "outcome" : "ACCEPTED",
+        "score" : 0.967,
+        "decision" : "LIVE",
+        "framesSha256" : "63bfaec59c87e725542f421d43c0e21f0308c4d44a42db9d8decf30f3c8d0e6e"
+      },
+      "SIM_LOWRES_REPLAY-e234a9a667" : {
+        "item" : "P03-SIM_LOWRES_REPLAY-L0-D0-T1",
+        "species" : "SIM_LOWRES_REPLAY",
+        "outcome" : "ACCEPTED",
+        "score" : 0.9738,
+        "decision" : "LIVE",
+        "framesSha256" : "89fa64bea6c6454cf8ffcbece2aa53c07df261098d316512f1a64d48f37aba66"
+      },
+      "SIM_PRINT-00308dd634" : {
+        "item" : "P06-SIM_PRINT-L0-D0-T1",
+        "species" : "SIM_PRINT",
+        "outcome" : "REJECTED",
+        "score" : 0.9114,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "48d49a24aae69515fc1179c4758146d4c76bd59dfbc317efeed387e3868bc628"
+      },
+      "SIM_PRINT-051b93952f" : {
+        "item" : "P08-SIM_PRINT-L0-D0-T1",
+        "species" : "SIM_PRINT",
+        "outcome" : "REJECTED",
+        "score" : 0.9034,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "f8135a7a0a7d7437b6cc916eda46f64640ac4ea282d1c4c9f86c589f3a480b0e"
+      },
+      "SIM_PRINT-147da99687" : {
+        "item" : "P01-SIM_PRINT-L0-D0-T1",
+        "species" : "SIM_PRINT",
+        "outcome" : "ACCEPTED",
+        "score" : 0.9405,
+        "decision" : "LIVE",
+        "framesSha256" : "ce79f5c133d579181086cd95cd7ea2afd2067378d40152a12885e7aaa8ef472f"
+      },
+      "SIM_PRINT-1dfbdab018" : {
+        "item" : "P03-SIM_PRINT-L0-D0-T1",
+        "species" : "SIM_PRINT",
+        "outcome" : "ACCEPTED",
+        "score" : 0.9349,
+        "decision" : "LIVE",
+        "framesSha256" : "35f8ecfd4f30e4028b891e3e365e3340b1010101b7a2a71a8aa8f3f5f526ab87"
+      },
+      "SIM_PRINT-23eea41434" : {
+        "item" : "P05-SIM_PRINT-L0-D0-T1",
+        "species" : "SIM_PRINT",
+        "outcome" : "REJECTED",
+        "score" : 0.8496,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "817578e87c4d64a61d0dd0c1568547ad0d518ffcbf7402b6f43fdae6d13945bb"
+      },
+      "SIM_PRINT-42ec4c7491" : {
+        "item" : "P11-SIM_PRINT-L0-D0-T1",
+        "species" : "SIM_PRINT",
+        "outcome" : "REJECTED",
+        "score" : 0.8377,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "3b2763f303ea8d39ab14c60a2e75f865a22522e45561646b4cc0a54171fb22a1"
+      },
+      "SIM_PRINT-66a7523d4e" : {
+        "item" : "P07-SIM_PRINT-L0-D0-T1",
+        "species" : "SIM_PRINT",
+        "outcome" : "REJECTED",
+        "score" : 0.7997,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "c51a99226360a4ecad159853b2a6631de1a48842d498b8b130971bf4f807a578"
+      },
+      "SIM_PRINT-9d3e22a388" : {
+        "item" : "P09-SIM_PRINT-L0-D0-T1",
+        "species" : "SIM_PRINT",
+        "outcome" : "REJECTED",
+        "score" : 0.8917,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "12541310356217580a24caa74556da64c144869d1ee0cac64d2ef1b19cf83855"
+      },
+      "SIM_PRINT-a417c7416f" : {
+        "item" : "P10-SIM_PRINT-L0-D0-T1",
+        "species" : "SIM_PRINT",
+        "outcome" : "ACCEPTED",
+        "score" : 0.9407,
+        "decision" : "LIVE",
+        "framesSha256" : "23c6c9039ca9a2d7a82113e1516e37d1b529468fdfc90855abeb4b5593fda225"
+      },
+      "SIM_PRINT-a87b59c215" : {
+        "item" : "P02-SIM_PRINT-L0-D0-T1",
+        "species" : "SIM_PRINT",
+        "outcome" : "REJECTED",
+        "score" : 0.1682,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "cc138f8f91ac5d615cf45c6f571cfffd4a2391ded8fd36fd99e46eb61fe2b569"
+      },
+      "SIM_PRINT-ac72031f55" : {
+        "item" : "P04-SIM_PRINT-L0-D0-T1",
+        "species" : "SIM_PRINT",
+        "outcome" : "REJECTED",
+        "score" : 0.6995,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "837ef876451e05b5d654e0b2f78ae5141b867620eaee897c7b5b81ef268f174b"
+      },
+      "SIM_PRINT-e638cff15d" : {
+        "item" : "P12-SIM_PRINT-L0-D0-T1",
+        "species" : "SIM_PRINT",
+        "outcome" : "ACCEPTED",
+        "score" : 0.9584,
+        "decision" : "LIVE",
+        "framesSha256" : "30aefd8c8a6f42945f3f1a3072116873214922366b03d8b5fd994286b245897d"
+      },
+      "SIM_PRINT_CUTOUT-010c71dbb2" : {
+        "item" : "P05-SIM_PRINT_CUTOUT-L0-D0-T1",
+        "species" : "SIM_PRINT_CUTOUT",
+        "outcome" : "REJECTED",
+        "score" : 0.8814,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "ac18711b4ea6c718107cc9c66abdb097c51787f5f557117ae8aa82e92e54df2d"
+      },
+      "SIM_PRINT_CUTOUT-0ac85cae0f" : {
+        "item" : "P09-SIM_PRINT_CUTOUT-L0-D0-T1",
+        "species" : "SIM_PRINT_CUTOUT",
+        "outcome" : "REJECTED",
+        "score" : 0.8429,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "0c4660e5d036dacabb84c512e4d9920e95ba28700934ae5e4f2f966f351ea2d9"
+      },
+      "SIM_PRINT_CUTOUT-177c0dc193" : {
+        "item" : "P10-SIM_PRINT_CUTOUT-L0-D0-T1",
+        "species" : "SIM_PRINT_CUTOUT",
+        "outcome" : "REJECTED",
+        "score" : 0.8721,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "176c52c5aac984f42705f5f46682745a1eaf79a1307a1bfd34e638e74b55b013"
+      },
+      "SIM_PRINT_CUTOUT-313de783bb" : {
+        "item" : "P04-SIM_PRINT_CUTOUT-L0-D0-T1",
+        "species" : "SIM_PRINT_CUTOUT",
+        "outcome" : "REJECTED",
+        "score" : 0.7124,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "5f8020b3ac5222159773f96c2d6b33994910f1e55dae23f25335490cfb9a0e6c"
+      },
+      "SIM_PRINT_CUTOUT-3918365c1e" : {
+        "item" : "P07-SIM_PRINT_CUTOUT-L0-D0-T1",
+        "species" : "SIM_PRINT_CUTOUT",
+        "outcome" : "REJECTED",
+        "score" : 0.8843,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "30588e9b69c1b71fef088b82e688e1fe23bad7c553940816272313d0f79a55c7"
+      },
+      "SIM_PRINT_CUTOUT-64d5045b99" : {
+        "item" : "P01-SIM_PRINT_CUTOUT-L0-D0-T1",
+        "species" : "SIM_PRINT_CUTOUT",
+        "outcome" : "ACCEPTED",
+        "score" : 0.965,
+        "decision" : "LIVE",
+        "framesSha256" : "1197ed3d41e6c0b43f40f767649b206c5cd5af73cd121ac11074510286745091"
+      },
+      "SIM_PRINT_CUTOUT-6a1bc030e2" : {
+        "item" : "P02-SIM_PRINT_CUTOUT-L0-D0-T1",
+        "species" : "SIM_PRINT_CUTOUT",
+        "outcome" : "REJECTED",
+        "score" : 0.8664,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "9287d71306b1590d9a97cf8bdadc81c015f4114a23a7d622127df5aac9167744"
+      },
+      "SIM_PRINT_CUTOUT-7825647cb5" : {
+        "item" : "P12-SIM_PRINT_CUTOUT-L0-D0-T1",
+        "species" : "SIM_PRINT_CUTOUT",
+        "outcome" : "ACCEPTED",
+        "score" : 0.9695,
+        "decision" : "LIVE",
+        "framesSha256" : "75c5f1a4ae979f88803956671f91dab30aa7cc91bf020c88a5ca2663ea185e79"
+      },
+      "SIM_PRINT_CUTOUT-8a143feab1" : {
+        "item" : "P08-SIM_PRINT_CUTOUT-L0-D0-T1",
+        "species" : "SIM_PRINT_CUTOUT",
+        "outcome" : "REJECTED",
+        "score" : 0.7651,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "d4d0faabb0700415911d4147ae5115d84fd5901ef436dde7c0d75d25a17b9c40"
+      },
+      "SIM_PRINT_CUTOUT-8e4691c93f" : {
+        "item" : "P06-SIM_PRINT_CUTOUT-L0-D0-T1",
+        "species" : "SIM_PRINT_CUTOUT",
+        "outcome" : "REJECTED",
+        "score" : 0.8807,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "cedfc4fceea2d4ce6e9c2c72c6ce25856fd97cfc9a389f4e910f4a976bdf1b84"
+      },
+      "SIM_PRINT_CUTOUT-90fea8486e" : {
+        "item" : "P11-SIM_PRINT_CUTOUT-L0-D0-T1",
+        "species" : "SIM_PRINT_CUTOUT",
+        "outcome" : "REJECTED",
+        "score" : 0.6638,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "d0c86dc08a75f6898d62051e7ef9ea7f5833e40b4d31a457dbefa2a5ff96a5c5"
+      },
+      "SIM_PRINT_CUTOUT-9c5f21ae03" : {
+        "item" : "P03-SIM_PRINT_CUTOUT-L0-D0-T1",
+        "species" : "SIM_PRINT_CUTOUT",
+        "outcome" : "ACCEPTED",
+        "score" : 0.9344,
+        "decision" : "LIVE",
+        "framesSha256" : "b21d7cbad253965d19039b9fad3cae88e8461ee41840063d4e9ea31417541bb2"
+      },
+      "SIM_PRINT_WARPED-0b8f5a998b" : {
+        "item" : "P02-SIM_PRINT_WARPED-L0-D0-T1",
+        "species" : "SIM_PRINT_WARPED",
+        "outcome" : "REJECTED",
+        "score" : 0.8979,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "b0f527a1d1fb657c8ac6db9ca9ea50276d59b75dad457b332d25c9effa4839f6"
+      },
+      "SIM_PRINT_WARPED-10a019bb68" : {
+        "item" : "P05-SIM_PRINT_WARPED-L0-D0-T1",
+        "species" : "SIM_PRINT_WARPED",
+        "outcome" : "ACCEPTED",
+        "score" : 0.9457,
+        "decision" : "LIVE",
+        "framesSha256" : "ba4e6264b2ab8fc39e2f6e2535364ebdb723d41109bc803da74fb9bff2aced06"
+      },
+      "SIM_PRINT_WARPED-2cec489c8f" : {
+        "item" : "P11-SIM_PRINT_WARPED-L0-D0-T1",
+        "species" : "SIM_PRINT_WARPED",
+        "outcome" : "ACCEPTED",
+        "score" : 0.9402,
+        "decision" : "LIVE",
+        "framesSha256" : "331e97d96dadcecc4ec477e6676bf15304873d2dede1a9402a17841ca4658bc6"
+      },
+      "SIM_PRINT_WARPED-632d43cd79" : {
+        "item" : "P06-SIM_PRINT_WARPED-L0-D0-T1",
+        "species" : "SIM_PRINT_WARPED",
+        "outcome" : "REJECTED",
+        "score" : 0.8593,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "f33718dcd8a00a5d9d4706b60b525e755f7efdce8355d6723e3743140b1ffcdf"
+      },
+      "SIM_PRINT_WARPED-6ce2c5b39c" : {
+        "item" : "P10-SIM_PRINT_WARPED-L0-D0-T1",
+        "species" : "SIM_PRINT_WARPED",
+        "outcome" : "ACCEPTED",
+        "score" : 0.9308,
+        "decision" : "LIVE",
+        "framesSha256" : "42b79e0fad6c96dfdab339a6859abe77f1357a53f460c0e20d3a9e2cae3a6c4d"
+      },
+      "SIM_PRINT_WARPED-7760756fcc" : {
+        "item" : "P12-SIM_PRINT_WARPED-L0-D0-T1",
+        "species" : "SIM_PRINT_WARPED",
+        "outcome" : "ACCEPTED",
+        "score" : 0.9717,
+        "decision" : "LIVE",
+        "framesSha256" : "8558bc8dcd6e099f78089128c7d801592549cffd9c509310e71146042c074943"
+      },
+      "SIM_PRINT_WARPED-a0d8eda21d" : {
+        "item" : "P08-SIM_PRINT_WARPED-L0-D0-T1",
+        "species" : "SIM_PRINT_WARPED",
+        "outcome" : "ACCEPTED",
+        "score" : 0.9764,
+        "decision" : "LIVE",
+        "framesSha256" : "64ffbe4dfb8dbca99e8825ffa2e2cfd5c7c43cedc35071f9425af6ba4ee1c6a3"
+      },
+      "SIM_PRINT_WARPED-a13ee308be" : {
+        "item" : "P04-SIM_PRINT_WARPED-L0-D0-T1",
+        "species" : "SIM_PRINT_WARPED",
+        "outcome" : "REJECTED",
+        "score" : 0.9384,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "e9d066589a04b12c9fcc08e3ffc17d04faa0b30570db2e5bb64e1093d8cd8043"
+      },
+      "SIM_PRINT_WARPED-b836024824" : {
+        "item" : "P03-SIM_PRINT_WARPED-L0-D0-T1",
+        "species" : "SIM_PRINT_WARPED",
+        "outcome" : "ACCEPTED",
+        "score" : 0.9332,
+        "decision" : "LIVE",
+        "framesSha256" : "056fe6ab486b768c83c6ea38a0e9e31f38f4c6a55f84c5e0d8a8a4859a7229a7"
+      },
+      "SIM_PRINT_WARPED-c7727aa81d" : {
+        "item" : "P09-SIM_PRINT_WARPED-L0-D0-T1",
+        "species" : "SIM_PRINT_WARPED",
+        "outcome" : "ACCEPTED",
+        "score" : 0.9366,
+        "decision" : "LIVE",
+        "framesSha256" : "1b65c4199c544b2367e055cd1e76e538c58c4a60a3719a7e833f7877e553dc70"
+      },
+      "SIM_PRINT_WARPED-ce4cc032dc" : {
+        "item" : "P01-SIM_PRINT_WARPED-L0-D0-T1",
+        "species" : "SIM_PRINT_WARPED",
+        "outcome" : "ACCEPTED",
+        "score" : 0.9367,
+        "decision" : "LIVE",
+        "framesSha256" : "bedd1d3b843b0dc1397636ec69a1b30532d4134b8b4225dd7cb7651574695054"
+      },
+      "SIM_PRINT_WARPED-ef37992bd8" : {
+        "item" : "P07-SIM_PRINT_WARPED-L0-D0-T1",
+        "species" : "SIM_PRINT_WARPED",
+        "outcome" : "REJECTED",
+        "score" : 0.9059,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "2c42c77ad02562894a1d1440dbb2502fbf3eb109450e8bb9eba40874a92bc295"
+      },
+      "SIM_REPLAY_JITTER-132875c3d2" : {
+        "item" : "P11-SIM_REPLAY_JITTER-L0-D0-T1",
+        "species" : "SIM_REPLAY_JITTER",
+        "outcome" : "REJECTED",
+        "score" : 0.8402,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "0ca3a7cf2b30bc593fd4c8ceb1ae786698fcafb64b269eb46ac34a193ead36af"
+      },
+      "SIM_REPLAY_JITTER-2856733464" : {
+        "item" : "P07-SIM_REPLAY_JITTER-L0-D0-T1",
+        "species" : "SIM_REPLAY_JITTER",
+        "outcome" : "REJECTED",
+        "score" : 0.8598,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "3ffcccb1a0f9e2610685b29f35626fed1ed1da9c9acfb2c49050ff8828ff9c95"
+      },
+      "SIM_REPLAY_JITTER-46c48a57e7" : {
+        "item" : "P08-SIM_REPLAY_JITTER-L0-D0-T1",
+        "species" : "SIM_REPLAY_JITTER",
+        "outcome" : "REJECTED",
+        "score" : 0.8384,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "91d196b5eb1f9af1d8bde767cfbb843714c0cde5716670759fd200425db1c9e9"
+      },
+      "SIM_REPLAY_JITTER-671caa5496" : {
+        "item" : "P09-SIM_REPLAY_JITTER-L0-D0-T1",
+        "species" : "SIM_REPLAY_JITTER",
+        "outcome" : "REJECTED",
+        "score" : 0.6951,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "9abfbb46f457533cefc59dfca681ac0ca4124bcc21a4d6e5869987e76700ea36"
+      },
+      "SIM_REPLAY_JITTER-69c80ea8d0" : {
+        "item" : "P05-SIM_REPLAY_JITTER-L0-D0-T1",
+        "species" : "SIM_REPLAY_JITTER",
+        "outcome" : "REJECTED",
+        "score" : 0.8655,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "ed429b42cb60d422c2cb8cc6a9b83a9ff105d7e538a18f7894d52b9da0efbaf4"
+      },
+      "SIM_REPLAY_JITTER-8338a379f1" : {
+        "item" : "P03-SIM_REPLAY_JITTER-L0-D0-T1",
+        "species" : "SIM_REPLAY_JITTER",
+        "outcome" : "REJECTED",
+        "score" : 0.8166,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "b8b2a9c136ff8f86b96bffae642b934bba43bf62f84d7b689825f8158d30c4e8"
+      },
+      "SIM_REPLAY_JITTER-8992cf5b73" : {
+        "item" : "P01-SIM_REPLAY_JITTER-L0-D0-T1",
+        "species" : "SIM_REPLAY_JITTER",
+        "outcome" : "REJECTED",
+        "score" : 0.8103,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "faaf7ae634979a959e04927c9333fae0f4fd5fee4d0b123060c8402fc42cb0a2"
+      },
+      "SIM_REPLAY_JITTER-8b7723e0a3" : {
+        "item" : "P04-SIM_REPLAY_JITTER-L0-D0-T1",
+        "species" : "SIM_REPLAY_JITTER",
+        "outcome" : "REJECTED",
+        "score" : 0.8977,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "f42b1fb0f256b684f84122d4920362d7dc827700597b3fc0ad5bc929bd675f6f"
+      },
+      "SIM_REPLAY_JITTER-92e7c969e9" : {
+        "item" : "P12-SIM_REPLAY_JITTER-L0-D0-T1",
+        "species" : "SIM_REPLAY_JITTER",
+        "outcome" : "REJECTED",
+        "score" : 0.8894,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "cf06c09de415596fe420bd6602dba7effe1da30d841bdb3d11b1d4fad7cb6a26"
+      },
+      "SIM_REPLAY_JITTER-a6b67ad9e0" : {
+        "item" : "P10-SIM_REPLAY_JITTER-L0-D0-T1",
+        "species" : "SIM_REPLAY_JITTER",
+        "outcome" : "REJECTED",
+        "score" : 0.6468,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "7dd779dc01f1f3c150efc4e5529f00732f22a66e5ea8889992293751817114ba"
+      },
+      "SIM_REPLAY_JITTER-b9f1907155" : {
+        "item" : "P06-SIM_REPLAY_JITTER-L0-D0-T1",
+        "species" : "SIM_REPLAY_JITTER",
+        "outcome" : "REJECTED",
+        "score" : 0.828,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "d7ef04e10b1a9f9b528ccce12a05b6aacefaa87032eafe29ac5dd14de30e799e"
+      },
+      "SIM_REPLAY_JITTER-faefb372b6" : {
+        "item" : "P02-SIM_REPLAY_JITTER-L0-D0-T1",
+        "species" : "SIM_REPLAY_JITTER",
+        "outcome" : "REJECTED",
+        "score" : 0.8252,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "f7a84465d19f3c18c9df0e789701d6df94b3ac437bfdceb8f33c00f7b3bc803a"
+      },
+      "SIM_SCREEN_PHOTO-10cf921b1d" : {
+        "item" : "P05-SIM_SCREEN_PHOTO-L0-D0-T1",
+        "species" : "SIM_SCREEN_PHOTO",
+        "outcome" : "REJECTED",
+        "score" : 0.8141,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "aff8f0ab4c3ed25ca8e08c43d675bf6d72ef46a68b1e7e599f5869be242d72a2"
+      },
+      "SIM_SCREEN_PHOTO-21b8bbf650" : {
+        "item" : "P11-SIM_SCREEN_PHOTO-L0-D0-T1",
+        "species" : "SIM_SCREEN_PHOTO",
+        "outcome" : "REJECTED",
+        "score" : 0.5343,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "547395b47a866bc93079b7c9ea0349a0c8d73e18716d313cbbe25c263eafece4"
+      },
+      "SIM_SCREEN_PHOTO-22545301da" : {
+        "item" : "P07-SIM_SCREEN_PHOTO-L0-D0-T1",
+        "species" : "SIM_SCREEN_PHOTO",
+        "outcome" : "REJECTED",
+        "score" : 0.7828,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "12be50f33ff14869dc078082fde088a3a1aebc7063d4ad864736656c58fa3d20"
+      },
+      "SIM_SCREEN_PHOTO-25cfaf0c72" : {
+        "item" : "P10-SIM_SCREEN_PHOTO-L0-D0-T1",
+        "species" : "SIM_SCREEN_PHOTO",
+        "outcome" : "REJECTED",
+        "score" : 0.674,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "c0cd915ec178fbc7db9f7eaea36008e741a9e2ced3d52a7bc2f8f6ee4d51ccfc"
+      },
+      "SIM_SCREEN_PHOTO-28f5c5519d" : {
+        "item" : "P12-SIM_SCREEN_PHOTO-L0-D0-T1",
+        "species" : "SIM_SCREEN_PHOTO",
+        "outcome" : "REJECTED",
+        "score" : 0.6995,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "fc58aada75e9bbcc18ec17bb79a60da1e4b95e502b9ab3945c60406935e9e7d8"
+      },
+      "SIM_SCREEN_PHOTO-28f681f8c1" : {
+        "item" : "P04-SIM_SCREEN_PHOTO-L0-D0-T1",
+        "species" : "SIM_SCREEN_PHOTO",
+        "outcome" : "REJECTED",
+        "score" : 0.9458,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "fb355be7355409a23295331f46ce8bd96b9db358c290395deab3a7a1d707e519"
+      },
+      "SIM_SCREEN_PHOTO-649efc88cf" : {
+        "item" : "P02-SIM_SCREEN_PHOTO-L0-D0-T1",
+        "species" : "SIM_SCREEN_PHOTO",
+        "outcome" : "REJECTED",
+        "score" : 0.8818,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "21f3d9e605706d4e1773161d33727f5c273fb7e14e68cb5fe0eadbf4c353d1b1"
+      },
+      "SIM_SCREEN_PHOTO-691a86fc05" : {
+        "item" : "P09-SIM_SCREEN_PHOTO-L0-D0-T1",
+        "species" : "SIM_SCREEN_PHOTO",
+        "outcome" : "REJECTED",
+        "score" : 0.8804,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "a6a1c6dfa129803578e8df0e2b2fa45fcfa09f2849642f0425824d133f772950"
+      },
+      "SIM_SCREEN_PHOTO-7d4c8bfb6b" : {
+        "item" : "P03-SIM_SCREEN_PHOTO-L0-D0-T1",
+        "species" : "SIM_SCREEN_PHOTO",
+        "outcome" : "REJECTED",
+        "score" : 0.8434,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "125e85837a0154967f24fada9ba3fd2e2744c673d27edd0ef1ac07e9d587271c"
+      },
+      "SIM_SCREEN_PHOTO-a615b72abd" : {
+        "item" : "P08-SIM_SCREEN_PHOTO-L0-D0-T1",
+        "species" : "SIM_SCREEN_PHOTO",
+        "outcome" : "REJECTED",
+        "score" : 0.8724,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "11dcd5e3f8697e8d69e8d63d2f0e115e88c7a8b58b20f00715fa7ae7572f84e7"
+      },
+      "SIM_SCREEN_PHOTO-a6c10a8702" : {
+        "item" : "P06-SIM_SCREEN_PHOTO-L0-D0-T1",
+        "species" : "SIM_SCREEN_PHOTO",
+        "outcome" : "REJECTED",
+        "score" : 0.8764,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "4260ce174a1e2a91c35e7e8531ad7054595e6c8ca6932f072641014dfdba8060"
+      },
+      "SIM_SCREEN_PHOTO-a9341fa839" : {
+        "item" : "P01-SIM_SCREEN_PHOTO-L0-D0-T1",
+        "species" : "SIM_SCREEN_PHOTO",
+        "outcome" : "REJECTED",
+        "score" : 0.4393,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "34c284a9b4bc45edda106aa59a3e8903a8509d177a7fe51ba9b38d68fb3f7639"
+      },
+      "SIM_SCREEN_REPLAY-038ce0be1f" : {
+        "item" : "P05-SIM_SCREEN_REPLAY-L0-D0-T1",
+        "species" : "SIM_SCREEN_REPLAY",
+        "outcome" : "REJECTED",
+        "score" : 0.3933,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "95b425a58951760013a65fe18316df28b06509a14d990e6bea1bfb78345e687e"
+      },
+      "SIM_SCREEN_REPLAY-1f6dfd7892" : {
+        "item" : "P06-SIM_SCREEN_REPLAY-L0-D0-T1",
+        "species" : "SIM_SCREEN_REPLAY",
+        "outcome" : "REJECTED",
+        "score" : 0.7969,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "314e8bbadfd5e958a74e48c58e17b5be42d0a16032aab8fb1771d5102731de1f"
+      },
+      "SIM_SCREEN_REPLAY-386e88138c" : {
+        "item" : "P08-SIM_SCREEN_REPLAY-L0-D0-T1",
+        "species" : "SIM_SCREEN_REPLAY",
+        "outcome" : "REJECTED",
+        "score" : 0.8216,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "73e79c282d528004c864ccecc958e52fe42fe34987862648ff1dc90ee382a8db"
+      },
+      "SIM_SCREEN_REPLAY-553bd92a62" : {
+        "item" : "P09-SIM_SCREEN_REPLAY-L0-D0-T1",
+        "species" : "SIM_SCREEN_REPLAY",
+        "outcome" : "REJECTED",
+        "score" : 0.5928,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "0657b64a6921ce8c14681c8797bf2d6b8493fee182edbb8e2878122fed7f58e3"
+      },
+      "SIM_SCREEN_REPLAY-823f6b153a" : {
+        "item" : "P03-SIM_SCREEN_REPLAY-L0-D0-T1",
+        "species" : "SIM_SCREEN_REPLAY",
+        "outcome" : "REJECTED",
+        "score" : 0.756,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "997ffb72d71b24bd4d54c726a91fb09c5dcfb931ac4179f9fb9f877462a00fb1"
+      },
+      "SIM_SCREEN_REPLAY-88c8082131" : {
+        "item" : "P10-SIM_SCREEN_REPLAY-L0-D0-T1",
+        "species" : "SIM_SCREEN_REPLAY",
+        "outcome" : "REJECTED",
+        "score" : 0.6589,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "3b0818dc6e98574b38b1b6975308465960ffad920bc0887c3928fb230308cd4e"
+      },
+      "SIM_SCREEN_REPLAY-a67c214700" : {
+        "item" : "P12-SIM_SCREEN_REPLAY-L0-D0-T1",
+        "species" : "SIM_SCREEN_REPLAY",
+        "outcome" : "REJECTED",
+        "score" : 0.2618,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "f1886bd29436e5c90505a8c581ceb3608249347986c4b23aa9c25faeb15c2a36"
+      },
+      "SIM_SCREEN_REPLAY-bdf899d08b" : {
+        "item" : "P02-SIM_SCREEN_REPLAY-L0-D0-T1",
+        "species" : "SIM_SCREEN_REPLAY",
+        "outcome" : "REJECTED",
+        "score" : 0.8425,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "c80118f3b20af281bb1a4050fc9fe41273fdc1615b4a66c504941b6bae910edd"
+      },
+      "SIM_SCREEN_REPLAY-c4502d75c6" : {
+        "item" : "P11-SIM_SCREEN_REPLAY-L0-D0-T1",
+        "species" : "SIM_SCREEN_REPLAY",
+        "outcome" : "REJECTED",
+        "score" : 0.7288,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "7e4cd398e8528f7b644fc0a8ec423a67758bf458cc032f29a3e6455314535586"
+      },
+      "SIM_SCREEN_REPLAY-d0bff2850c" : {
+        "item" : "P07-SIM_SCREEN_REPLAY-L0-D0-T1",
+        "species" : "SIM_SCREEN_REPLAY",
+        "outcome" : "NO_RESPONSE",
+        "score" : 0.5,
+        "decision" : "NOT_LIVE",
+        "failure" : "FACE_NOT_DETECTED",
+        "framesSha256" : "1c86ab60823b1a0dd8482c469b18d6186da27424f1728431f668780ddcc0244f"
+      },
+      "SIM_SCREEN_REPLAY-e5d7007276" : {
+        "item" : "P01-SIM_SCREEN_REPLAY-L0-D0-T1",
+        "species" : "SIM_SCREEN_REPLAY",
+        "outcome" : "REJECTED",
+        "score" : 0.3766,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "3b040f71125ff990dbf046f73603e58d12241d1bfb38146084dc89fb03410f2a"
+      },
+      "SIM_SCREEN_REPLAY-f9af939b33" : {
+        "item" : "P04-SIM_SCREEN_REPLAY-L0-D0-T1",
+        "species" : "SIM_SCREEN_REPLAY",
+        "outcome" : "ACCEPTED",
+        "score" : 0.9377,
+        "decision" : "LIVE",
+        "framesSha256" : "a6b312ceff05a7c38a9a756a4d9208b24c6b00706340a72c2a0b6c25e2b68338"
+      }
+    },
+    "challenge" : {
+      "BONA_FIDE-01203c498d" : {
+        "item" : "P11-BONA_FIDE-L0-D0-T1",
+        "species" : "BONA_FIDE",
+        "outcome" : "REJECTED",
+        "score" : 0.8825,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "ca536e9203e1db975f46ea667551a96e9a2755303072b1619f661d5a437090e9"
+      },
+      "BONA_FIDE-15888b83a5" : {
+        "item" : "P12-BONA_FIDE-L0-D0-T2",
+        "species" : "BONA_FIDE",
+        "outcome" : "REJECTED",
+        "score" : 0.8441,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "114854ec7fc00d1777e4c394b0e283e6bc33db421b1038872a41842696d7163d"
+      },
+      "BONA_FIDE-1e21fd31ad" : {
+        "item" : "P07-BONA_FIDE-L0-D0-T1",
+        "species" : "BONA_FIDE",
+        "outcome" : "REJECTED",
+        "score" : 0.8677,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "b620d18c5e44f1fc867b606b173e09115afe47356f812a7f23a7b5dcb04a0c61"
+      },
+      "BONA_FIDE-1ff4974272" : {
+        "item" : "P09-BONA_FIDE-L0-D0-T2",
+        "species" : "BONA_FIDE",
+        "outcome" : "REJECTED",
+        "score" : 0.9135,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "be8726c4fb0c91eaaa2445fb3683c63d5c9042421a42959951baa3a8aab7580b"
+      },
+      "BONA_FIDE-20677d3e20" : {
+        "item" : "P01-BONA_FIDE-L0-D0-T2",
+        "species" : "BONA_FIDE",
+        "outcome" : "REJECTED",
+        "score" : 0.9145,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "97e4181d4560255fbc00a881ed278c5b754a76f04833d975c5e0bf1074b88563"
+      },
+      "BONA_FIDE-2558c177b0" : {
+        "item" : "P08-BONA_FIDE-L0-D0-T2",
+        "species" : "BONA_FIDE",
+        "outcome" : "REJECTED",
+        "score" : 0.9163,
+        "decision" : "NOT_LIVE",
+        "failure" : "CHALLENGE_TIMEOUT",
+        "framesSha256" : "091678842f2a4f64d3f96c4ada0d808d02952ef819093f9b420e22d8fcb2d5a4"
+      },
+      "BONA_FIDE-298e4bc2c6" : {
+        "item" : "P08-BONA_FIDE-L0-D0-T1",
+        "species" : "BONA_FIDE",
+        "outcome" : "REJECTED",
+        "score" : 0.8881,
+        "decision" : "NOT_LIVE",
+        "failure" : "CHALLENGE_TIMEOUT",
+        "framesSha256" : "ee4daef50c9e55daf5b8d21d3e602c42615b8ba48f2b5312ce7f629d294384ea"
+      },
+      "BONA_FIDE-327e193cf4" : {
+        "item" : "P06-BONA_FIDE-L0-D0-T1",
+        "species" : "BONA_FIDE",
+        "outcome" : "REJECTED",
+        "score" : 0.9208,
+        "decision" : "NOT_LIVE",
+        "failure" : "CHALLENGE_TIMEOUT",
+        "framesSha256" : "24daa63e697ffef67f427ca9ab07c17a5dcb484592e59a6b555b2574cf1b105f"
+      },
+      "BONA_FIDE-4505b7e6fd" : {
+        "item" : "P12-BONA_FIDE-L0-D0-T1",
+        "species" : "BONA_FIDE",
+        "outcome" : "REJECTED",
+        "score" : 0.9705,
+        "decision" : "NOT_LIVE",
+        "failure" : "ACTIVE_CHALLENGE_FAILED",
+        "framesSha256" : "9afd0182b4f0e687e4b607b04580cd0d135f64377c33c472ae6bf6652f783ea3"
+      },
+      "BONA_FIDE-65e5d26940" : {
+        "item" : "P01-BONA_FIDE-L0-D0-T1",
+        "species" : "BONA_FIDE",
+        "outcome" : "REJECTED",
+        "score" : 0.9249,
+        "decision" : "NOT_LIVE",
+        "failure" : "CHALLENGE_TIMEOUT",
+        "framesSha256" : "70e9f0348961132d7d4047f7f3a9560bae389d2b2f79f12619ca07549e8bb32a"
+      },
+      "BONA_FIDE-6aab9e962c" : {
+        "item" : "P05-BONA_FIDE-L0-D0-T2",
+        "species" : "BONA_FIDE",
+        "outcome" : "REJECTED",
+        "score" : 0.9113,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "5fdb8047d526d023348e4967df580d7346f833337128e127a3bb09156e8a8031"
+      },
+      "BONA_FIDE-730dfe3418" : {
+        "item" : "P11-BONA_FIDE-L0-D0-T2",
+        "species" : "BONA_FIDE",
+        "outcome" : "REJECTED",
+        "score" : 0.8661,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "4690b03c08b9cfca4bb3cf27e97c7767d9a29076ce74ba3bcd43e9ba60698123"
+      },
+      "BONA_FIDE-990b15c030" : {
+        "item" : "P07-BONA_FIDE-L0-D0-T2",
+        "species" : "BONA_FIDE",
+        "outcome" : "REJECTED",
+        "score" : 0.9326,
+        "decision" : "NOT_LIVE",
+        "failure" : "CHALLENGE_TIMEOUT",
+        "framesSha256" : "61fa06e5a66cef26849964b599d6e5476b0e3f2d4d9c34112cd2c10b77045ace"
+      },
+      "BONA_FIDE-9a6f9beb24" : {
+        "item" : "P03-BONA_FIDE-L0-D0-T1",
+        "species" : "BONA_FIDE",
+        "outcome" : "REJECTED",
+        "score" : 0.7988,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "3db7920d264ba36a13d8314ca50b2b93f6cffc084529f71e8f6fdbe6e6bd8240"
+      },
+      "BONA_FIDE-9aa1380ee0" : {
+        "item" : "P02-BONA_FIDE-L0-D0-T1",
+        "species" : "BONA_FIDE",
+        "outcome" : "REJECTED",
+        "score" : 0.9083,
+        "decision" : "NOT_LIVE",
+        "failure" : "CHALLENGE_TIMEOUT",
+        "framesSha256" : "cacf7259d3fceb26fb5b9881a9559fdc9ed289e3cd7801e74d605094eb41a893"
+      },
+      "BONA_FIDE-be82d39733" : {
+        "item" : "P03-BONA_FIDE-L0-D0-T2",
+        "species" : "BONA_FIDE",
+        "outcome" : "REJECTED",
+        "score" : 0.901,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "6290329eafcaf885595fbdcbf10bb3590214c1e2c2985e8228760c5f7f0854ce"
+      },
+      "BONA_FIDE-cb30750b11" : {
+        "item" : "P09-BONA_FIDE-L0-D0-T1",
+        "species" : "BONA_FIDE",
+        "outcome" : "REJECTED",
+        "score" : 0.8919,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "032fd773e74b91230dec602bbec4e738096212ac03271b5386b8415ba261b34e"
+      },
+      "BONA_FIDE-cbd6b52d71" : {
+        "item" : "P04-BONA_FIDE-L0-D0-T1",
+        "species" : "BONA_FIDE",
+        "outcome" : "REJECTED",
+        "score" : 0.9005,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "09f5b27091316f162c8fd025fa40301d244aca7df33dbac8561dbe615beaf71c"
+      },
+      "BONA_FIDE-d917f863e8" : {
+        "item" : "P02-BONA_FIDE-L0-D0-T2",
+        "species" : "BONA_FIDE",
+        "outcome" : "REJECTED",
+        "score" : 0.886,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "78db73b0d19f65b9ce10496190ed1a9bb8f6d284fd1e228553c25640fb77f604"
+      },
+      "BONA_FIDE-dbfef647a6" : {
+        "item" : "P10-BONA_FIDE-L0-D0-T1",
+        "species" : "BONA_FIDE",
+        "outcome" : "REJECTED",
+        "score" : 0.8354,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "9e38d5b82f9676e9ad8ff69b1119a4bdf298386c16af6fb3cf10e1f9da4395ed"
+      },
+      "BONA_FIDE-e58d282532" : {
+        "item" : "P05-BONA_FIDE-L0-D0-T1",
+        "species" : "BONA_FIDE",
+        "outcome" : "REJECTED",
+        "score" : 0.895,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "cdfb167279eca4cba1e4429f616f410bd91e9e59cbaf66bb4735810ab3307eb8"
+      },
+      "BONA_FIDE-ec6cbfb808" : {
+        "item" : "P10-BONA_FIDE-L0-D0-T2",
+        "species" : "BONA_FIDE",
+        "outcome" : "REJECTED",
+        "score" : 0.8191,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "0d1da43f6b3194ac49923fdf3f0690990b2577b82bc57c034da0c48db4305af1"
+      },
+      "BONA_FIDE-f4b1e3d332" : {
+        "item" : "P06-BONA_FIDE-L0-D0-T2",
+        "species" : "BONA_FIDE",
+        "outcome" : "REJECTED",
+        "score" : 0.937,
+        "decision" : "NOT_LIVE",
+        "failure" : "CHALLENGE_TIMEOUT",
+        "framesSha256" : "ee7e6ef6640dab0cc38121368e8859688e81792bad3b0619af0624efdbddcb8f"
+      },
+      "BONA_FIDE-ffa15ec69b" : {
+        "item" : "P04-BONA_FIDE-L0-D0-T2",
+        "species" : "BONA_FIDE",
+        "outcome" : "REJECTED",
+        "score" : 0.9457,
+        "decision" : "NOT_LIVE",
+        "failure" : "CHALLENGE_TIMEOUT",
+        "framesSha256" : "b789974b9b275d7c02d7348a11fb7d4d7f0ce5f14f6b94d8ebbe2f9227501e73"
+      },
+      "SIM_LOWRES_REPLAY-0b23d5660a" : {
+        "item" : "P02-SIM_LOWRES_REPLAY-L0-D0-T1",
+        "species" : "SIM_LOWRES_REPLAY",
+        "outcome" : "NO_RESPONSE",
+        "score" : 0.5,
+        "decision" : "NOT_LIVE",
+        "failure" : "POOR_FACE_QUALITY",
+        "framesSha256" : "1046ebe6e123c3b25fc4f82c6f4c4fb617921c65cabd9addde12a40cf48da797"
+      },
+      "SIM_LOWRES_REPLAY-1238e953ac" : {
+        "item" : "P07-SIM_LOWRES_REPLAY-L0-D0-T1",
+        "species" : "SIM_LOWRES_REPLAY",
+        "outcome" : "REJECTED",
+        "score" : 0.892,
+        "decision" : "NOT_LIVE",
+        "failure" : "CHALLENGE_TIMEOUT",
+        "framesSha256" : "6fefbcae3615907b0c4cb2bc9e7485531a300be3ca948dbf1fb8734aec1ddf06"
+      },
+      "SIM_LOWRES_REPLAY-1b466c8193" : {
+        "item" : "P11-SIM_LOWRES_REPLAY-L0-D0-T1",
+        "species" : "SIM_LOWRES_REPLAY",
+        "outcome" : "REJECTED",
+        "score" : 0.3491,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "e22f9eff76df7157ca914bf0c6ac33f60999008786e8f96dd1798fc1615d5700"
+      },
+      "SIM_LOWRES_REPLAY-66b2b11b4a" : {
+        "item" : "P05-SIM_LOWRES_REPLAY-L0-D0-T1",
+        "species" : "SIM_LOWRES_REPLAY",
+        "outcome" : "NO_RESPONSE",
+        "score" : 0.9769,
+        "decision" : "NOT_LIVE",
+        "failure" : "SESSION_TIMEOUT",
+        "framesSha256" : "7e35034a7884ced11660d5e0a0b59db1fdc3eb60082c4d8360c91028aae781af"
+      },
+      "SIM_LOWRES_REPLAY-a870fda4f7" : {
+        "item" : "P12-SIM_LOWRES_REPLAY-L0-D0-T1",
+        "species" : "SIM_LOWRES_REPLAY",
+        "outcome" : "REJECTED",
+        "score" : 0.7298,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "aa63ac284a36c8705683f0a020f02ffa336b30e08c7b39c2bbdc6bb498401ad5"
+      },
+      "SIM_LOWRES_REPLAY-b239e14c19" : {
+        "item" : "P08-SIM_LOWRES_REPLAY-L0-D0-T1",
+        "species" : "SIM_LOWRES_REPLAY",
+        "outcome" : "REJECTED",
+        "score" : 0.9774,
+        "decision" : "NOT_LIVE",
+        "failure" : "CHALLENGE_TIMEOUT",
+        "framesSha256" : "d0808b1c7edf80c97945fe3d955980394ee7823152b7a09d1b0c4a91086d43cc"
+      },
+      "SIM_LOWRES_REPLAY-c05274c7d8" : {
+        "item" : "P01-SIM_LOWRES_REPLAY-L0-D0-T1",
+        "species" : "SIM_LOWRES_REPLAY",
+        "outcome" : "REJECTED",
+        "score" : 0.9207,
+        "decision" : "NOT_LIVE",
+        "failure" : "CHALLENGE_TIMEOUT",
+        "framesSha256" : "676f287196e9f27b1fd7bed6df8fbe15c16a1b1751eb4e1e3e58ebcabe606bde"
+      },
+      "SIM_LOWRES_REPLAY-c7b1bc032d" : {
+        "item" : "P06-SIM_LOWRES_REPLAY-L0-D0-T1",
+        "species" : "SIM_LOWRES_REPLAY",
+        "outcome" : "REJECTED",
+        "score" : 0.9113,
+        "decision" : "NOT_LIVE",
+        "failure" : "CHALLENGE_TIMEOUT",
+        "framesSha256" : "96b5b04a321cdd2bfe8e19169d54806484f243c91a9ed78d43e4a101c517d448"
+      },
+      "SIM_LOWRES_REPLAY-ccd79656e6" : {
+        "item" : "P10-SIM_LOWRES_REPLAY-L0-D0-T1",
+        "species" : "SIM_LOWRES_REPLAY",
+        "outcome" : "REJECTED",
+        "score" : 0.8503,
+        "decision" : "NOT_LIVE",
+        "failure" : "ACTIVE_CHALLENGE_FAILED",
+        "framesSha256" : "83ecdc74f5dc8abc017e8443218290fc72bf8aa2fa45397e6ecabd032ddf1bf7"
+      },
+      "SIM_LOWRES_REPLAY-cf8f90e231" : {
+        "item" : "P04-SIM_LOWRES_REPLAY-L0-D0-T1",
+        "species" : "SIM_LOWRES_REPLAY",
+        "outcome" : "REJECTED",
+        "score" : 0.9303,
+        "decision" : "NOT_LIVE",
+        "failure" : "CHALLENGE_TIMEOUT",
+        "framesSha256" : "a37784231eb320fcc954af8114522a4c8948bd9e4484ea892b98440d85e81bdb"
+      },
+      "SIM_LOWRES_REPLAY-dbb06cbeef" : {
+        "item" : "P09-SIM_LOWRES_REPLAY-L0-D0-T1",
+        "species" : "SIM_LOWRES_REPLAY",
+        "outcome" : "REJECTED",
+        "score" : 0.9611,
+        "decision" : "NOT_LIVE",
+        "failure" : "CHALLENGE_TIMEOUT",
+        "framesSha256" : "63bfaec59c87e725542f421d43c0e21f0308c4d44a42db9d8decf30f3c8d0e6e"
+      },
+      "SIM_LOWRES_REPLAY-e234a9a667" : {
+        "item" : "P03-SIM_LOWRES_REPLAY-L0-D0-T1",
+        "species" : "SIM_LOWRES_REPLAY",
+        "outcome" : "REJECTED",
+        "score" : 0.9707,
+        "decision" : "NOT_LIVE",
+        "failure" : "CHALLENGE_TIMEOUT",
+        "framesSha256" : "89fa64bea6c6454cf8ffcbece2aa53c07df261098d316512f1a64d48f37aba66"
+      },
+      "SIM_PRINT-00308dd634" : {
+        "item" : "P06-SIM_PRINT-L0-D0-T1",
+        "species" : "SIM_PRINT",
+        "outcome" : "REJECTED",
+        "score" : 0.9114,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "48d49a24aae69515fc1179c4758146d4c76bd59dfbc317efeed387e3868bc628"
+      },
+      "SIM_PRINT-051b93952f" : {
+        "item" : "P08-SIM_PRINT-L0-D0-T1",
+        "species" : "SIM_PRINT",
+        "outcome" : "REJECTED",
+        "score" : 0.9034,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "f8135a7a0a7d7437b6cc916eda46f64640ac4ea282d1c4c9f86c589f3a480b0e"
+      },
+      "SIM_PRINT-147da99687" : {
+        "item" : "P01-SIM_PRINT-L0-D0-T1",
+        "species" : "SIM_PRINT",
+        "outcome" : "REJECTED",
+        "score" : 0.9126,
+        "decision" : "NOT_LIVE",
+        "failure" : "CHALLENGE_TIMEOUT",
+        "framesSha256" : "ce79f5c133d579181086cd95cd7ea2afd2067378d40152a12885e7aaa8ef472f"
+      },
+      "SIM_PRINT-1dfbdab018" : {
+        "item" : "P03-SIM_PRINT-L0-D0-T1",
+        "species" : "SIM_PRINT",
+        "outcome" : "REJECTED",
+        "score" : 0.9198,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "35f8ecfd4f30e4028b891e3e365e3340b1010101b7a2a71a8aa8f3f5f526ab87"
+      },
+      "SIM_PRINT-23eea41434" : {
+        "item" : "P05-SIM_PRINT-L0-D0-T1",
+        "species" : "SIM_PRINT",
+        "outcome" : "REJECTED",
+        "score" : 0.8496,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "817578e87c4d64a61d0dd0c1568547ad0d518ffcbf7402b6f43fdae6d13945bb"
+      },
+      "SIM_PRINT-42ec4c7491" : {
+        "item" : "P11-SIM_PRINT-L0-D0-T1",
+        "species" : "SIM_PRINT",
+        "outcome" : "REJECTED",
+        "score" : 0.8377,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "3b2763f303ea8d39ab14c60a2e75f865a22522e45561646b4cc0a54171fb22a1"
+      },
+      "SIM_PRINT-66a7523d4e" : {
+        "item" : "P07-SIM_PRINT-L0-D0-T1",
+        "species" : "SIM_PRINT",
+        "outcome" : "REJECTED",
+        "score" : 0.7997,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "c51a99226360a4ecad159853b2a6631de1a48842d498b8b130971bf4f807a578"
+      },
+      "SIM_PRINT-9d3e22a388" : {
+        "item" : "P09-SIM_PRINT-L0-D0-T1",
+        "species" : "SIM_PRINT",
+        "outcome" : "REJECTED",
+        "score" : 0.8917,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "12541310356217580a24caa74556da64c144869d1ee0cac64d2ef1b19cf83855"
+      },
+      "SIM_PRINT-a417c7416f" : {
+        "item" : "P10-SIM_PRINT-L0-D0-T1",
+        "species" : "SIM_PRINT",
+        "outcome" : "REJECTED",
+        "score" : 0.9125,
+        "decision" : "NOT_LIVE",
+        "failure" : "CHALLENGE_TIMEOUT",
+        "framesSha256" : "23c6c9039ca9a2d7a82113e1516e37d1b529468fdfc90855abeb4b5593fda225"
+      },
+      "SIM_PRINT-a87b59c215" : {
+        "item" : "P02-SIM_PRINT-L0-D0-T1",
+        "species" : "SIM_PRINT",
+        "outcome" : "REJECTED",
+        "score" : 0.1682,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "cc138f8f91ac5d615cf45c6f571cfffd4a2391ded8fd36fd99e46eb61fe2b569"
+      },
+      "SIM_PRINT-ac72031f55" : {
+        "item" : "P04-SIM_PRINT-L0-D0-T1",
+        "species" : "SIM_PRINT",
+        "outcome" : "REJECTED",
+        "score" : 0.6995,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "837ef876451e05b5d654e0b2f78ae5141b867620eaee897c7b5b81ef268f174b"
+      },
+      "SIM_PRINT-e638cff15d" : {
+        "item" : "P12-SIM_PRINT-L0-D0-T1",
+        "species" : "SIM_PRINT",
+        "outcome" : "REJECTED",
+        "score" : 0.9279,
+        "decision" : "NOT_LIVE",
+        "failure" : "CHALLENGE_TIMEOUT",
+        "framesSha256" : "30aefd8c8a6f42945f3f1a3072116873214922366b03d8b5fd994286b245897d"
+      },
+      "SIM_PRINT_CUTOUT-010c71dbb2" : {
+        "item" : "P05-SIM_PRINT_CUTOUT-L0-D0-T1",
+        "species" : "SIM_PRINT_CUTOUT",
+        "outcome" : "REJECTED",
+        "score" : 0.8814,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "ac18711b4ea6c718107cc9c66abdb097c51787f5f557117ae8aa82e92e54df2d"
+      },
+      "SIM_PRINT_CUTOUT-0ac85cae0f" : {
+        "item" : "P09-SIM_PRINT_CUTOUT-L0-D0-T1",
+        "species" : "SIM_PRINT_CUTOUT",
+        "outcome" : "REJECTED",
+        "score" : 0.8429,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "0c4660e5d036dacabb84c512e4d9920e95ba28700934ae5e4f2f966f351ea2d9"
+      },
+      "SIM_PRINT_CUTOUT-177c0dc193" : {
+        "item" : "P10-SIM_PRINT_CUTOUT-L0-D0-T1",
+        "species" : "SIM_PRINT_CUTOUT",
+        "outcome" : "REJECTED",
+        "score" : 0.8721,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "176c52c5aac984f42705f5f46682745a1eaf79a1307a1bfd34e638e74b55b013"
+      },
+      "SIM_PRINT_CUTOUT-313de783bb" : {
+        "item" : "P04-SIM_PRINT_CUTOUT-L0-D0-T1",
+        "species" : "SIM_PRINT_CUTOUT",
+        "outcome" : "REJECTED",
+        "score" : 0.7124,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "5f8020b3ac5222159773f96c2d6b33994910f1e55dae23f25335490cfb9a0e6c"
+      },
+      "SIM_PRINT_CUTOUT-3918365c1e" : {
+        "item" : "P07-SIM_PRINT_CUTOUT-L0-D0-T1",
+        "species" : "SIM_PRINT_CUTOUT",
+        "outcome" : "REJECTED",
+        "score" : 0.8843,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "30588e9b69c1b71fef088b82e688e1fe23bad7c553940816272313d0f79a55c7"
+      },
+      "SIM_PRINT_CUTOUT-64d5045b99" : {
+        "item" : "P01-SIM_PRINT_CUTOUT-L0-D0-T1",
+        "species" : "SIM_PRINT_CUTOUT",
+        "outcome" : "REJECTED",
+        "score" : 0.9259,
+        "decision" : "NOT_LIVE",
+        "failure" : "CHALLENGE_TIMEOUT",
+        "framesSha256" : "1197ed3d41e6c0b43f40f767649b206c5cd5af73cd121ac11074510286745091"
+      },
+      "SIM_PRINT_CUTOUT-6a1bc030e2" : {
+        "item" : "P02-SIM_PRINT_CUTOUT-L0-D0-T1",
+        "species" : "SIM_PRINT_CUTOUT",
+        "outcome" : "REJECTED",
+        "score" : 0.8664,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "9287d71306b1590d9a97cf8bdadc81c015f4114a23a7d622127df5aac9167744"
+      },
+      "SIM_PRINT_CUTOUT-7825647cb5" : {
+        "item" : "P12-SIM_PRINT_CUTOUT-L0-D0-T1",
+        "species" : "SIM_PRINT_CUTOUT",
+        "outcome" : "REJECTED",
+        "score" : 0.9047,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "75c5f1a4ae979f88803956671f91dab30aa7cc91bf020c88a5ca2663ea185e79"
+      },
+      "SIM_PRINT_CUTOUT-8a143feab1" : {
+        "item" : "P08-SIM_PRINT_CUTOUT-L0-D0-T1",
+        "species" : "SIM_PRINT_CUTOUT",
+        "outcome" : "REJECTED",
+        "score" : 0.7651,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "d4d0faabb0700415911d4147ae5115d84fd5901ef436dde7c0d75d25a17b9c40"
+      },
+      "SIM_PRINT_CUTOUT-8e4691c93f" : {
+        "item" : "P06-SIM_PRINT_CUTOUT-L0-D0-T1",
+        "species" : "SIM_PRINT_CUTOUT",
+        "outcome" : "REJECTED",
+        "score" : 0.8807,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "cedfc4fceea2d4ce6e9c2c72c6ce25856fd97cfc9a389f4e910f4a976bdf1b84"
+      },
+      "SIM_PRINT_CUTOUT-90fea8486e" : {
+        "item" : "P11-SIM_PRINT_CUTOUT-L0-D0-T1",
+        "species" : "SIM_PRINT_CUTOUT",
+        "outcome" : "REJECTED",
+        "score" : 0.6638,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "d0c86dc08a75f6898d62051e7ef9ea7f5833e40b4d31a457dbefa2a5ff96a5c5"
+      },
+      "SIM_PRINT_CUTOUT-9c5f21ae03" : {
+        "item" : "P03-SIM_PRINT_CUTOUT-L0-D0-T1",
+        "species" : "SIM_PRINT_CUTOUT",
+        "outcome" : "REJECTED",
+        "score" : 0.93,
+        "decision" : "NOT_LIVE",
+        "failure" : "CHALLENGE_TIMEOUT",
+        "framesSha256" : "b21d7cbad253965d19039b9fad3cae88e8461ee41840063d4e9ea31417541bb2"
+      },
+      "SIM_PRINT_WARPED-0b8f5a998b" : {
+        "item" : "P02-SIM_PRINT_WARPED-L0-D0-T1",
+        "species" : "SIM_PRINT_WARPED",
+        "outcome" : "REJECTED",
+        "score" : 0.8979,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "b0f527a1d1fb657c8ac6db9ca9ea50276d59b75dad457b332d25c9effa4839f6"
+      },
+      "SIM_PRINT_WARPED-10a019bb68" : {
+        "item" : "P05-SIM_PRINT_WARPED-L0-D0-T1",
+        "species" : "SIM_PRINT_WARPED",
+        "outcome" : "REJECTED",
+        "score" : 0.9235,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "ba4e6264b2ab8fc39e2f6e2535364ebdb723d41109bc803da74fb9bff2aced06"
+      },
+      "SIM_PRINT_WARPED-2cec489c8f" : {
+        "item" : "P11-SIM_PRINT_WARPED-L0-D0-T1",
+        "species" : "SIM_PRINT_WARPED",
+        "outcome" : "REJECTED",
+        "score" : 0.9494,
+        "decision" : "NOT_LIVE",
+        "failure" : "CHALLENGE_TIMEOUT",
+        "framesSha256" : "331e97d96dadcecc4ec477e6676bf15304873d2dede1a9402a17841ca4658bc6"
+      },
+      "SIM_PRINT_WARPED-632d43cd79" : {
+        "item" : "P06-SIM_PRINT_WARPED-L0-D0-T1",
+        "species" : "SIM_PRINT_WARPED",
+        "outcome" : "REJECTED",
+        "score" : 0.8593,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "f33718dcd8a00a5d9d4706b60b525e755f7efdce8355d6723e3743140b1ffcdf"
+      },
+      "SIM_PRINT_WARPED-6ce2c5b39c" : {
+        "item" : "P10-SIM_PRINT_WARPED-L0-D0-T1",
+        "species" : "SIM_PRINT_WARPED",
+        "outcome" : "REJECTED",
+        "score" : 0.9345,
+        "decision" : "NOT_LIVE",
+        "failure" : "CHALLENGE_TIMEOUT",
+        "framesSha256" : "42b79e0fad6c96dfdab339a6859abe77f1357a53f460c0e20d3a9e2cae3a6c4d"
+      },
+      "SIM_PRINT_WARPED-7760756fcc" : {
+        "item" : "P12-SIM_PRINT_WARPED-L0-D0-T1",
+        "species" : "SIM_PRINT_WARPED",
+        "outcome" : "REJECTED",
+        "score" : 0.9642,
+        "decision" : "NOT_LIVE",
+        "failure" : "CHALLENGE_TIMEOUT",
+        "framesSha256" : "8558bc8dcd6e099f78089128c7d801592549cffd9c509310e71146042c074943"
+      },
+      "SIM_PRINT_WARPED-a0d8eda21d" : {
+        "item" : "P08-SIM_PRINT_WARPED-L0-D0-T1",
+        "species" : "SIM_PRINT_WARPED",
+        "outcome" : "REJECTED",
+        "score" : 0.9506,
+        "decision" : "NOT_LIVE",
+        "failure" : "CHALLENGE_TIMEOUT",
+        "framesSha256" : "64ffbe4dfb8dbca99e8825ffa2e2cfd5c7c43cedc35071f9425af6ba4ee1c6a3"
+      },
+      "SIM_PRINT_WARPED-a13ee308be" : {
+        "item" : "P04-SIM_PRINT_WARPED-L0-D0-T1",
+        "species" : "SIM_PRINT_WARPED",
+        "outcome" : "REJECTED",
+        "score" : 0.9384,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "e9d066589a04b12c9fcc08e3ffc17d04faa0b30570db2e5bb64e1093d8cd8043"
+      },
+      "SIM_PRINT_WARPED-b836024824" : {
+        "item" : "P03-SIM_PRINT_WARPED-L0-D0-T1",
+        "species" : "SIM_PRINT_WARPED",
+        "outcome" : "REJECTED",
+        "score" : 0.9527,
+        "decision" : "NOT_LIVE",
+        "failure" : "CHALLENGE_TIMEOUT",
+        "framesSha256" : "056fe6ab486b768c83c6ea38a0e9e31f38f4c6a55f84c5e0d8a8a4859a7229a7"
+      },
+      "SIM_PRINT_WARPED-c7727aa81d" : {
+        "item" : "P09-SIM_PRINT_WARPED-L0-D0-T1",
+        "species" : "SIM_PRINT_WARPED",
+        "outcome" : "REJECTED",
+        "score" : 0.9222,
+        "decision" : "NOT_LIVE",
+        "failure" : "CHALLENGE_TIMEOUT",
+        "framesSha256" : "1b65c4199c544b2367e055cd1e76e538c58c4a60a3719a7e833f7877e553dc70"
+      },
+      "SIM_PRINT_WARPED-ce4cc032dc" : {
+        "item" : "P01-SIM_PRINT_WARPED-L0-D0-T1",
+        "species" : "SIM_PRINT_WARPED",
+        "outcome" : "REJECTED",
+        "score" : 0.8822,
+        "decision" : "NOT_LIVE",
+        "failure" : "CHALLENGE_TIMEOUT",
+        "framesSha256" : "bedd1d3b843b0dc1397636ec69a1b30532d4134b8b4225dd7cb7651574695054"
+      },
+      "SIM_PRINT_WARPED-ef37992bd8" : {
+        "item" : "P07-SIM_PRINT_WARPED-L0-D0-T1",
+        "species" : "SIM_PRINT_WARPED",
+        "outcome" : "REJECTED",
+        "score" : 0.9059,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "2c42c77ad02562894a1d1440dbb2502fbf3eb109450e8bb9eba40874a92bc295"
+      },
+      "SIM_REPLAY_JITTER-132875c3d2" : {
+        "item" : "P11-SIM_REPLAY_JITTER-L0-D0-T1",
+        "species" : "SIM_REPLAY_JITTER",
+        "outcome" : "REJECTED",
+        "score" : 0.8402,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "0ca3a7cf2b30bc593fd4c8ceb1ae786698fcafb64b269eb46ac34a193ead36af"
+      },
+      "SIM_REPLAY_JITTER-2856733464" : {
+        "item" : "P07-SIM_REPLAY_JITTER-L0-D0-T1",
+        "species" : "SIM_REPLAY_JITTER",
+        "outcome" : "REJECTED",
+        "score" : 0.8598,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "3ffcccb1a0f9e2610685b29f35626fed1ed1da9c9acfb2c49050ff8828ff9c95"
+      },
+      "SIM_REPLAY_JITTER-46c48a57e7" : {
+        "item" : "P08-SIM_REPLAY_JITTER-L0-D0-T1",
+        "species" : "SIM_REPLAY_JITTER",
+        "outcome" : "REJECTED",
+        "score" : 0.8384,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "91d196b5eb1f9af1d8bde767cfbb843714c0cde5716670759fd200425db1c9e9"
+      },
+      "SIM_REPLAY_JITTER-671caa5496" : {
+        "item" : "P09-SIM_REPLAY_JITTER-L0-D0-T1",
+        "species" : "SIM_REPLAY_JITTER",
+        "outcome" : "REJECTED",
+        "score" : 0.6951,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "9abfbb46f457533cefc59dfca681ac0ca4124bcc21a4d6e5869987e76700ea36"
+      },
+      "SIM_REPLAY_JITTER-69c80ea8d0" : {
+        "item" : "P05-SIM_REPLAY_JITTER-L0-D0-T1",
+        "species" : "SIM_REPLAY_JITTER",
+        "outcome" : "REJECTED",
+        "score" : 0.8655,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "ed429b42cb60d422c2cb8cc6a9b83a9ff105d7e538a18f7894d52b9da0efbaf4"
+      },
+      "SIM_REPLAY_JITTER-8338a379f1" : {
+        "item" : "P03-SIM_REPLAY_JITTER-L0-D0-T1",
+        "species" : "SIM_REPLAY_JITTER",
+        "outcome" : "REJECTED",
+        "score" : 0.8166,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "b8b2a9c136ff8f86b96bffae642b934bba43bf62f84d7b689825f8158d30c4e8"
+      },
+      "SIM_REPLAY_JITTER-8992cf5b73" : {
+        "item" : "P01-SIM_REPLAY_JITTER-L0-D0-T1",
+        "species" : "SIM_REPLAY_JITTER",
+        "outcome" : "REJECTED",
+        "score" : 0.8103,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "faaf7ae634979a959e04927c9333fae0f4fd5fee4d0b123060c8402fc42cb0a2"
+      },
+      "SIM_REPLAY_JITTER-8b7723e0a3" : {
+        "item" : "P04-SIM_REPLAY_JITTER-L0-D0-T1",
+        "species" : "SIM_REPLAY_JITTER",
+        "outcome" : "REJECTED",
+        "score" : 0.8977,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "f42b1fb0f256b684f84122d4920362d7dc827700597b3fc0ad5bc929bd675f6f"
+      },
+      "SIM_REPLAY_JITTER-92e7c969e9" : {
+        "item" : "P12-SIM_REPLAY_JITTER-L0-D0-T1",
+        "species" : "SIM_REPLAY_JITTER",
+        "outcome" : "REJECTED",
+        "score" : 0.8894,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "cf06c09de415596fe420bd6602dba7effe1da30d841bdb3d11b1d4fad7cb6a26"
+      },
+      "SIM_REPLAY_JITTER-a6b67ad9e0" : {
+        "item" : "P10-SIM_REPLAY_JITTER-L0-D0-T1",
+        "species" : "SIM_REPLAY_JITTER",
+        "outcome" : "REJECTED",
+        "score" : 0.6468,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "7dd779dc01f1f3c150efc4e5529f00732f22a66e5ea8889992293751817114ba"
+      },
+      "SIM_REPLAY_JITTER-b9f1907155" : {
+        "item" : "P06-SIM_REPLAY_JITTER-L0-D0-T1",
+        "species" : "SIM_REPLAY_JITTER",
+        "outcome" : "REJECTED",
+        "score" : 0.828,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "d7ef04e10b1a9f9b528ccce12a05b6aacefaa87032eafe29ac5dd14de30e799e"
+      },
+      "SIM_REPLAY_JITTER-faefb372b6" : {
+        "item" : "P02-SIM_REPLAY_JITTER-L0-D0-T1",
+        "species" : "SIM_REPLAY_JITTER",
+        "outcome" : "REJECTED",
+        "score" : 0.8252,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "f7a84465d19f3c18c9df0e789701d6df94b3ac437bfdceb8f33c00f7b3bc803a"
+      },
+      "SIM_SCREEN_PHOTO-10cf921b1d" : {
+        "item" : "P05-SIM_SCREEN_PHOTO-L0-D0-T1",
+        "species" : "SIM_SCREEN_PHOTO",
+        "outcome" : "REJECTED",
+        "score" : 0.8141,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "aff8f0ab4c3ed25ca8e08c43d675bf6d72ef46a68b1e7e599f5869be242d72a2"
+      },
+      "SIM_SCREEN_PHOTO-21b8bbf650" : {
+        "item" : "P11-SIM_SCREEN_PHOTO-L0-D0-T1",
+        "species" : "SIM_SCREEN_PHOTO",
+        "outcome" : "REJECTED",
+        "score" : 0.5343,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "547395b47a866bc93079b7c9ea0349a0c8d73e18716d313cbbe25c263eafece4"
+      },
+      "SIM_SCREEN_PHOTO-22545301da" : {
+        "item" : "P07-SIM_SCREEN_PHOTO-L0-D0-T1",
+        "species" : "SIM_SCREEN_PHOTO",
+        "outcome" : "REJECTED",
+        "score" : 0.7828,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "12be50f33ff14869dc078082fde088a3a1aebc7063d4ad864736656c58fa3d20"
+      },
+      "SIM_SCREEN_PHOTO-25cfaf0c72" : {
+        "item" : "P10-SIM_SCREEN_PHOTO-L0-D0-T1",
+        "species" : "SIM_SCREEN_PHOTO",
+        "outcome" : "REJECTED",
+        "score" : 0.674,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "c0cd915ec178fbc7db9f7eaea36008e741a9e2ced3d52a7bc2f8f6ee4d51ccfc"
+      },
+      "SIM_SCREEN_PHOTO-28f5c5519d" : {
+        "item" : "P12-SIM_SCREEN_PHOTO-L0-D0-T1",
+        "species" : "SIM_SCREEN_PHOTO",
+        "outcome" : "REJECTED",
+        "score" : 0.6995,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "fc58aada75e9bbcc18ec17bb79a60da1e4b95e502b9ab3945c60406935e9e7d8"
+      },
+      "SIM_SCREEN_PHOTO-28f681f8c1" : {
+        "item" : "P04-SIM_SCREEN_PHOTO-L0-D0-T1",
+        "species" : "SIM_SCREEN_PHOTO",
+        "outcome" : "REJECTED",
+        "score" : 0.9458,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "fb355be7355409a23295331f46ce8bd96b9db358c290395deab3a7a1d707e519"
+      },
+      "SIM_SCREEN_PHOTO-649efc88cf" : {
+        "item" : "P02-SIM_SCREEN_PHOTO-L0-D0-T1",
+        "species" : "SIM_SCREEN_PHOTO",
+        "outcome" : "REJECTED",
+        "score" : 0.8818,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "21f3d9e605706d4e1773161d33727f5c273fb7e14e68cb5fe0eadbf4c353d1b1"
+      },
+      "SIM_SCREEN_PHOTO-691a86fc05" : {
+        "item" : "P09-SIM_SCREEN_PHOTO-L0-D0-T1",
+        "species" : "SIM_SCREEN_PHOTO",
+        "outcome" : "REJECTED",
+        "score" : 0.8804,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "a6a1c6dfa129803578e8df0e2b2fa45fcfa09f2849642f0425824d133f772950"
+      },
+      "SIM_SCREEN_PHOTO-7d4c8bfb6b" : {
+        "item" : "P03-SIM_SCREEN_PHOTO-L0-D0-T1",
+        "species" : "SIM_SCREEN_PHOTO",
+        "outcome" : "REJECTED",
+        "score" : 0.8434,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "125e85837a0154967f24fada9ba3fd2e2744c673d27edd0ef1ac07e9d587271c"
+      },
+      "SIM_SCREEN_PHOTO-a615b72abd" : {
+        "item" : "P08-SIM_SCREEN_PHOTO-L0-D0-T1",
+        "species" : "SIM_SCREEN_PHOTO",
+        "outcome" : "REJECTED",
+        "score" : 0.8724,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "11dcd5e3f8697e8d69e8d63d2f0e115e88c7a8b58b20f00715fa7ae7572f84e7"
+      },
+      "SIM_SCREEN_PHOTO-a6c10a8702" : {
+        "item" : "P06-SIM_SCREEN_PHOTO-L0-D0-T1",
+        "species" : "SIM_SCREEN_PHOTO",
+        "outcome" : "REJECTED",
+        "score" : 0.8764,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "4260ce174a1e2a91c35e7e8531ad7054595e6c8ca6932f072641014dfdba8060"
+      },
+      "SIM_SCREEN_PHOTO-a9341fa839" : {
+        "item" : "P01-SIM_SCREEN_PHOTO-L0-D0-T1",
+        "species" : "SIM_SCREEN_PHOTO",
+        "outcome" : "REJECTED",
+        "score" : 0.4393,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "34c284a9b4bc45edda106aa59a3e8903a8509d177a7fe51ba9b38d68fb3f7639"
+      },
+      "SIM_SCREEN_REPLAY-038ce0be1f" : {
+        "item" : "P05-SIM_SCREEN_REPLAY-L0-D0-T1",
+        "species" : "SIM_SCREEN_REPLAY",
+        "outcome" : "REJECTED",
+        "score" : 0.3933,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "95b425a58951760013a65fe18316df28b06509a14d990e6bea1bfb78345e687e"
+      },
+      "SIM_SCREEN_REPLAY-1f6dfd7892" : {
+        "item" : "P06-SIM_SCREEN_REPLAY-L0-D0-T1",
+        "species" : "SIM_SCREEN_REPLAY",
+        "outcome" : "REJECTED",
+        "score" : 0.7969,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "314e8bbadfd5e958a74e48c58e17b5be42d0a16032aab8fb1771d5102731de1f"
+      },
+      "SIM_SCREEN_REPLAY-386e88138c" : {
+        "item" : "P08-SIM_SCREEN_REPLAY-L0-D0-T1",
+        "species" : "SIM_SCREEN_REPLAY",
+        "outcome" : "REJECTED",
+        "score" : 0.8216,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "73e79c282d528004c864ccecc958e52fe42fe34987862648ff1dc90ee382a8db"
+      },
+      "SIM_SCREEN_REPLAY-553bd92a62" : {
+        "item" : "P09-SIM_SCREEN_REPLAY-L0-D0-T1",
+        "species" : "SIM_SCREEN_REPLAY",
+        "outcome" : "REJECTED",
+        "score" : 0.5928,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "0657b64a6921ce8c14681c8797bf2d6b8493fee182edbb8e2878122fed7f58e3"
+      },
+      "SIM_SCREEN_REPLAY-823f6b153a" : {
+        "item" : "P03-SIM_SCREEN_REPLAY-L0-D0-T1",
+        "species" : "SIM_SCREEN_REPLAY",
+        "outcome" : "REJECTED",
+        "score" : 0.756,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "997ffb72d71b24bd4d54c726a91fb09c5dcfb931ac4179f9fb9f877462a00fb1"
+      },
+      "SIM_SCREEN_REPLAY-88c8082131" : {
+        "item" : "P10-SIM_SCREEN_REPLAY-L0-D0-T1",
+        "species" : "SIM_SCREEN_REPLAY",
+        "outcome" : "REJECTED",
+        "score" : 0.6589,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "3b0818dc6e98574b38b1b6975308465960ffad920bc0887c3928fb230308cd4e"
+      },
+      "SIM_SCREEN_REPLAY-a67c214700" : {
+        "item" : "P12-SIM_SCREEN_REPLAY-L0-D0-T1",
+        "species" : "SIM_SCREEN_REPLAY",
+        "outcome" : "REJECTED",
+        "score" : 0.2618,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "f1886bd29436e5c90505a8c581ceb3608249347986c4b23aa9c25faeb15c2a36"
+      },
+      "SIM_SCREEN_REPLAY-bdf899d08b" : {
+        "item" : "P02-SIM_SCREEN_REPLAY-L0-D0-T1",
+        "species" : "SIM_SCREEN_REPLAY",
+        "outcome" : "REJECTED",
+        "score" : 0.8425,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "c80118f3b20af281bb1a4050fc9fe41273fdc1615b4a66c504941b6bae910edd"
+      },
+      "SIM_SCREEN_REPLAY-c4502d75c6" : {
+        "item" : "P11-SIM_SCREEN_REPLAY-L0-D0-T1",
+        "species" : "SIM_SCREEN_REPLAY",
+        "outcome" : "REJECTED",
+        "score" : 0.7288,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "7e4cd398e8528f7b644fc0a8ec423a67758bf458cc032f29a3e6455314535586"
+      },
+      "SIM_SCREEN_REPLAY-d0bff2850c" : {
+        "item" : "P07-SIM_SCREEN_REPLAY-L0-D0-T1",
+        "species" : "SIM_SCREEN_REPLAY",
+        "outcome" : "NO_RESPONSE",
+        "score" : 0.5,
+        "decision" : "NOT_LIVE",
+        "failure" : "FACE_NOT_DETECTED",
+        "framesSha256" : "1c86ab60823b1a0dd8482c469b18d6186da27424f1728431f668780ddcc0244f"
+      },
+      "SIM_SCREEN_REPLAY-e5d7007276" : {
+        "item" : "P01-SIM_SCREEN_REPLAY-L0-D0-T1",
+        "species" : "SIM_SCREEN_REPLAY",
+        "outcome" : "REJECTED",
+        "score" : 0.3766,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "3b040f71125ff990dbf046f73603e58d12241d1bfb38146084dc89fb03410f2a"
+      },
+      "SIM_SCREEN_REPLAY-f9af939b33" : {
+        "item" : "P04-SIM_SCREEN_REPLAY-L0-D0-T1",
+        "species" : "SIM_SCREEN_REPLAY",
+        "outcome" : "REJECTED",
+        "score" : 0.8934,
+        "decision" : "ATTACK",
+        "failure" : "PAD_DETECTED",
+        "framesSha256" : "a6b312ceff05a7c38a9a756a4d9208b24c6b00706340a72c2a0b6c25e2b68338"
+      }
+    }
+  }
+}

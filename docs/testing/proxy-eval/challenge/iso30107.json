@@ -1,0 +1,290 @@
+{
+  "title" : "mosip-vivid PROXY self-evaluation, challenge replay (prompt-ignoring recordings; bona fide cannot answer)",
+  "context" : {
+    "corpus" : "proxy-eval-2026-10-24",
+    "mode" : "challenge-replay",
+    "workflow" : "RESIDENT",
+    "commit" : "3587dbb+uncommitted",
+    "attacks" : "digital-simulation-not-physical-PAI",
+    "scores" : "proxy-eval/out/scores_challenge.jsonl"
+  },
+  "threshold" : 0.8,
+  "bonaFideCount" : 35,
+  "attackCount" : 186,
+  "confidenceInterval" : "Wilson score interval, 95 % (z = 1.96)",
+  "apcerBySpecies" : {
+    "SIM_PRINT" : {
+      "apcer" : 0.0,
+      "count" : 36,
+      "errors" : 0,
+      "ci95" : [ 0.0, 0.09641862859446367 ]
+    },
+    "SIM_PRINT_CUTOUT" : {
+      "apcer" : 0.0,
+      "count" : 35,
+      "errors" : 0,
+      "ci95" : [ 0.0, 0.09890099232440402 ]
+    },
+    "SIM_PRINT_WARPED" : {
+      "apcer" : 0.0,
+      "count" : 37,
+      "errors" : 0,
+      "ci95" : [ 0.0, 0.09405782583720251 ]
+    },
+    "SIM_SCREEN_PHOTO" : {
+      "apcer" : 0.0,
+      "count" : 39,
+      "errors" : 0,
+      "ci95" : [ 0.0, 0.08966685370757144 ]
+    },
+    "SIM_SCREEN_REPLAY" : {
+      "apcer" : 0.0,
+      "count" : 39,
+      "errors" : 0,
+      "ci95" : [ 0.0, 0.08966685370757144 ]
+    }
+  },
+  "maxApcer" : 0.0,
+  "worstSpecies" : "SIM_PRINT",
+  "maxApcerCi95" : [ 0.0, 0.09641862859446367 ],
+  "bpcer" : 1.0,
+  "bpcerErrors" : 35,
+  "bpcerCi95" : [ 0.9010990076755959, 1.0 ],
+  "acer" : 0.5,
+  "bpcerAtApcer5" : 1.0,
+  "bpcerAtApcer5Threshold" : 4.9E-324,
+  "bpcerAtApcer10" : 1.0,
+  "bpcerAtApcer10Threshold" : 4.9E-324,
+  "apnrr" : 0.046153846153846156,
+  "bpnrr" : 0.10256410256410256,
+  "nonResponse" : {
+    "definition" : "Presentations with no PAD decision: decision ERROR or failure in [CAMERA_UNAVAILABLE, DEVICE_CONNECTION_FAILURE, DEVICE_UNAVAILABLE, ENGINE_ERROR, FACE_NOT_DETECTED, INVALID_FRAME_DATA, MULTIPLE_FACES, POOR_FACE_QUALITY, SESSION_TIMEOUT]. Excluded from APCER/BPCER. CANCELLED sessions are excluded from every rate.",
+    "attack" : {
+      "rate" : 0.046153846153846156,
+      "count" : 9,
+      "of" : 195,
+      "ci95" : [ 0.024468892331212376, 0.08537469335878062 ]
+    },
+    "bonaFide" : {
+      "rate" : 0.10256410256410256,
+      "count" : 4,
+      "of" : 39,
+      "ci95" : [ 0.04061331344668381, 0.23578854462856527 ]
+    },
+    "bySpecies" : {
+      "SIM_PRINT" : {
+        "rate" : 0.07692307692307693,
+        "count" : 3,
+        "of" : 39,
+        "ci95" : [ 0.02650739530377974, 0.20321071167954996 ]
+      },
+      "SIM_PRINT_CUTOUT" : {
+        "rate" : 0.10256410256410256,
+        "count" : 4,
+        "of" : 39,
+        "ci95" : [ 0.04061331344668381, 0.23578854462856527 ]
+      },
+      "SIM_PRINT_WARPED" : {
+        "rate" : 0.05128205128205128,
+        "count" : 2,
+        "of" : 39,
+        "ci95" : [ 0.014177955415274113, 0.16885640047613612 ]
+      },
+      "SIM_SCREEN_PHOTO" : {
+        "rate" : 0.0,
+        "count" : 0,
+        "of" : 39,
+        "ci95" : [ 0.0, 0.08966685370757144 ]
+      },
+      "SIM_SCREEN_REPLAY" : {
+        "rate" : 0.0,
+        "count" : 0,
+        "of" : 39,
+        "ci95" : [ 0.0, 0.08966685370757144 ]
+      }
+    }
+  },
+  "slices" : {
+    "minSubjects" : 5,
+    "note" : "Slices with fewer than minSubjects distinct participants are suppressed and expose no counts.",
+    "groups" : {
+      "device" : [ {
+        "value" : "D0",
+        "suppressed" : false,
+        "subjects" : 39,
+        "bpcer" : {
+          "rate" : 1.0,
+          "count" : 35,
+          "of" : 35,
+          "ci95" : [ 0.9010990076755959, 1.0 ]
+        },
+        "bpnrr" : {
+          "rate" : 0.10256410256410256,
+          "count" : 4,
+          "of" : 39,
+          "ci95" : [ 0.04061331344668381, 0.23578854462856527 ]
+        },
+        "bpcerRatioToLowest" : 1.0,
+        "moreThanTwiceLowest" : false,
+        "apcerBySpecies" : {
+          "SIM_PRINT" : {
+            "rate" : 0.0,
+            "count" : 0,
+            "of" : 36,
+            "ci95" : [ 0.0, 0.09641862859446367 ]
+          },
+          "SIM_PRINT_CUTOUT" : {
+            "rate" : 0.0,
+            "count" : 0,
+            "of" : 35,
+            "ci95" : [ 0.0, 0.09890099232440402 ]
+          },
+          "SIM_PRINT_WARPED" : {
+            "rate" : 0.0,
+            "count" : 0,
+            "of" : 37,
+            "ci95" : [ 0.0, 0.09405782583720251 ]
+          },
+          "SIM_SCREEN_PHOTO" : {
+            "rate" : 0.0,
+            "count" : 0,
+            "of" : 39,
+            "ci95" : [ 0.0, 0.08966685370757144 ]
+          },
+          "SIM_SCREEN_REPLAY" : {
+            "rate" : 0.0,
+            "count" : 0,
+            "of" : 39,
+            "ci95" : [ 0.0, 0.08966685370757144 ]
+          }
+        },
+        "apnrrBySpecies" : {
+          "SIM_PRINT" : {
+            "rate" : 0.07692307692307693,
+            "count" : 3,
+            "of" : 39,
+            "ci95" : [ 0.02650739530377974, 0.20321071167954996 ]
+          },
+          "SIM_PRINT_CUTOUT" : {
+            "rate" : 0.10256410256410256,
+            "count" : 4,
+            "of" : 39,
+            "ci95" : [ 0.04061331344668381, 0.23578854462856527 ]
+          },
+          "SIM_PRINT_WARPED" : {
+            "rate" : 0.05128205128205128,
+            "count" : 2,
+            "of" : 39,
+            "ci95" : [ 0.014177955415274113, 0.16885640047613612 ]
+          },
+          "SIM_SCREEN_PHOTO" : {
+            "rate" : 0.0,
+            "count" : 0,
+            "of" : 39,
+            "ci95" : [ 0.0, 0.08966685370757144 ]
+          },
+          "SIM_SCREEN_REPLAY" : {
+            "rate" : 0.0,
+            "count" : 0,
+            "of" : 39,
+            "ci95" : [ 0.0, 0.08966685370757144 ]
+          }
+        }
+      } ],
+      "lighting" : [ {
+        "value" : "L0",
+        "suppressed" : false,
+        "subjects" : 39,
+        "bpcer" : {
+          "rate" : 1.0,
+          "count" : 35,
+          "of" : 35,
+          "ci95" : [ 0.9010990076755959, 1.0 ]
+        },
+        "bpnrr" : {
+          "rate" : 0.10256410256410256,
+          "count" : 4,
+          "of" : 39,
+          "ci95" : [ 0.04061331344668381, 0.23578854462856527 ]
+        },
+        "bpcerRatioToLowest" : 1.0,
+        "moreThanTwiceLowest" : false,
+        "apcerBySpecies" : {
+          "SIM_PRINT" : {
+            "rate" : 0.0,
+            "count" : 0,
+            "of" : 36,
+            "ci95" : [ 0.0, 0.09641862859446367 ]
+          },
+          "SIM_PRINT_CUTOUT" : {
+            "rate" : 0.0,
+            "count" : 0,
+            "of" : 35,
+            "ci95" : [ 0.0, 0.09890099232440402 ]
+          },
+          "SIM_PRINT_WARPED" : {
+            "rate" : 0.0,
+            "count" : 0,
+            "of" : 37,
+            "ci95" : [ 0.0, 0.09405782583720251 ]
+          },
+          "SIM_SCREEN_PHOTO" : {
+            "rate" : 0.0,
+            "count" : 0,
+            "of" : 39,
+            "ci95" : [ 0.0, 0.08966685370757144 ]
+          },
+          "SIM_SCREEN_REPLAY" : {
+            "rate" : 0.0,
+            "count" : 0,
+            "of" : 39,
+            "ci95" : [ 0.0, 0.08966685370757144 ]
+          }
+        },
+        "apnrrBySpecies" : {
+          "SIM_PRINT" : {
+            "rate" : 0.07692307692307693,
+            "count" : 3,
+            "of" : 39,
+            "ci95" : [ 0.02650739530377974, 0.20321071167954996 ]
+          },
+          "SIM_PRINT_CUTOUT" : {
+            "rate" : 0.10256410256410256,
+            "count" : 4,
+            "of" : 39,
+            "ci95" : [ 0.04061331344668381, 0.23578854462856527 ]
+          },
+          "SIM_PRINT_WARPED" : {
+            "rate" : 0.05128205128205128,
+            "count" : 2,
+            "of" : 39,
+            "ci95" : [ 0.014177955415274113, 0.16885640047613612 ]
+          },
+          "SIM_SCREEN_PHOTO" : {
+            "rate" : 0.0,
+            "count" : 0,
+            "of" : 39,
+            "ci95" : [ 0.0, 0.08966685370757144 ]
+          },
+          "SIM_SCREEN_REPLAY" : {
+            "rate" : 0.0,
+            "count" : 0,
+            "of" : 39,
+            "ci95" : [ 0.0, 0.08966685370757144 ]
+          }
+        }
+      } ]
+    }
+  },
+  "eer" : 0.5,
+  "eerThreshold" : 0.0,
+  "detCurve" : [ {
+    "threshold" : 0.0,
+    "apcer" : 1.0,
+    "bpcer" : 0.0
+  }, {
+    "threshold" : 4.9E-324,
+    "apcer" : 0.0,
+    "bpcer" : 1.0
+  } ]
+}

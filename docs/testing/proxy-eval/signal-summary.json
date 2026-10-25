@@ -1,0 +1,299 @@
+{
+ "note": "Per-signal attack probability, confidence-weighted mean over the frames of each item (FrameTraceMain, production engine, detector threshold 0.7). auc = P(attack item mean > bona fide item mean). vetoItems = items with at least one frame at p>=0.9 and confidence>=0.5 (the fusion veto rule). parallax is measured on natural motion after a NOD challenge is signalled at 2.5 s, not on a real challenge response.",
+ "summary": {
+  "cnn_texture": {
+   "BONA_FIDE": {
+    "n": 39,
+    "mean": 0.030977249418561854,
+    "sd": 0.13386055702939165,
+    "p_ge_05": 1,
+    "veto_items": 2
+   },
+   "SIM_PRINT": {
+    "n": 39,
+    "mean": 0.16161239953394066,
+    "sd": 0.27096250346645706,
+    "auc": 0.8402366863905325,
+    "p_ge_05": 5,
+    "veto_items": 7
+   },
+   "SIM_PRINT_CUTOUT": {
+    "n": 39,
+    "mean": 0.1562192249472178,
+    "sd": 0.2128266521382653,
+    "auc": 0.8803418803418803,
+    "p_ge_05": 4,
+    "veto_items": 6
+   },
+   "SIM_PRINT_WARPED": {
+    "n": 39,
+    "mean": 0.17303937549388748,
+    "sd": 0.2757072655685343,
+    "auc": 0.8685075608152532,
+    "p_ge_05": 4,
+    "veto_items": 6
+   },
+   "SIM_SCREEN_PHOTO": {
+    "n": 39,
+    "mean": 0.6386299570489551,
+    "sd": 0.35778327114738984,
+    "auc": 0.9690992767915845,
+    "p_ge_05": 25,
+    "veto_items": 28
+   },
+   "SIM_SCREEN_REPLAY": {
+    "n": 39,
+    "mean": 0.501241029449245,
+    "sd": 0.36198197392043036,
+    "auc": 0.9592373438527285,
+    "p_ge_05": 19,
+    "veto_items": 28
+   }
+  },
+  "moire": {
+   "BONA_FIDE": {
+    "n": 39,
+    "mean": 0.03361607097769319,
+    "sd": 0.013661984291024871,
+    "p_ge_05": 0,
+    "veto_items": 0
+   },
+   "SIM_PRINT": {
+    "n": 39,
+    "mean": 0.03369615630942753,
+    "sd": 0.017890455769941183,
+    "auc": 0.4720578566732413,
+    "p_ge_05": 0,
+    "veto_items": 0
+   },
+   "SIM_PRINT_CUTOUT": {
+    "n": 39,
+    "mean": 0.03418355726367753,
+    "sd": 0.016234478749497797,
+    "auc": 0.4891518737672584,
+    "p_ge_05": 0,
+    "veto_items": 0
+   },
+   "SIM_PRINT_WARPED": {
+    "n": 39,
+    "mean": 0.035178970412778926,
+    "sd": 0.023167794695334008,
+    "auc": 0.4536489151873767,
+    "p_ge_05": 0,
+    "veto_items": 0
+   },
+   "SIM_SCREEN_PHOTO": {
+    "n": 39,
+    "mean": 0.06138150507475196,
+    "sd": 0.10120732839112463,
+    "auc": 0.47666009204470744,
+    "p_ge_05": 1,
+    "veto_items": 0
+   },
+   "SIM_SCREEN_REPLAY": {
+    "n": 39,
+    "mean": 0.06371955818658316,
+    "sd": 0.10572812701783124,
+    "auc": 0.4700854700854701,
+    "p_ge_05": 1,
+    "veto_items": 0
+   }
+  },
+  "color_stats": {
+   "BONA_FIDE": {
+    "n": 39,
+    "mean": 0.049156692479235126,
+    "sd": 0.10242316197474048,
+    "p_ge_05": 1,
+    "veto_items": 0
+   },
+   "SIM_PRINT": {
+    "n": 39,
+    "mean": 0.02546079247710083,
+    "sd": 0.031139984618786136,
+    "auc": 0.4648257725180802,
+    "p_ge_05": 0,
+    "veto_items": 0
+   },
+   "SIM_PRINT_CUTOUT": {
+    "n": 39,
+    "mean": 0.028333579324999355,
+    "sd": 0.03420568248179714,
+    "auc": 0.4700854700854701,
+    "p_ge_05": 0,
+    "veto_items": 0
+   },
+   "SIM_PRINT_WARPED": {
+    "n": 39,
+    "mean": 0.02818255541415808,
+    "sd": 0.03647132454461661,
+    "auc": 0.4740302432610125,
+    "p_ge_05": 0,
+    "veto_items": 0
+   },
+   "SIM_SCREEN_PHOTO": {
+    "n": 39,
+    "mean": 0.14119545432811526,
+    "sd": 0.18199325181231968,
+    "auc": 0.7679158448389217,
+    "p_ge_05": 2,
+    "veto_items": 1
+   },
+   "SIM_SCREEN_REPLAY": {
+    "n": 39,
+    "mean": 0.12898413012123436,
+    "sd": 0.17244610670348773,
+    "auc": 0.7626561472715319,
+    "p_ge_05": 1,
+    "veto_items": 1
+   }
+  },
+  "rppg": {
+   "BONA_FIDE": {
+    "n": 39,
+    "mean": 0.6667708436207607,
+    "sd": 0.17646119497528293,
+    "p_ge_05": 32,
+    "veto_items": 3
+   },
+   "SIM_PRINT": {
+    "n": 39,
+    "mean": 0.7100064485619746,
+    "sd": 0.1750490587406935,
+    "auc": 0.591715976331361,
+    "p_ge_05": 35,
+    "veto_items": 4
+   },
+   "SIM_PRINT_CUTOUT": {
+    "n": 39,
+    "mean": 0.7184191150174952,
+    "sd": 0.16807409433807421,
+    "auc": 0.6127547666009204,
+    "p_ge_05": 35,
+    "veto_items": 0
+   },
+   "SIM_PRINT_WARPED": {
+    "n": 39,
+    "mean": 0.6540488752380041,
+    "sd": 0.21597302898719056,
+    "auc": 0.5187376725838264,
+    "p_ge_05": 31,
+    "veto_items": 2
+   },
+   "SIM_SCREEN_PHOTO": {
+    "n": 39,
+    "mean": 0.46283430011464405,
+    "sd": 0.32934420279724574,
+    "auc": 0.34779750164365547,
+    "p_ge_05": 19,
+    "veto_items": 5
+   },
+   "SIM_SCREEN_REPLAY": {
+    "n": 39,
+    "mean": 0.642788366866676,
+    "sd": 0.22963993763345739,
+    "auc": 0.5095332018408941,
+    "p_ge_05": 30,
+    "veto_items": 2
+   }
+  },
+  "parallax": {
+   "BONA_FIDE": {
+    "n": 39,
+    "mean": 0.2569792561323571,
+    "sd": 0.21355964389083507,
+    "p_ge_05": 6,
+    "veto_items": 0
+   },
+   "SIM_PRINT": {
+    "n": 39,
+    "mean": 0.3937409342564287,
+    "sd": 0.29815538557108756,
+    "auc": 0.6278763971071664,
+    "p_ge_05": 12,
+    "veto_items": 1
+   },
+   "SIM_PRINT_CUTOUT": {
+    "n": 39,
+    "mean": 0.36157433203356093,
+    "sd": 0.2664367249049697,
+    "auc": 0.6101249178172256,
+    "p_ge_05": 11,
+    "veto_items": 0
+   },
+   "SIM_PRINT_WARPED": {
+    "n": 39,
+    "mean": 0.41221735674371585,
+    "sd": 0.2820371765389743,
+    "auc": 0.6640368178829718,
+    "p_ge_05": 15,
+    "veto_items": 1
+   },
+   "SIM_SCREEN_PHOTO": {
+    "n": 39,
+    "mean": 0.5051240034117045,
+    "sd": 0.38144335755464565,
+    "auc": 0.6640368178829718,
+    "p_ge_05": 19,
+    "veto_items": 0
+   },
+   "SIM_SCREEN_REPLAY": {
+    "n": 39,
+    "mean": 0.2024375079791739,
+    "sd": 0.1953864692354868,
+    "auc": 0.4188034188034188,
+    "p_ge_05": 4,
+    "veto_items": 0
+   }
+  },
+  "injection": {
+   "BONA_FIDE": {
+    "n": 39,
+    "mean": 0.0,
+    "sd": 0.0,
+    "p_ge_05": 0,
+    "veto_items": 0
+   },
+   "SIM_PRINT": {
+    "n": 39,
+    "mean": 0.0,
+    "sd": 0.0,
+    "auc": 0.5,
+    "p_ge_05": 0,
+    "veto_items": 0
+   },
+   "SIM_PRINT_CUTOUT": {
+    "n": 39,
+    "mean": 0.0,
+    "sd": 0.0,
+    "auc": 0.5,
+    "p_ge_05": 0,
+    "veto_items": 0
+   },
+   "SIM_PRINT_WARPED": {
+    "n": 39,
+    "mean": 0.0,
+    "sd": 0.0,
+    "auc": 0.5,
+    "p_ge_05": 0,
+    "veto_items": 0
+   },
+   "SIM_SCREEN_PHOTO": {
+    "n": 39,
+    "mean": 0.0,
+    "sd": 0.0,
+    "auc": 0.5,
+    "p_ge_05": 0,
+    "veto_items": 0
+   },
+   "SIM_SCREEN_REPLAY": {
+    "n": 39,
+    "mean": 0.0,
+    "sd": 0.0,
+    "auc": 0.5,
+    "p_ge_05": 0,
+    "veto_items": 0
+   }
+  }
+ }
+}

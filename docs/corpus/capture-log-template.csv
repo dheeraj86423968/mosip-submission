@@ -1,0 +1,8 @@
+# mosip-vivid PAD corpus capture log. Keep the filled log ONLY on the encrypted corpus volume; never commit it. See docs/corpus-ethics.md.
+# session_date=YYYY-MM-DD,protocol_version=,approval_ref=,site=,custodians=,capture_operator=
+# Values: label=BONA_FIDE or a PAI species (corpus-ethics.md s5); attack_potential=NA|LEVEL1|LEVEL2|LEVEL3; lighting=L1|L2|L3; device=D1|D2|D3; consent_*=Y|N; mst_band=1-3|4-7|8-10|blank; age_band=18-29|30-49|50+; Y/N/NA for checks; fused_score filled after scoring. The four P01 rows are illustrative - delete them.
+item_id,participant_id,label,attack_class,attack_potential,lighting,device,take,duration_s,consent_eval,consent_instruments,consent_training,consent_deepfake,consent_demographics,mst_band,age_band,gender_self,eyewear,head_covering,facial_hair,attacker_id,instrument_destroyed,phone_purged,audio_stripped,metadata_stripped,session_outcome,fused_score,notes
+P01-BONA_FIDE-L1-D1-T1,P01,BONA_FIDE,NONE,NA,L1,D1,1,10,Y,Y,N,N,Y,4-7,18-29,,none,none,none,,NA,Y,Y,Y,,,
+P01-PRINT_A4_MATTE-L1-D1-T1,P01,PRINT_A4_MATTE,PRINT,LEVEL1,L1,D1,1,10,Y,Y,N,N,Y,4-7,18-29,,none,none,none,P01,Y,Y,Y,Y,,,
+P01-PRINT_CUTOUT_EYES-L1-D1-T1,P01,PRINT_CUTOUT_EYES,PRINT,LEVEL1,L1,D1,1,10,Y,Y,N,N,Y,4-7,18-29,,none,none,none,P02,Y,Y,Y,Y,,,attacker is team member P02
+P01-VIDEO_REPLAY_PHONE-L2-D2-T1,P01,VIDEO_REPLAY_PHONE,VIDEO_REPLAY,LEVEL1,L2,D2,1,10,Y,Y,N,N,Y,4-7,18-29,,none,none,none,P01,Y,Y,Y,Y,,,
