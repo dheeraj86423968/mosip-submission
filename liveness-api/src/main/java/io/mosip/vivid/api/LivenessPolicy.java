@@ -61,9 +61,9 @@ public final class LivenessPolicy {
     public static LivenessPolicy defaults(Workflow w) {
         Builder b = builder(w).policyVersion("builtin-1.0");
         switch (w) {
-            case RESIDENT -> b.passiveThreshold(0.80).activeMode(ActiveMode.ON_LOW_CONFIDENCE).minChallenges(2).maxChallenges(3).maxRetries(3).onMaxRetries(OnMaxRetries.ASSISTED_CAPTURE_WITH_SUPERVISOR);
-            case OPERATOR -> b.passiveThreshold(0.85).activeMode(ActiveMode.ALWAYS).minChallenges(1).maxChallenges(2).maxRetries(3).onMaxRetries(OnMaxRetries.LOCK_AND_ALERT);
-            case SUPERVISOR -> b.passiveThreshold(0.90).activeMode(ActiveMode.ALWAYS).minChallenges(2).maxChallenges(3).maxRetries(2).onMaxRetries(OnMaxRetries.LOCK_AND_ALERT);
+            case RESIDENT: b.passiveThreshold(0.80).activeMode(ActiveMode.ALWAYS).minChallenges(2).maxChallenges(3).maxRetries(3).onMaxRetries(OnMaxRetries.ASSISTED_CAPTURE_WITH_SUPERVISOR); break;
+            case OPERATOR: b.passiveThreshold(0.85).activeMode(ActiveMode.ALWAYS).minChallenges(2).maxChallenges(3).maxRetries(3).onMaxRetries(OnMaxRetries.LOCK_AND_ALERT); break;
+            case SUPERVISOR: b.passiveThreshold(0.90).activeMode(ActiveMode.ALWAYS).minChallenges(3).maxChallenges(3).maxRetries(2).onMaxRetries(OnMaxRetries.LOCK_AND_ALERT); break;
         }
         return b.build();
     }
@@ -97,10 +97,10 @@ public final class LivenessPolicy {
         private String policyVersion; private Workflow workflow; private boolean enabled = true;
         private double passiveThreshold = 0.8, padHardThreshold = 0.9; private long passiveWindowMillis = 2500; private int passiveMinFrames = 8;
         private ActiveMode activeMode = ActiveMode.ON_LOW_CONFIDENCE; private int minChallenges = 2, maxChallenges = 3;
-        private Set<ChallengeType> challengePool = EnumSet.of(ChallengeType.BLINK, ChallengeType.SMILE, ChallengeType.TURN_LEFT, ChallengeType.TURN_RIGHT, ChallengeType.NOD);
+        private Set<ChallengeType> challengePool = EnumSet.of(ChallengeType.BLINK, ChallengeType.SMILE, ChallengeType.TURN_LEFT, ChallengeType.TURN_RIGHT, ChallengeType.OPEN_MOUTH);
         private Set<ChallengeType> accessibilityPool = EnumSet.of(ChallengeType.BLINK, ChallengeType.SMILE, ChallengeType.HOLD_STILL);
         private boolean requireDepthRevealingChallenge = true; private long challengeTimeoutMillis = 8000;
-        private long minActionLatencyMillis = 150, maxActionLatencyMillis = 6000; private int maxRetries = 3;
+        private long minActionLatencyMillis = 150, maxActionLatencyMillis = 3000; private int maxRetries = 3;
         private OnMaxRetries onMaxRetries = OnMaxRetries.RETRY_ONLY; private long sessionTimeoutMillis = 60000;
         private double minFaceQuality = 0.4, identityDriftThreshold = 0.45; private Map<String, Double> signalWeights = new java.util.HashMap<>();
         private boolean requireIdentityContinuity = true;

@@ -1,0 +1,95 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://mosip.io/vivid/policy-schema-1.0.json",
+  "title": "MOSIP Vivid liveness policy",
+  "description": "Per-workflow face liveness and presentation-attack-detection policy for the MOSIP Registration Clients. Every field except schemaVersion is optional; absent fields keep the compiled-in defaults. Unknown properties are rejected.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion"],
+  "properties": {
+    "schemaVersion": { "type": "string", "pattern": "^1\\.[0-9]+$", "description": "Schema version; major version must be 1." },
+    "version": { "type": "string", "description": "Free-form version label of this policy instance, surfaced in audit and in LivenessResult.policyVersion." },
+    "workflows": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "RESIDENT": { "$ref": "#/definitions/workflow" },
+        "OPERATOR": { "$ref": "#/definitions/workflow" },
+        "SUPERVISOR": { "$ref": "#/definitions/workflow" }
+      }
+    },
+    "device": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "minFps": { "type": "integer", "minimum": 1, "description": "Frame rate below which the device is reported as degraded." },
+        "reconnectAttempts": { "type": "integer", "minimum": 0 },
+        "stallTimeoutMs": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "diagnostics": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "mode": { "type": "string", "enum": ["OFF", "SUPERVISOR_ONLY", "ON"] }
+      }
+    }
+  },
+  "definitions": {
+    "challengeType": {
+      "type": "string",
+      "enum": ["BLINK", "BLINK_TWICE", "SMILE", "OPEN_MOUTH", "RAISE_EYEBROWS", "TURN_LEFT", "TURN_RIGHT", "LOOK_UP", "LOOK_DOWN", "NOD", "HOLD_STILL"]
+    },
+    "unit": { "type": "number", "minimum": 0, "maximum": 1 },
+    "workflow": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "enabled": { "type": "boolean", "description": "Whether liveness is enforced for this workflow." },
+        "passiveThreshold": { "$ref": "#/definitions/unit", "description": "Fused liveness score (1 = live) required to pass passively." },
+        "padHardThreshold": { "$ref": "#/definitions/unit", "description": "Attack probability at which a single confident signal vetoes the session." },
+        "passiveWindowMs": { "type": "integer", "minimum": 1 },
+        "passiveMinFrames": { "type": "integer", "minimum": 1 },
+        "active": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "mode": { "type": "string", "enum": ["NEVER", "ON_LOW_CONFIDENCE", "ALWAYS"] },
+            "minChallenges": { "type": "integer", "minimum": 0 },
+            "maxChallenges": { "type": "integer", "minimum": 0 },
+            "pool": { "type": "array", "items": { "$ref": "#/definitions/challengeType" }, "uniqueItems": true },
+            "accessibilityPool": { "type": "array", "items": { "$ref": "#/definitions/challengeType" }, "uniqueItems": true, "description": "Pool used when the operator marks assisted capture; motor challenges are skipped automatically." },
+            "requireDepthRevealing": { "type": "boolean", "description": "Guarantee at least one head-motion challenge per sequence so the parallax signal can run." },
+            "timeoutMs": { "type": "integer", "minimum": 1 },
+            "minActionLatencyMs": { "type": "integer", "minimum": 0, "description": "Reaction faster than this is treated as replay or injection." },
+            "maxActionLatencyMs": { "type": "integer", "minimum": 1 }
+          }
+        },
+        "maxRetries": { "type": "integer", "minimum": 1, "description": "Total attempts before the session locks." },
+        "onMaxRetries": { "type": "string", "enum": ["RETRY_ONLY", "LOCK_AND_ALERT", "ASSISTED_CAPTURE_WITH_SUPERVISOR", "FALLBACK_TO_EXCEPTION_FLOW"] },
+        "sessionTimeoutMs": { "type": "integer", "minimum": 1, "description": "Wall-clock budget per attempt." },
+        "minFaceQuality": { "$ref": "#/definitions/unit" },
+        "identity": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "required": { "type": "boolean" },
+            "driftThreshold": { "type": "number", "exclusiveMinimum": 0, "maximum": 2, "description": "Cosine distance from the session anchor above which identity continuity fails." }
+          }
+        },
+        "signals": {
+          "type": "object",
+          "description": "Fusion settings keyed by signal id (cnn_texture, moire, color_stats, rppg, parallax, challenge_timing, identity, depth, ir, injection).",
+          "additionalProperties": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "enabled": { "type": "boolean" },
+              "weight": { "type": "number", "minimum": 0, "maximum": 10 }
+            }
+          }
+        }
+      }
+    }
+  }
+}

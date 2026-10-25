@@ -1,0 +1,54 @@
+{
+  "schemaVersion": "1.0",
+  "version": "builtin-1.0",
+  "workflows": {
+    "RESIDENT": {
+      "enabled": true,
+      "passiveThreshold": 0.80,
+      "padHardThreshold": 0.90,
+      "passiveWindowMs": 2500,
+      "passiveMinFrames": 8,
+      "active": {
+        "mode": "ALWAYS",
+        "minChallenges": 2,
+        "maxChallenges": 3,
+        "pool": ["BLINK", "SMILE", "TURN_LEFT", "TURN_RIGHT", "OPEN_MOUTH"],
+        "accessibilityPool": ["BLINK", "SMILE", "HOLD_STILL"],
+        "requireDepthRevealing": true,
+        "timeoutMs": 8000,
+        "minActionLatencyMs": 150,
+        "maxActionLatencyMs": 3000
+      },
+      "maxRetries": 3,
+      "onMaxRetries": "ASSISTED_CAPTURE_WITH_SUPERVISOR",
+      "sessionTimeoutMs": 60000,
+      "minFaceQuality": 0.4,
+      "identity": { "required": true, "driftThreshold": 0.45 },
+      "signals": {
+        "cnn_texture": { "enabled": true, "weight": 1.0 },
+        "moire": { "enabled": true, "weight": 1.0 },
+        "color_stats": { "enabled": true, "weight": 0.6 },
+        "rppg": { "enabled": true, "weight": 0.8 },
+        "parallax": { "enabled": true, "weight": 1.2 },
+        "challenge_timing": { "enabled": true, "weight": 1.0 },
+        "identity": { "enabled": true, "weight": 1.0 }
+      }
+    },
+    "OPERATOR": {
+      "enabled": true,
+      "passiveThreshold": 0.85,
+      "active": { "mode": "ALWAYS", "minChallenges": 2, "maxChallenges": 3 },
+      "maxRetries": 3,
+      "onMaxRetries": "LOCK_AND_ALERT"
+    },
+    "SUPERVISOR": {
+      "enabled": true,
+      "passiveThreshold": 0.90,
+      "active": { "mode": "ALWAYS", "minChallenges": 3, "maxChallenges": 3 },
+      "maxRetries": 2,
+      "onMaxRetries": "LOCK_AND_ALERT"
+    }
+  },
+  "device": { "minFps": 10, "reconnectAttempts": 5, "stallTimeoutMs": 3000 },
+  "diagnostics": { "mode": "OFF" }
+}
