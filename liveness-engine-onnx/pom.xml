@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>io.mosip.vivid</groupId>
+    <artifactId>mosip-vivid-parent</artifactId>
+    <version>0.1.0-SNAPSHOT</version>
+    <relativePath>../pom.xml</relativePath>
+  </parent>
+  <artifactId>liveness-engine-onnx</artifactId>
+  <name>liveness-engine-onnx</name>
+  <description>Desktop liveness/PAD engine: ONNX Runtime inference (YuNet detection, CNN anti-spoofing, SFace embeddings) plus
+    hand-written moire, colour, rPPG, parallax, quality and injection signals. Image processing uses only java.desktop.</description>
+
+  <properties>
+    <onnxruntime.version>1.20.0</onnxruntime.version>
+  </properties>
+
+  <dependencies>
+    <dependency><groupId>io.mosip.vivid</groupId><artifactId>liveness-api</artifactId></dependency>
+    <dependency><groupId>io.mosip.vivid</groupId><artifactId>device-api</artifactId></dependency>
+    <dependency><groupId>io.mosip.vivid</groupId><artifactId>model-bundle</artifactId></dependency>
+    <dependency><groupId>com.microsoft.onnxruntime</groupId><artifactId>onnxruntime</artifactId><version>${onnxruntime.version}</version></dependency>
+    <dependency><groupId>org.slf4j</groupId><artifactId>slf4j-api</artifactId></dependency>
+    <dependency><groupId>org.junit.jupiter</groupId><artifactId>junit-jupiter</artifactId><scope>test</scope></dependency>
+    <dependency><groupId>org.assertj</groupId><artifactId>assertj-core</artifactId><scope>test</scope></dependency>
+    <dependency><groupId>org.slf4j</groupId><artifactId>slf4j-simple</artifactId><scope>test</scope></dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <!-- Integration tests read models from ./models relative to the module directory. -->
+          <workingDirectory>${project.basedir}</workingDirectory>
+          <trimStackTrace>false</trimStackTrace>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>

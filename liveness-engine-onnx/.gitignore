@@ -1,0 +1,4 @@
+models/*.onnx
+models/*.tflite
+!models/README.md
+!models/LICENSE-*.txt
