@@ -18,7 +18,14 @@ final class SyntheticSubjectEngine {
 
     private SyntheticSubjectEngine() {}
 
-    static boolean available() { return OnnxEngineFactory.findModelDirectory().isPresent(); }
+    /** True when the model directory holds the YuNet detector; the repository ships only licence files there. */
+    static boolean available() {
+        return OnnxEngineFactory.findModelDirectory().map(d -> {
+            try (java.util.stream.Stream<Path> s = java.nio.file.Files.list(d)) {
+                return s.anyMatch(p -> { String n = p.getFileName().toString().toLowerCase(java.util.Locale.ROOT); return n.contains("yunet") && n.endsWith(".onnx"); });
+            } catch (java.io.IOException e) { return false; }
+        }).orElse(false);
+    }
 
     static OnnxLivenessEngine create() {
         Path dir = OnnxEngineFactory.findModelDirectory().orElseThrow();

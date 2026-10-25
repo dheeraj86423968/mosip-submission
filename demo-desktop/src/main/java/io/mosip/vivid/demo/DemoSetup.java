@@ -40,7 +40,7 @@ public final class DemoSetup {
         for (Path p : candidates) {
             if (Files.isDirectory(p) && Files.exists(p.resolve("face_detection_yunet_2023mar.onnx"))) return Optional.of(p.toAbsolutePath().normalize());
         }
-        return flag == null ? OnnxEngineFactory.findModelDirectory() : Optional.empty();
+        return flag == null ? OnnxEngineFactory.findModelDirectory().filter(d -> Files.exists(d.resolve("face_detection_yunet_2023mar.onnx"))) : Optional.empty();
     }
 
     /** The production engine; with {@code detectorThreshold} > 0 the YuNet threshold is overridden. */

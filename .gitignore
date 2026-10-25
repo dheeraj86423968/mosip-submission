@@ -8,8 +8,8 @@ target/
 **/models/*.onnx
 **/models/*.tflite
 !models/README.md
-corpus/
-!docs/corpus/
+# real-face evaluation data, only at the repository root (a bare 'corpus/' also matched Java packages)
+/corpus/
 *.mp4
 *.avi
 build/
