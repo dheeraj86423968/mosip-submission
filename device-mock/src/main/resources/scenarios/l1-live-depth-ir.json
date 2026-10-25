@@ -1,0 +1,17 @@
+{
+  "name": "l1-live-depth-ir",
+  "description": "L1-style device with registered depth (GRAY16 mm) and active IR (GRAY8): a live subject who blinks, smiles and turns the head. The depth map is an ellipsoid head with nose, eye sockets and chin that follows the pose; IR shows skin shading and corneal glints.",
+  "width": 640, "height": 480, "loop": true,
+  "sensors": {"depth": true, "ir": true, "surface": "AUTO", "noiseMm": 1.0, "holeFraction": 0.01},
+  "segments": [{
+    "source": "synthetic-face", "durationMs": 12000, "fps": 15, "label": "LIVE",
+    "timeline": [
+      {"action": "BLINK", "atMs": 1200},
+      {"action": "SMILE", "fromMs": 2500, "toMs": 3800, "intensity": 1.0},
+      {"action": "YAW", "fromMs": 4500, "toMs": 6000, "degrees": 25},
+      {"action": "YAW", "fromMs": 6500, "toMs": 8000, "degrees": -25},
+      {"action": "PITCH", "fromMs": 8500, "toMs": 9700, "degrees": 15},
+      {"action": "BLINK", "atMs": 10500}
+    ]
+  }]
+}

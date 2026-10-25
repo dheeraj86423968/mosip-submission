@@ -1,0 +1,10 @@
+{
+  "name": "print-attack",
+  "description": "A printed photograph held in front of the camera: static face, paper grain and halftone texture, no blinks, no response to challenges.",
+  "width": 640, "height": 480, "loop": true,
+  "segments": [{
+    "source": "synthetic-face", "durationMs": 10000, "fps": 15, "label": "PRINT",
+    "overlay": "PRINT_TEXTURE", "seed": 7,
+    "timeline": []
+  }]
+}

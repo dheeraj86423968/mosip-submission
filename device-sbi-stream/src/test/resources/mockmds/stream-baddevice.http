@@ -1,0 +1,12 @@
+HTTP/1.1 200 OK
+Access-Control-Allow-Headers:DNT,X-Mx-ReqToken,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,X-PINGOTHER,Authorization
+Access-Control-Allow-Origin: *
+Access-Control-Allow-Methods: "OPTIONS, RCAPTURE, CAPTURE, MOSIPDINFO, MOSIPDISC, STREAM, GET, POST"
+Access-Control-Allow-Credentials: true
+CACHE-CONTROL:no-cache
+Content-Length: 127
+Content-Type: application/json
+LOCATION: HTTP://127.0.0.1:4501/
+Connection: close
+
+{"errorCode":"605","errorInfo":"Device is not connected or not Registered for the deviceId given in Livestream request object"}

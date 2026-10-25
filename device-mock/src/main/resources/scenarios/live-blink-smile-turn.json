@@ -1,0 +1,21 @@
+{
+  "name": "live-blink-smile-turn",
+  "description": "A live subject that performs every active challenge in sequence: blink, smile, open mouth, raise eyebrows, turn left, turn right, look up, look down, nod.",
+  "width": 640, "height": 480, "loop": true,
+  "segments": [{
+    "source": "synthetic-face", "durationMs": 16000, "fps": 15, "label": "LIVE",
+    "timeline": [
+      {"action": "BLINK", "atMs": 1200},
+      {"action": "BLINK", "atMs": 1700},
+      {"action": "SMILE", "fromMs": 2500, "toMs": 4000, "intensity": 1.0},
+      {"action": "OPEN_MOUTH", "fromMs": 4500, "toMs": 5800, "intensity": 1.0},
+      {"action": "RAISE_EYEBROWS", "fromMs": 6000, "toMs": 7000, "intensity": 1.0},
+      {"action": "YAW", "fromMs": 7500, "toMs": 9000, "degrees": 25},
+      {"action": "YAW", "fromMs": 9500, "toMs": 11000, "degrees": -25},
+      {"action": "PITCH", "fromMs": 11500, "toMs": 12700, "degrees": 20},
+      {"action": "PITCH", "fromMs": 13000, "toMs": 14200, "degrees": -20},
+      {"action": "NOD", "fromMs": 14400, "toMs": 15800, "degrees": 15},
+      {"action": "BLINK", "atMs": 15900}
+    ]
+  }]
+}

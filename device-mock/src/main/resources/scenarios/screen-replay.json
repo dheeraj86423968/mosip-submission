@@ -1,0 +1,14 @@
+{
+  "name": "screen-replay",
+  "description": "A phone screen showing a recorded video: pixel grid / moire interference, blue cast, and a looping recording that ignores challenge prompts.",
+  "width": 640, "height": 480, "loop": true,
+  "segments": [{
+    "source": "synthetic-face", "durationMs": 10000, "fps": 15, "label": "SCREEN_REPLAY",
+    "overlay": "MOIRE_GRID", "timelineLoops": true,
+    "timeline": [
+      {"action": "BLINK", "atMs": 900},
+      {"action": "SMILE", "fromMs": 1500, "toMs": 2500, "intensity": 0.8},
+      {"action": "BLINK", "atMs": 3200}
+    ]
+  }]
+}

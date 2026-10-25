@@ -1,0 +1,10 @@
+{
+  "name": "l1-print-depth-ir",
+  "description": "L1-style device (depth + IR) facing a flat printed photograph held at a 15 degree tilt: planar depth with exact perspective, bright and nearly uniform IR without glints.",
+  "width": 640, "height": 480, "loop": true,
+  "sensors": {"depth": true, "ir": true, "surface": "FLAT_PRINT", "tiltDeg": 15, "pitchDeg": 5},
+  "segments": [{
+    "source": "synthetic-face", "durationMs": 10000, "fps": 15, "label": "PRINT",
+    "overlay": "PRINT_TEXTURE", "seed": 7, "timeline": []
+  }]
+}

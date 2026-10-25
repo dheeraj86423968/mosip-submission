@@ -1,0 +1,15 @@
+{
+  "name": "video-replay",
+  "description": "A pre-recorded video replayed to the camera: a fixed expression timeline (blink, smile, turn) loops every 5 s regardless of which challenge is prompted.",
+  "width": 640, "height": 480, "loop": true,
+  "segments": [{
+    "source": "synthetic-face", "durationMs": 20000, "fps": 15, "label": "VIDEO_REPLAY",
+    "timelineLoops": true,
+    "timeline": [
+      {"action": "BLINK", "atMs": 800},
+      {"action": "SMILE", "fromMs": 1500, "toMs": 2800, "intensity": 1.0},
+      {"action": "YAW", "fromMs": 3200, "toMs": 4600, "degrees": 20},
+      {"action": "BLINK", "atMs": 4900}
+    ]
+  }]
+}

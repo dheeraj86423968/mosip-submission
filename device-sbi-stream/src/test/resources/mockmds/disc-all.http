@@ -1,0 +1,12 @@
+HTTP/1.1 200 OK
+Access-Control-Allow-Headers:DNT,X-Mx-ReqToken,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,X-PINGOTHER,Authorization
+Access-Control-Allow-Origin: *
+Access-Control-Allow-Methods: "OPTIONS, RCAPTURE, CAPTURE, MOSIPDINFO, MOSIPDISC, STREAM, GET, POST"
+Access-Control-Allow-Credentials: true
+CACHE-CONTROL:no-cache
+Content-Length: 1713
+Content-Type: application/json
+LOCATION: HTTP://127.0.0.1:4501/
+Connection: close
+
+[{"deviceId":"2","deviceStatus":"Ready","certification":"L0","serviceVersion":"0.9.5","callbackId":"http://127.0.0.1:4501/","digitalId":"eyJzZXJpYWxObyI6IjEyMzQ1Njc4OTAiLCJtYWtlIjoiTU9TSVAiLCJtb2RlbCI6IlNMQVAwMSIsInR5cGUiOiJGaW5nZXIiLCJkZXZpY2VTdWJUeXBlIjoiU2xhcCIsImRldmljZVByb3ZpZGVySWQiOiJNT1NJUC5QUk9YWS5TQkkiLCJkZXZpY2VQcm92aWRlciI6Ik1PU0lQIiwiZGF0ZVRpbWUiOiIyMDI2LTEwLTI0VDEyOjQ2OjIxWiJ9","deviceCode":"b692b595-3523-slap-99fc-bd76e35f190f","purpose":"Registration","error":{"errorCode":"0","errorInfo":"Success"},"specVersion":["0.9.5"],"deviceSubId":["1","2","3"]},{"deviceId":"3","deviceStatus":"Ready","certification":"L0","serviceVersion":"0.9.5","callbackId":"http://127.0.0.1:4501/","digitalId":"eyJzZXJpYWxObyI6IjIzNDU2Nzg5MDEiLCJtYWtlIjoiTU9TSVAiLCJtb2RlbCI6IkZBQ0UwMSIsInR5cGUiOiJGYWNlIiwiZGV2aWNlU3ViVHlwZSI6IkZ1bGwgZmFjZSIsImRldmljZVByb3ZpZGVySWQiOiJNT1NJUC5QUk9YWS5TQkkiLCJkZXZpY2VQcm92aWRlciI6Ik1PU0lQIiwiZGF0ZVRpbWUiOiIyMDI2LTEwLTI0VDEyOjQ2OjIxWiJ9","deviceCode":"b692b595-3523-face-99fc-bd76e35f190f","purpose":"Registration","error":{"errorCode":"0","errorInfo":"Success"},"specVersion":["0.9.5"],"deviceSubId":["0"]},{"deviceId":"1","deviceStatus":"Ready","certification":"L0","serviceVersion":"0.9.5","callbackId":"http://127.0.0.1:4501/","digitalId":"eyJzZXJpYWxObyI6IjM0NTY3ODkwMTIiLCJtYWtlIjoiTU9TSVAiLCJtb2RlbCI6IklSSVMwMSIsInR5cGUiOiJJcmlzIiwiZGV2aWNlU3ViVHlwZSI6IkRvdWJsZSIsImRldmljZVByb3ZpZGVySWQiOiJNT1NJUC5QUk9YWS5TQkkiLCJkZXZpY2VQcm92aWRlciI6Ik1PU0lQIiwiZGF0ZVRpbWUiOiIyMDI2LTEwLTI0VDEyOjQ2OjIxWiJ9","deviceCode":"b692b595-3523-iris-99fc-bd76e35f190f","purpose":"Registration","error":{"errorCode":"0","errorInfo":"Success"},"specVersion":["0.9.5"],"deviceSubId":["1","2","3"]}]

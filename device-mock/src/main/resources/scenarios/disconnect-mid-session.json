@@ -1,0 +1,18 @@
+{
+  "name": "disconnect-mid-session",
+  "description": "Live subject; the device is unplugged 3 s in and reattached 2.5 s later, then the subject continues.",
+  "width": 640, "height": 480, "loop": false,
+  "segments": [{
+    "source": "synthetic-face", "durationMs": 12000, "fps": 15, "label": "LIVE",
+    "timeline": [
+      {"action": "BLINK", "atMs": 1000},
+      {"action": "BLINK", "atMs": 7000},
+      {"action": "SMILE", "fromMs": 8000, "toMs": 9500, "intensity": 1.0},
+      {"action": "YAW", "fromMs": 10000, "toMs": 11500, "degrees": 25}
+    ],
+    "faults": [
+      {"atMs": 3000, "kind": "DISCONNECT"},
+      {"atMs": 5500, "kind": "RECONNECT"}
+    ]
+  }]
+}

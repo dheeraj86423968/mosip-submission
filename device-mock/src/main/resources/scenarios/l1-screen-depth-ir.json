@@ -1,0 +1,14 @@
+{
+  "name": "l1-screen-depth-ir",
+  "description": "L1-style device (depth + IR) facing a tablet replaying a video: planar depth with drop-outs on the glass, IR-dark panel (no NIR emission) inside a lit bezel.",
+  "width": 640, "height": 480, "loop": true,
+  "sensors": {"depth": true, "ir": true, "surface": "SCREEN", "tiltDeg": 10, "pitchDeg": 0},
+  "segments": [{
+    "source": "synthetic-face", "durationMs": 10000, "fps": 15, "label": "SCREEN_REPLAY",
+    "overlay": "MOIRE_GRID", "timelineLoops": true,
+    "timeline": [
+      {"action": "BLINK", "atMs": 900},
+      {"action": "BLINK", "atMs": 3200}
+    ]
+  }]
+}

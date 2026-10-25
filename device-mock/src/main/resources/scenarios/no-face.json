@@ -1,0 +1,10 @@
+{
+  "name": "no-face",
+  "description": "Nobody in front of the camera: an empty scene for 4 s, then a blank (covered lens) frame and sensor noise. Should end in FACE_NOT_DETECTED.",
+  "width": 640, "height": 480, "loop": true,
+  "segments": [
+    {"source": "synthetic-face", "durationMs": 4000, "fps": 15, "label": "NONE", "faceCount": 0},
+    {"source": "blank", "durationMs": 2000, "fps": 15, "label": "NONE"},
+    {"source": "noise", "durationMs": 2000, "fps": 15, "label": "NONE"}
+  ]
+}

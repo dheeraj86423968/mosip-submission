@@ -1,0 +1,10 @@
+{
+  "name": "l1-curved-print-depth-ir",
+  "description": "L1-style device (depth + IR) facing a printed photograph bent around a vertical axis (radius 120 mm) to fake facial relief: curved but developable depth with no nose, print-like IR.",
+  "width": 640, "height": 480, "loop": true,
+  "sensors": {"depth": true, "ir": true, "surface": "CURVED_PRINT", "bendRadiusMm": 120},
+  "segments": [{
+    "source": "synthetic-face", "durationMs": 10000, "fps": 15, "label": "PRINT",
+    "overlay": "PRINT_TEXTURE", "seed": 8, "timeline": []
+  }]
+}

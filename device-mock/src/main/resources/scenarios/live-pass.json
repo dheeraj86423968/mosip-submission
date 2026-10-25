@@ -1,0 +1,14 @@
+{
+  "name": "live-pass",
+  "description": "A live subject sitting still with natural blinks and a small head motion; should pass passively.",
+  "width": 640, "height": 480, "loop": true,
+  "segments": [{
+    "source": "synthetic-face", "durationMs": 8000, "fps": 15, "label": "LIVE",
+    "timeline": [
+      {"action": "BLINK", "atMs": 1100},
+      {"action": "BLINK", "atMs": 3900},
+      {"action": "YAW", "fromMs": 4500, "toMs": 6000, "degrees": 6},
+      {"action": "BLINK", "atMs": 7000}
+    ]
+  }]
+}

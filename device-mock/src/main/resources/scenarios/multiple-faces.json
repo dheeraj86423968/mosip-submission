@@ -1,0 +1,13 @@
+{
+  "name": "multiple-faces",
+  "description": "Two subjects in frame for the whole session; the client must refuse to run liveness until only one face remains.",
+  "width": 640, "height": 480, "loop": true,
+  "segments": [{
+    "source": "synthetic-face", "durationMs": 8000, "fps": 15, "label": "LIVE", "faceCount": 2,
+    "timeline": [
+      {"action": "BLINK", "atMs": 1500},
+      {"action": "SMILE", "fromMs": 3000, "toMs": 4500, "intensity": 1.0},
+      {"action": "BLINK", "atMs": 6000}
+    ]
+  }]
+}
