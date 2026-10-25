@@ -1,0 +1,1 @@
+{"scenario":"multiple-faces","expectedDecision":["NOT_LIVE","ERROR"],"allowedFailureReasons":["MULTIPLE_FACES","SESSION_TIMEOUT","FACE_NOT_DETECTED","POOR_FACE_QUALITY"],"maxDurationMs":60000,"notes":"Two faces for the whole session: must not pass."}

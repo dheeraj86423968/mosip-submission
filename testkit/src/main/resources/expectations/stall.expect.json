@@ -1,0 +1,1 @@
+{"scenario":"stall","expectedDecision":["LIVE","ERROR","NOT_LIVE"],"allowedFailureReasons":["DEVICE_CONNECTION_FAILURE","SESSION_TIMEOUT","CHALLENGE_TIMEOUT","LIVENESS_BELOW_THRESHOLD"],"maxDurationMs":60000,"notes":"A 4 s stall mid-session: timeouts must keep firing via tick() while no frames arrive."}

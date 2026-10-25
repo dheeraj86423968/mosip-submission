@@ -1,0 +1,1 @@
+{"scenario":"screen-replay","expectedDecision":["ATTACK","NOT_LIVE"],"allowedFailureReasons":["PAD_DETECTED","LIVENESS_BELOW_THRESHOLD","ACTIVE_CHALLENGE_FAILED","CHALLENGE_TIMEOUT","MAX_RETRIES_EXCEEDED"],"maxDurationMs":60000,"notes":"Moire grid plus a looping recording that ignores prompts."}

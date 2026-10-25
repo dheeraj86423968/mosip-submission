@@ -1,0 +1,1 @@
+{"scenario":"print-attack","expectedDecision":["ATTACK","NOT_LIVE"],"allowedFailureReasons":["PAD_DETECTED","LIVENESS_BELOW_THRESHOLD","ACTIVE_CHALLENGE_FAILED","CHALLENGE_TIMEOUT","MAX_RETRIES_EXCEEDED"],"maxDurationMs":60000,"notes":"Static printed photo: either PAD flags it or it fails the active challenge."}

@@ -1,0 +1,1 @@
+{"scenario":"no-face","expectedDecision":["NOT_LIVE","ERROR"],"allowedFailureReasons":["FACE_NOT_DETECTED","SESSION_TIMEOUT","POOR_FACE_QUALITY","INVALID_FRAME_DATA"],"maxDurationMs":60000,"notes":"Nobody present: must end in FACE_NOT_DETECTED or a timeout, never LIVE."}

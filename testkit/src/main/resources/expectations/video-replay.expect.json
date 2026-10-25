@@ -1,0 +1,1 @@
+{"scenario":"video-replay","expectedDecision":["ATTACK","NOT_LIVE"],"allowedFailureReasons":["PAD_DETECTED","LIVENESS_BELOW_THRESHOLD","ACTIVE_CHALLENGE_FAILED","CHALLENGE_TIMEOUT","MAX_RETRIES_EXCEEDED"],"maxDurationMs":60000,"notes":"Replayed recording performs actions on its own schedule; challenge timing must reject it."}

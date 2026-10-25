@@ -1,0 +1,1 @@
+{"scenario":"live-blink-smile-turn","expectedDecision":"LIVE","maxDurationMs":40000,"notes":"Performs every challenge; must pass regardless of which challenges the policy draws."}

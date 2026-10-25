@@ -1,0 +1,1 @@
+{"scenario":"disconnect-mid-session","expectedDecision":["LIVE","ERROR","NOT_LIVE"],"allowedFailureReasons":["DEVICE_CONNECTION_FAILURE","DEVICE_UNAVAILABLE","SESSION_TIMEOUT","CHALLENGE_TIMEOUT","LIVENESS_BELOW_THRESHOLD"],"maxDurationMs":60000,"notes":"The orchestrator may ride out the 2.5 s unplug and pass, or fail cleanly with a device error; it must never hang or crash."}

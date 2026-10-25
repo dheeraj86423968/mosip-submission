@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>io.mosip.vivid</groupId>
+    <artifactId>mosip-vivid-parent</artifactId>
+    <version>0.1.0-SNAPSHOT</version>
+    <relativePath>../pom.xml</relativePath>
+  </parent>
+  <artifactId>calibration</artifactId>
+  <name>calibration</name>
+  <description>Central job of privacy-preserving continual calibration (PLAN.md 17.10): aggregates the differentially private score histograms that clients release through the audit sync, re-estimates the passive threshold for a target BPCER under bounds and a minimum-change rule, and emits a signed policy update. Also the threshold-recovery simulation.</description>
+
+  <!-- Server-side tool, never shipped in a Registration Client: Java 17. -->
+  <properties><maven.compiler.release>17</maven.compiler.release></properties>
+
+  <dependencies>
+    <dependency><groupId>io.mosip.vivid</groupId><artifactId>liveness-api</artifactId></dependency>
+    <dependency><groupId>io.mosip.vivid</groupId><artifactId>policy</artifactId></dependency>
+    <dependency><groupId>io.mosip.vivid</groupId><artifactId>telemetry</artifactId></dependency>
+    <dependency><groupId>com.fasterxml.jackson.core</groupId><artifactId>jackson-databind</artifactId></dependency>
+    <dependency><groupId>org.slf4j</groupId><artifactId>slf4j-api</artifactId></dependency>
+    <dependency><groupId>org.slf4j</groupId><artifactId>slf4j-simple</artifactId><scope>runtime</scope></dependency>
+    <dependency><groupId>org.junit.jupiter</groupId><artifactId>junit-jupiter</artifactId><scope>test</scope></dependency>
+    <dependency><groupId>org.assertj</groupId><artifactId>assertj-core</artifactId><scope>test</scope></dependency>
+  </dependencies>
+</project>

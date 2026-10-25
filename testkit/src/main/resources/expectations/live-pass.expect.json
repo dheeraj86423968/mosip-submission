@@ -1,0 +1,1 @@
+{"scenario":"live-pass","expectedDecision":"LIVE","maxDurationMs":20000,"notes":"A still, blinking live subject must pass (passively or after at most the policy's challenges)."}
