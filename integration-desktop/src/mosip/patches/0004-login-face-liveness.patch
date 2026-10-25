@@ -1,0 +1,75 @@
+# mosip-vivid integration-desktop patch -- generated against mosip/registration-client release-1.2.0.x (c1cc4e7f).
+# Applies with git apply and compiles against the real client (see docs/testing/desktop-mosip-compile.md); never run.
+# Application login with face (SessionContext.validateFace): optional FaceAuthLivenessGuard bean (implemented by
+# io.mosip.vivid.desktop.mosip.OperatorAuthLivenessHook in registration-client) runs operator liveness before the auth
+# capture and binds the capture after it. registration-services gets no compile-time dependency on mosip-vivid.
+diff --git a/registration/registration-services/src/main/java/io/mosip/registration/context/SessionContext.java b/registration/registration-services/src/main/java/io/mosip/registration/context/SessionContext.java
+index ffc21a3..6049f8c 100644
+--- a/registration/registration-services/src/main/java/io/mosip/registration/context/SessionContext.java
++++ b/registration/registration-services/src/main/java/io/mosip/registration/context/SessionContext.java
+@@ -28,6 +28,7 @@ import io.mosip.registration.enums.Role;
+ import io.mosip.registration.exception.RegBaseCheckedException;
+ import io.mosip.registration.mdm.dto.MDMRequestDto;
+ import io.mosip.registration.service.bio.BioService;
++import io.mosip.registration.service.bio.FaceAuthLivenessGuard;
+ import io.mosip.registration.service.login.LoginService;
+ import io.mosip.registration.service.security.AuthenticationService;
+ import io.mosip.registration.util.healthcheck.RegistrationSystemPropertiesChecker;
+@@ -426,7 +427,21 @@ public class SessionContext {
+ 				.getIntValueFromApplicationMap(RegistrationConstants.CAPTURE_TIME_OUT), 1, io.mosip.registration.context.ApplicationContext
+ 				.getIntValueFromApplicationMap(RegistrationConstants.FACE_AUTHENTICATION_THRESHOLD));
+ 		
++		// mosip-vivid: optional face liveness / PAD guard; no bean (liveness module not installed) = unchanged behaviour
++		FaceAuthLivenessGuard livenessGuard = applicationContext.getBeansOfType(FaceAuthLivenessGuard.class).values()
++				.stream().findFirst().orElse(null);
++		if (livenessGuard != null && !livenessGuard.beforeFaceAuthCapture(authenticationValidatorDTO.getUserId())) {
++			validAuthModes.remove(loginMethod);
++			sessionContext = null;
++			return false;
++		}
++
+ 		List<BiometricsDto> biometrics = bioService.captureModalityForAuth(mdmRequestDto);
++		if (livenessGuard != null && !livenessGuard.afterFaceAuthCapture(authenticationValidatorDTO.getUserId(), biometrics)) {
++			validAuthModes.remove(loginMethod);
++			sessionContext = null;
++			return false;
++		}
+ 		if(authService.authValidator(authenticationValidatorDTO.getUserId(), BiometricType.FACE.value(), biometrics)) {
+ 			createSessionContext();
+ 			SessionContext.authTokenDTO().setLoginMode(loginMethod);
+diff --git a/registration/registration-services/src/main/java/io/mosip/registration/service/bio/FaceAuthLivenessGuard.java b/registration/registration-services/src/main/java/io/mosip/registration/service/bio/FaceAuthLivenessGuard.java
+new file mode 100644
+index 0000000..fb9c313
+--- /dev/null
++++ b/registration/registration-services/src/main/java/io/mosip/registration/service/bio/FaceAuthLivenessGuard.java
+@@ -0,0 +1,30 @@
++package io.mosip.registration.service.bio;
++
++import java.util.List;
++
++import io.mosip.registration.dto.packetmanager.BiometricsDto;
++import io.mosip.registration.exception.RegBaseCheckedException;
++
++/**
++ * Optional face liveness / presentation-attack guard around operator face authentication at login
++ * ({@code SessionContext.validateFace}). Implemented outside registration-services (mosip-vivid
++ * {@code io.mosip.vivid.desktop.mosip.OperatorAuthLivenessHook}, packaged with registration-client), looked up from
++ * the Spring context and skipped when no bean exists, so registration-services has no compile-time dependency on it.
++ */
++public interface FaceAuthLivenessGuard {
++
++	/**
++	 * Runs before {@code BioService.captureModalityForAuth}. Opens its own SBI stream.
++	 *
++	 * @return {@code true} when liveness is disabled by policy or the session was accepted; {@code false} rejects the login
++	 */
++	boolean beforeFaceAuthCapture(String userId) throws RegBaseCheckedException;
++
++	/**
++	 * Runs after the signed capture and before {@code AuthenticationService.authValidator}: binds the captured face to
++	 * the liveness session (identity continuity).
++	 *
++	 * @return {@code true} when not required or bound; {@code false} rejects the login
++	 */
++	boolean afterFaceAuthCapture(String userId, List<BiometricsDto> biometrics);
++}

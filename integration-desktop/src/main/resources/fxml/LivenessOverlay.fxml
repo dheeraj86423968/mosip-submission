@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Liveness overlay for the MOSIP Desktop Registration Client.
+  Stacked on top of the existing preview ImageView (biometricImage / faceImage) at runtime by
+  io.mosip.vivid.desktop.ui.LivenessOverlayController. No %keys are used: text is resolved by the controller from
+  i18n/liveness_<lang>.properties, so this FXML does not depend on the client's labels bundle.
+-->
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Ellipse?>
+
+<StackPane fx:id="overlayRoot" styleClass="liveness-overlay" stylesheets="@liveness-overlay.css"
+           xmlns="http://javafx.com/javafx/11" xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="io.mosip.vivid.desktop.ui.LivenessOverlayController">
+
+    <!-- live preview; hidden when the host supplies its own ImageView -->
+    <ImageView fx:id="previewImage" preserveRatio="true" pickOnBounds="true" />
+
+    <!-- face guide: colour AND badge text change with state (never colour alone) -->
+    <Ellipse fx:id="faceGuide" radiusX="110" radiusY="145" styleClass="face-guide,guide-idle" mouseTransparent="true" />
+
+    <AnchorPane mouseTransparent="false" pickOnBounds="false">
+        <!-- top strip: device chip, network chip, retry counter, state badge -->
+        <HBox spacing="8" alignment="CENTER_LEFT" AnchorPane.topAnchor="8" AnchorPane.leftAnchor="8" AnchorPane.rightAnchor="8">
+            <Label fx:id="deviceChip" styleClass="chip,chip-device" text="" />
+            <Label fx:id="networkChip" styleClass="chip,chip-network" text="" />
+            <Label fx:id="retryLabel" styleClass="chip,chip-retry" text="" />
+            <Label fx:id="stateBadge" styleClass="chip,chip-state" text="" HBox.hgrow="ALWAYS" maxWidth="Infinity" />
+        </HBox>
+
+        <!-- centre: challenge card -->
+        <VBox fx:id="challengeCard" styleClass="challenge-card" alignment="CENTER" spacing="6" visible="false" managed="false"
+              AnchorPane.leftAnchor="24" AnchorPane.rightAnchor="24" AnchorPane.topAnchor="48">
+            <Label fx:id="challengeIcon" styleClass="challenge-icon" text="" />
+            <Label fx:id="challengeText" styleClass="challenge-text" text="" wrapText="true" />
+            <Label fx:id="challengeStep" styleClass="challenge-step" text="" />
+        </VBox>
+
+        <!-- bottom: hint, progress dots, failure / locked panes -->
+        <VBox alignment="CENTER" spacing="6" AnchorPane.leftAnchor="8" AnchorPane.rightAnchor="8" AnchorPane.bottomAnchor="8">
+            <VBox fx:id="failurePane" styleClass="failure-pane" alignment="CENTER" spacing="4" visible="false" managed="false">
+                <Label fx:id="failureText" styleClass="failure-text" wrapText="true" text="" />
+                <Label fx:id="failureGuidance" styleClass="failure-guidance" wrapText="true" text="" />
+            </VBox>
+            <VBox fx:id="lockedPane" styleClass="locked-pane" alignment="CENTER" spacing="4" visible="false" managed="false">
+                <Label fx:id="lockedTitle" styleClass="locked-title" text="" />
+                <Label fx:id="lockedGuidance" styleClass="locked-guidance" wrapText="true" text="" />
+            </VBox>
+            <Label fx:id="hintLabel" styleClass="hint-label" wrapText="true" text="" />
+            <HBox fx:id="progressDots" styleClass="progress-dots" alignment="CENTER" spacing="8" />
+            <HBox alignment="CENTER" spacing="12">
+                <Button fx:id="cancelButton" styleClass="overlay-button" text="" onAction="#onCancel" />
+                <Hyperlink fx:id="diagnosticsLink" styleClass="diagnostics-link" text="" visible="false" managed="false" onAction="#onToggleDiagnostics" />
+            </HBox>
+        </VBox>
+
+        <!-- hidden diagnostics pane (supervisor / diagnostics mode only) -->
+        <VBox fx:id="diagnosticsPane" styleClass="diagnostics-pane" spacing="4" visible="false" managed="false"
+              AnchorPane.topAnchor="40" AnchorPane.rightAnchor="8" prefWidth="260">
+            <Label fx:id="diagnosticsTitle" styleClass="diagnostics-title" text="" />
+            <TextArea fx:id="diagnosticsText" styleClass="diagnostics-text" editable="false" wrapText="true" prefRowCount="12" />
+        </VBox>
+    </AnchorPane>
+</StackPane>

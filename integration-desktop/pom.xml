@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>io.mosip.vivid</groupId>
+    <artifactId>mosip-vivid-parent</artifactId>
+    <version>0.1.0-SNAPSHOT</version>
+    <relativePath>../pom.xml</relativePath>
+  </parent>
+  <artifactId>integration-desktop</artifactId>
+  <name>integration-desktop</name>
+  <description>
+    Liveness gate, UI binding, i18n keys, capture binding and config adapter for the MOSIP Desktop Registration Client.
+    src/main/java compiles against liveness-api + device-api only. src/mosip/java holds the classes that reference
+    io.mosip.registration.* and is NOT compiled here; it is applied to the registration-client build as a patch
+    (see README.md and src/mosip/patches).
+  </description>
+
+  <properties>
+    <javafx.version>21.0.5</javafx.version>
+  </properties>
+
+  <dependencies>
+    <dependency><groupId>io.mosip.vivid</groupId><artifactId>liveness-api</artifactId></dependency>
+    <dependency><groupId>io.mosip.vivid</groupId><artifactId>device-api</artifactId></dependency>
+    <dependency><groupId>io.mosip.vivid</groupId><artifactId>liveness-core</artifactId></dependency>
+    <dependency><groupId>org.slf4j</groupId><artifactId>slf4j-api</artifactId></dependency>
+
+    <!-- JavaFX is provided by the Registration Client (openjfx 11 in release-1.2.0.x, 21 on develop-java21).
+         Only the ui package touches it; everything else is plain Java. -->
+    <dependency><groupId>org.openjfx</groupId><artifactId>javafx-controls</artifactId><version>${javafx.version}</version><scope>provided</scope></dependency>
+    <dependency><groupId>org.openjfx</groupId><artifactId>javafx-fxml</artifactId><version>${javafx.version}</version><scope>provided</scope></dependency>
+
+    <!-- The MOSIP artifact is deliberately NOT resolved by this build: it is optional+provided and only
+         meaningful when src/mosip/java is compiled inside the registration-client tree (profile "mosip"). -->
+
+    <dependency><groupId>org.junit.jupiter</groupId><artifactId>junit-jupiter</artifactId><scope>test</scope></dependency>
+    <dependency><groupId>org.assertj</groupId><artifactId>assertj-core</artifactId><scope>test</scope></dependency>
+    <dependency><groupId>org.slf4j</groupId><artifactId>slf4j-simple</artifactId><scope>test</scope></dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <configuration>
+          <archive>
+            <manifestEntries>
+              <Automatic-Module-Name>io.mosip.vivid.integration.desktop</Automatic-Module-Name>
+            </manifestEntries>
+          </archive>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
+  <profiles>
+    <!-- Activate only inside a registration-client checkout that has registration-services on the classpath:
+         mvn -Pmosip -Dmosip.version=1.2.0.1 ... -->
+    <profile>
+      <id>mosip</id>
+      <dependencies>
+        <dependency>
+          <groupId>io.mosip.registration</groupId>
+          <artifactId>registration-services</artifactId>
+          <version>${mosip.version}</version>
+          <scope>provided</scope>
+          <optional>true</optional>
+        </dependency>
+      </dependencies>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>build-helper-maven-plugin</artifactId>
+            <version>3.6.0</version>
+            <executions>
+              <execution>
+                <id>add-mosip-sources</id>
+                <phase>generate-sources</phase>
+                <goals><goal>add-source</goal></goals>
+                <configuration><sources><source>src/mosip/java</source></sources></configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
+</project>

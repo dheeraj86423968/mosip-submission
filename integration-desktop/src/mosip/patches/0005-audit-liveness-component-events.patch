@@ -1,0 +1,61 @@
+# mosip-vivid integration-desktop patch -- generated against mosip/registration-client release-1.2.0.x (c1cc4e7f).
+# Applies with git apply and compiles against the real client (see docs/testing/desktop-mosip-compile.md); never run.
+# Audit: Components.LIVENESS and AuditEvent.LIVENESS_* (ids mirror io.mosip.vivid.desktop.DesktopAuditEvent).
+--- a/registration/registration-services/src/main/java/io/mosip/registration/constants/AuditEvent.java
++++ b/registration/registration-services/src/main/java/io/mosip/registration/constants/AuditEvent.java
+@@ -310,6 +310,43 @@
+ 	
+ 	REG_BLOCKLISTED_WORD_ACCEPTED("REG-EVT-102", USER_EVENT.getCode(), "REG_BLOCKLISTED_WORD_ACCEPTED",
+ 			"Demographic Details : A blocklisted word has been accepted in Registration"),
++	/* mosip-vivid liveness / PAD (component LIVENESS, REG-MOD-153) */
++	LIVENESS_SESSION_STARTED("REG-LIV-001", SYSTEM_EVENT.getCode(), "LIVENESS_SESSION_STARTED",
++			"Liveness session started"),
++	LIVENESS_PASSIVE_PASSED("REG-LIV-002", SYSTEM_EVENT.getCode(), "LIVENESS_PASSIVE_PASSED",
++			"Passive liveness passed"),
++	LIVENESS_PASSIVE_BELOW_THRESHOLD("REG-LIV-003", SYSTEM_EVENT.getCode(), "LIVENESS_PASSIVE_BELOW_THRESHOLD",
++			"Passive liveness below threshold, active challenge issued"),
++	LIVENESS_CHALLENGE_ISSUED("REG-LIV-004", SYSTEM_EVENT.getCode(), "LIVENESS_CHALLENGE_ISSUED",
++			"Active challenge issued"),
++	LIVENESS_CHALLENGE_PASSED("REG-LIV-005", SYSTEM_EVENT.getCode(), "LIVENESS_CHALLENGE_PASSED",
++			"Active challenge passed"),
++	LIVENESS_CHALLENGE_TIMEOUT("REG-LIV-006", SYSTEM_EVENT.getCode(), "LIVENESS_CHALLENGE_TIMEOUT",
++			"Active challenge timed out"),
++	LIVENESS_PAD_DETECTED("REG-LIV-007", SYSTEM_EVENT.getCode(), "LIVENESS_PAD_DETECTED",
++			"Presentation attack detected"),
++	LIVENESS_IDENTITY_DRIFT("REG-LIV-008", SYSTEM_EVENT.getCode(), "LIVENESS_IDENTITY_DRIFT",
++			"Identity continuity failed"),
++	LIVENESS_SESSION_PASSED("REG-LIV-009", SYSTEM_EVENT.getCode(), "LIVENESS_SESSION_PASSED",
++			"Liveness session passed"),
++	LIVENESS_SESSION_FAILED("REG-LIV-010", SYSTEM_EVENT.getCode(), "LIVENESS_SESSION_FAILED",
++			"Liveness session failed"),
++	LIVENESS_MAX_RETRIES_REACHED("REG-LIV-011", SYSTEM_EVENT.getCode(), "LIVENESS_MAX_RETRIES_REACHED",
++			"Liveness max retries reached"),
++	LIVENESS_SUPERVISOR_OVERRIDE("REG-LIV-012", USER_EVENT.getCode(), "LIVENESS_SUPERVISOR_OVERRIDE",
++			"Supervisor override of liveness lock"),
++	LIVENESS_DEVICE_FAULT("REG-LIV-013", SYSTEM_EVENT.getCode(), "LIVENESS_DEVICE_FAULT",
++			"Face device fault during liveness"),
++	LIVENESS_POLICY_LOADED("REG-LIV-014", SYSTEM_EVENT.getCode(), "LIVENESS_POLICY_LOADED",
++			"Liveness policy loaded"),
++	LIVENESS_MODEL_BUNDLE_LOADED("REG-LIV-015", SYSTEM_EVENT.getCode(), "LIVENESS_MODEL_BUNDLE_LOADED",
++			"Liveness model bundle loaded"),
++	LIVENESS_MODEL_BUNDLE_REJECTED("REG-LIV-016", SYSTEM_EVENT.getCode(), "LIVENESS_MODEL_BUNDLE_REJECTED",
++			"Liveness model bundle rejected"),
++	LIVENESS_POLICY_DISABLED("REG-LIV-017", SYSTEM_EVENT.getCode(), "LIVENESS_POLICY_DISABLED",
++			"Liveness disabled by policy"),
++	LIVENESS_CAPTURE_BOUND("REG-LIV-018", SYSTEM_EVENT.getCode(), "LIVENESS_CAPTURE_BOUND",
++			"Signed capture bound to liveness session"),
+ 	REG_BLOCKLISTED_WORD_REJECTED("REG-EVT-103", USER_EVENT.getCode(), "REG_BLOCKLISTED_WORD_REJECTED",
+ 			"Demographic Details : A blocklisted word has been rejected in Registration"),
+ 	
+--- a/registration/registration-services/src/main/java/io/mosip/registration/constants/Components.java
++++ b/registration/registration-services/src/main/java/io/mosip/registration/constants/Components.java
+@@ -76,7 +76,8 @@
+ 	MDM_NO_DEVICE_AVAILABLE("REG-MOD-150","no device found"),
+ 	MDM_DEVICE_FOUND("REG-MOD-151","Device found"),
+ 	
+-	CLIENT_UPGRADE("REG-MOD-152", "Client Upgrade");
++	CLIENT_UPGRADE("REG-MOD-152", "Client Upgrade"),
++	LIVENESS("REG-MOD-153", "Liveness and PAD");
+ 
+ 	/**
+ 	 * The constructor

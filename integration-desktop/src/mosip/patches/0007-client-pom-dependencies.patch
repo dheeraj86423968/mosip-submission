@@ -1,0 +1,52 @@
+# mosip-vivid integration-desktop patch -- generated against mosip/registration-client release-1.2.0.x (c1cc4e7f).
+# Applies with git apply and compiles against the real client (see docs/testing/desktop-mosip-compile.md); never run.
+# Ship mosip-vivid jars in target/lib via copy-dependencies (natives travel inside the onnxruntime / opencv jars).
+diff --git a/registration/registration-client/pom.xml b/registration/registration-client/pom.xml
+index 4e5fdd6..2a17d26 100644
+--- a/registration/registration-client/pom.xml
++++ b/registration/registration-client/pom.xml
+@@ -24,6 +24,44 @@
+ 			<artifactId>registration-services</artifactId>
+ 			<version>1.2.0.2</version>
+ 		</dependency>
++		<!-- mosip-vivid face liveness / PAD -->
++		<dependency>
++			<groupId>io.mosip.vivid</groupId>
++			<artifactId>integration-desktop</artifactId>
++			<version>0.1.0-SNAPSHOT</version>
++			<exclusions>
++				<!-- client stays on its slf4j 1.7.x + logback 1.2 binding; slf4j-api 2.x would ignore that binding (NOP logging) -->
++				<exclusion>
++					<groupId>org.slf4j</groupId>
++					<artifactId>slf4j-api</artifactId>
++				</exclusion>
++			</exclusions>
++		</dependency>
++		<dependency>
++			<groupId>io.mosip.vivid</groupId>
++			<artifactId>liveness-core</artifactId>
++			<version>0.1.0-SNAPSHOT</version>
++			<exclusions>
++				<!-- client stays on its slf4j 1.7.x + logback 1.2 binding; slf4j-api 2.x would ignore that binding (NOP logging) -->
++				<exclusion>
++					<groupId>org.slf4j</groupId>
++					<artifactId>slf4j-api</artifactId>
++				</exclusion>
++			</exclusions>
++		</dependency>
++		<dependency>
++			<groupId>io.mosip.vivid</groupId>
++			<artifactId>liveness-engine-onnx</artifactId>
++			<version>0.1.0-SNAPSHOT</version>
++			<scope>runtime</scope>
++			<exclusions>
++				<!-- client stays on its slf4j 1.7.x + logback 1.2 binding; slf4j-api 2.x would ignore that binding (NOP logging) -->
++				<exclusion>
++					<groupId>org.slf4j</groupId>
++					<artifactId>slf4j-api</artifactId>
++				</exclusion>
++			</exclusions>
++		</dependency>
+ 		<dependency>
+ 			<groupId>org.springframework</groupId>
+ 			<artifactId>spring-web</artifactId>

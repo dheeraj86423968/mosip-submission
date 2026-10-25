@@ -1,0 +1,62 @@
+# mosip-vivid integration-desktop patch -- generated against mosip/registration-client release-1.2.0.x (c1cc4e7f).
+# Applies with git apply and compiles against the real client (see docs/testing/desktop-mosip-compile.md); never run.
+# Operator / reviewer(supervisor) packet authentication: liveness before captureModalityForAuth, capture binding before authValidator.
+--- a/registration/registration-client/src/main/java/io/mosip/registration/controller/BaseController.java
++++ b/registration/registration-client/src/main/java/io/mosip/registration/controller/BaseController.java
+@@ -75,6 +75,10 @@
+ import io.mosip.registration.service.BaseService;
+ import io.mosip.registration.service.IdentitySchemaService;
+ import io.mosip.registration.service.bio.BioService;
++import io.mosip.vivid.api.LivenessResult;
++import io.mosip.vivid.api.Workflow;
++import io.mosip.vivid.desktop.mosip.LivenessCaptureVerifier;
++import io.mosip.vivid.desktop.mosip.OperatorAuthLivenessHook;
+ import io.mosip.registration.service.config.GlobalParamService;
+ import io.mosip.registration.service.operator.UserOnboardService;
+ import io.mosip.registration.service.remap.CenterMachineReMapService;
+@@ -1711,6 +1715,21 @@
+ 	 * @throws RegBaseCheckedException
+ 	 */
+ 	protected boolean captureAndValidateFace(String userId, boolean isPacketAuth, boolean isReviewer) throws RegBaseCheckedException, IOException {
++		return captureAndValidateFace(userId, isPacketAuth, isReviewer, null);
++	}
++
++	/** mosip-vivid: same as above, with the screen's face ImageView for the liveness overlay. */
++	protected boolean captureAndValidateFace(String userId, boolean isPacketAuth, boolean isReviewer, ImageView preview) throws RegBaseCheckedException, IOException {
++		Workflow workflow = isReviewer ? Workflow.SUPERVISOR : Workflow.OPERATOR;
++		OperatorAuthLivenessHook livenessHook = ClientApplication.getApplicationContext().getBean(OperatorAuthLivenessHook.class);
++		LivenessResult liveness = null;
++		if (livenessHook.enabled(workflow)) {
++			liveness = livenessHook.verify(workflow, preview, userId);
++			if (!liveness.accepted()) {
++				LOGGER.warn("Face liveness not accepted for {} auth: {}", workflow, liveness.decision());
++				return false;
++			}
++		}
+ 		MDMRequestDto mdmRequestDto = new MDMRequestDto(RegistrationConstants.FACE_FULLFACE, null, "Registration",
+ 				io.mosip.registration.context.ApplicationContext
+ 						.getStringValueFromApplicationMap(RegistrationConstants.SERVER_ACTIVE_PROFILE),
+@@ -1720,6 +1739,11 @@
+ 				.getIntValueFromApplicationMap(RegistrationConstants.FACE_AUTHENTICATION_THRESHOLD));
+ 
+ 		List<BiometricsDto> biometrics = bioService.captureModalityForAuth(mdmRequestDto);
++
++		if (liveness != null && !ClientApplication.getApplicationContext().getBean(LivenessCaptureVerifier.class)
++				.verify(liveness, biometrics, workflow, userId).accepted()) {
++			return false;
++		}
+ 
+ 		boolean match = authenticationService.authValidator(userId, SingleType.FACE.value(), biometrics);
+ 		if (match && isPacketAuth) {
+--- a/registration/registration-client/src/main/java/io/mosip/registration/controller/auth/AuthenticationController.java
++++ b/registration/registration-client/src/main/java/io/mosip/registration/controller/auth/AuthenticationController.java
+@@ -529,7 +529,8 @@
+ 					@Override
+ 					protected Boolean call() {
+ 						try {
+-							return captureAndValidateFace(userId, true, isReviewer);
++							streamer.stop(); // mosip-vivid: the liveness gate opens its own SBI stream
++							return captureAndValidateFace(userId, true, isReviewer, faceImage);
+ 						} catch (RegBaseCheckedException | IOException exception) {
+ 							LOGGER.error("Exception while getting the scanned biometrics for user authentication: caused by "
+ 											+ ExceptionUtils.getStackTrace(exception));

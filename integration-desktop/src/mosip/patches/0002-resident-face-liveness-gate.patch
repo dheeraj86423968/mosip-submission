@@ -1,0 +1,102 @@
+# mosip-vivid integration-desktop patch -- generated against mosip/registration-client release-1.2.0.x (c1cc4e7f).
+# Applies with git apply and compiles against the real client (see docs/testing/desktop-mosip-compile.md); never run.
+# Resident face capture: run LivenessGate on the SBI stream before rcapture; bind the signed capture to the session afterwards.
+--- a/registration/registration-client/src/main/java/io/mosip/registration/controller/device/GenericBiometricsController.java
++++ b/registration/registration-client/src/main/java/io/mosip/registration/controller/device/GenericBiometricsController.java
+@@ -44,6 +44,12 @@
+ import io.mosip.registration.mdm.service.impl.MosipDeviceSpecificationFactory;
+ import io.mosip.registration.service.BaseService;
+ import io.mosip.registration.service.bio.BioService;
++import io.mosip.vivid.api.LivenessResult;
++import io.mosip.vivid.api.Workflow;
++import io.mosip.vivid.desktop.CaptureBinding;
++import io.mosip.vivid.desktop.LivenessMessages;
++import io.mosip.vivid.desktop.mosip.LivenessCaptureVerifier;
++import io.mosip.vivid.desktop.mosip.ResidentFaceLivenessHook;
+ import io.mosip.registration.util.control.FxControl;
+ import io.mosip.registration.util.control.impl.BiometricFxControl;
+ import javafx.concurrent.Service;
+@@ -166,6 +172,12 @@
+ 	private BioService bioService;
+ 
+ 	@Autowired
++	private ResidentFaceLivenessHook residentFaceLivenessHook;
++
++	@Autowired
++	private LivenessCaptureVerifier livenessCaptureVerifier;
++
++	@Autowired
+ 	private BaseService baseService;
+ 
+ 	public ImageView getBiometricImage() {
+@@ -488,8 +500,22 @@
+ 						generateAlert(RegistrationConstants.ERROR, RegistrationUIConstants.getMessageLanguageSpecific(RegistrationUIConstants.STREAMING_ERROR));
+ 						return;
+ 					}
+-					rCaptureTaskService();
+-					streamer.startStream(urlStream, biometricImage, biometricImage);
++					if (residentFaceLivenessHook.applies(currentModality)) {
++						// mosip-vivid: liveness first, rcapture only after PASSED. The hook renders the stream itself.
++						residentFaceLivenessHook.run(mdmBioDevice, urlStream, biometricImage,
++								() -> rCaptureTaskService(),
++								result -> {
++									String key = result == null ? LivenessMessages.GENERIC_FAILURE
++											: LivenessMessages.keyForFailure(result.failure().orElse(null));
++									generateAlert(RegistrationConstants.ERROR, RegistrationUIConstants.getMessageLanguageSpecific(key));
++									SessionContext.setAutoLogout(true);
++									disableEnableBiometricPane(false);
++								},
++								false /* assisted capture: wire to the operator's accessibility toggle */);
++					} else {
++						rCaptureTaskService();
++						streamer.startStream(urlStream, biometricImage, biometricImage);
++					}
+ 
+ 				} catch (RegBaseCheckedException | IOException exception) {
+ 					LOGGER.error("Error while streaming : " + currentModality,  exception);
+@@ -600,6 +626,22 @@
+ 					if(!isValidBiometric) {// if any above checks failed show alert capture failure
+ 						generateAlert(RegistrationConstants.ALERT_INFORMATION, RegistrationUIConstants.getMessageLanguageSpecific(RegistrationUIConstants.BIOMETRIC_CAPTURE_FAILURE));
+ 						return;
++					}
++
++					// mosip-vivid: identity continuity between the liveness session and the signed rcapture image
++					if (residentFaceLivenessHook.applies(currentModality)) {
++						LivenessResult liveness = residentFaceLivenessHook.lastResult();
++						CaptureBinding.Outcome binding = livenessCaptureVerifier.verify(liveness, mdsCapturedBiometricsList,
++								Workflow.RESIDENT, SessionContext.userId());
++						if (!binding.accepted()) {
++							LOGGER.warn("Liveness capture binding rejected: {}", binding.status());
++							generateAlert(RegistrationConstants.ERROR, RegistrationUIConstants.getMessageLanguageSpecific(LivenessMessages.GENERIC_FAILURE));
++							return;
++						}
++						if (liveness != null) {
++							getRegistrationDTOFromSession().LIVENESS_SUMMARY.put(fxControl.getUiSchemaDTO().getId(),
++									LivenessCaptureVerifier.summaryJson(liveness, binding));
++						}
+ 					}
+ 
+ 					LOGGER.debug("Started local de-dup validation");// validate local de-dup check
+--- a/registration/registration-services/src/main/java/io/mosip/registration/dto/RegistrationDTO.java
++++ b/registration/registration-services/src/main/java/io/mosip/registration/dto/RegistrationDTO.java
+@@ -79,6 +79,8 @@
+ 	public Map<String, Double> SDK_SCORES = new HashMap<>();
+ 	public Map<String, Object> AGE_GROUPS = new HashMap<>();
+ 	public Map<String, Integer> ATTEMPTS = new HashMap<>();
++	/** mosip-vivid: per biometric field, JSON summary of the liveness session (scores, nonce, hashes; never images). */
++	public Map<String, String> LIVENESS_SUMMARY = new HashMap<>();
+ 	public Map<String, List<String>> CONFIGURED_BIOATTRIBUTES = new HashMap<>();
+ 	public Map<String, String> SELECTED_CODES = new HashMap<>();
+ 	public Map<String, BlocklistedConsentDto> BLOCKLISTED_CHECK = new HashMap<>();
+--- a/registration/registration-services/src/main/java/io/mosip/registration/service/packet/impl/PacketHandlerServiceImpl.java
++++ b/registration/registration-services/src/main/java/io/mosip/registration/service/packet/impl/PacketHandlerServiceImpl.java
+@@ -324,6 +324,9 @@
+ 
+ 		metaInfoMap.put("metaData", getJsonString(getLabelValueDTOListString(metaData)));
+ 		metaInfoMap.put("blockListedWords", getJsonString(registrationDTO.BLOCKLISTED_CHECK));
++		if (!registrationDTO.LIVENESS_SUMMARY.isEmpty()) {
++			metaInfoMap.put("livenessSummary", getJsonString(registrationDTO.LIVENESS_SUMMARY));
++		}
+ 	}
+ 
+ 	private void setOperationsData(Map<String, String> metaInfoMap, RegistrationDTO registrationDTO)

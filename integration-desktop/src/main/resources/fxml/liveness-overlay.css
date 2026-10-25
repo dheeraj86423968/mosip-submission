@@ -1,0 +1,48 @@
+/* Liveness overlay. Colours are paired with text badges so no state relies on colour alone. */
+.liveness-overlay { -fx-background-color: transparent; }
+
+.face-guide { -fx-fill: transparent; -fx-stroke-width: 4; -fx-stroke-line-cap: round; -fx-stroke-dash-array: 14 10; }
+.guide-idle       { -fx-stroke: #9e9e9e; }
+.guide-acquiring  { -fx-stroke: #f5a623; }
+.guide-evaluating { -fx-stroke: #f5a623; -fx-stroke-dash-array: 4 6; }
+.guide-challenge  { -fx-stroke: #1e88e5; -fx-stroke-dash-array: null; }
+.guide-passed     { -fx-stroke: #2e9e4f; -fx-stroke-dash-array: null; -fx-stroke-width: 6; }
+.guide-failed     { -fx-stroke: #d32f2f; }
+.guide-locked     { -fx-stroke: #d32f2f; -fx-stroke-width: 6; }
+.guide-device     { -fx-stroke: #9e9e9e; -fx-stroke-dash-array: 2 8; }
+
+.chip { -fx-background-color: rgba(0,0,0,0.65); -fx-text-fill: white; -fx-padding: 3 10 3 10; -fx-background-radius: 12; -fx-font-size: 12px; }
+.chip-device.device-ok   { -fx-background-color: rgba(46,158,79,0.85); }
+.chip-device.device-warn { -fx-background-color: rgba(245,166,35,0.9); }
+.chip-device.device-bad  { -fx-background-color: rgba(211,47,47,0.9); }
+.chip-state { -fx-alignment: center-right; -fx-background-color: transparent; -fx-font-weight: bold; }
+
+.challenge-card { -fx-background-color: rgba(255,255,255,0.92); -fx-background-radius: 12; -fx-padding: 12; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.35), 10, 0, 0, 2); }
+.challenge-icon { -fx-font-size: 40px; }
+.challenge-text { -fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #1a1a1a; }
+.challenge-step { -fx-font-size: 12px; -fx-text-fill: #555; }
+
+.hint-label { -fx-font-size: 16px; -fx-text-fill: white; -fx-background-color: rgba(0,0,0,0.55); -fx-padding: 6 14 6 14; -fx-background-radius: 8; }
+.progress-dots .dot { -fx-fill: rgba(255,255,255,0.45); -fx-stroke: white; -fx-stroke-width: 1; }
+.progress-dots .dot-done { -fx-fill: #2e9e4f; }
+.progress-dots .dot-active { -fx-fill: #1e88e5; }
+
+.failure-pane { -fx-background-color: rgba(211,47,47,0.9); -fx-background-radius: 8; -fx-padding: 8; }
+.failure-text { -fx-text-fill: white; -fx-font-size: 15px; -fx-font-weight: bold; }
+.failure-guidance { -fx-text-fill: white; -fx-font-size: 12px; }
+.locked-pane { -fx-background-color: rgba(60,60,60,0.95); -fx-background-radius: 8; -fx-padding: 10; }
+.locked-title { -fx-text-fill: #ffb4b4; -fx-font-size: 16px; -fx-font-weight: bold; }
+.locked-guidance { -fx-text-fill: white; -fx-font-size: 13px; }
+
+.overlay-button { -fx-background-color: rgba(0,0,0,0.6); -fx-text-fill: white; -fx-background-radius: 6; }
+.diagnostics-link { -fx-text-fill: #cfe8ff; }
+.diagnostics-pane { -fx-background-color: rgba(0,0,0,0.8); -fx-background-radius: 8; -fx-padding: 8; }
+.diagnostics-title { -fx-text-fill: white; -fx-font-weight: bold; }
+.diagnostics-text { -fx-font-family: monospace; -fx-font-size: 11px; }
+
+/* accessibility: high contrast + large text */
+.high-contrast .chip, .high-contrast .hint-label { -fx-background-color: black; -fx-text-fill: yellow; -fx-font-size: 18px; }
+.high-contrast .challenge-card { -fx-background-color: black; -fx-border-color: yellow; -fx-border-width: 3; }
+.high-contrast .challenge-text, .high-contrast .challenge-icon, .high-contrast .challenge-step { -fx-text-fill: yellow; -fx-font-size: 26px; }
+.high-contrast .face-guide { -fx-stroke-width: 8; }
+.rtl { -fx-node-orientation: right-to-left; }

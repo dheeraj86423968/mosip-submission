@@ -1,0 +1,16 @@
+# mosip-vivid integration-desktop patch -- generated against mosip/registration-client release-1.2.0.x (c1cc4e7f).
+# Applies with git apply and compiles against the real client (see docs/testing/desktop-mosip-compile.md); never run.
+# Register io.mosip.vivid.desktop.mosip beans via AppConfig component scan (alternative: move LivenessSpringConfig into io.mosip.registration.api.config).
+--- a/registration/registration-services/src/main/java/io/mosip/registration/config/AppConfig.java
++++ b/registration/registration-services/src/main/java/io/mosip/registration/config/AppConfig.java
+@@ -53,7 +53,9 @@
+ 		"io.mosip.kernel.core.pdfgenerator.spi", "io.mosip.kernel.pdfgenerator.itext.impl",
+ 		"io.mosip.kernel.idobjectvalidator.impl", "io.mosip.kernel.biosdk.provider.impl",
+ 		"io.mosip.kernel.biosdk.provider.factory", "io.mosip.commons.packet",
+-		"io.mosip.registration.api.config" })
++		"io.mosip.registration.api.config",
++		/* mosip-vivid liveness / PAD */
++		"io.mosip.vivid.desktop.mosip" })
+ @PropertySource(value = { "classpath:spring.properties", "classpath:props/mosip-application.properties" })
+ @ImportAutoConfiguration(RefreshAutoConfiguration.class)
+ @EnableConfigurationProperties

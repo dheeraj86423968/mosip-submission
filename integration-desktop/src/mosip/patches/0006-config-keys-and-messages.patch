@@ -1,0 +1,32 @@
+# mosip-vivid integration-desktop patch -- generated against mosip/registration-client release-1.2.0.x (c1cc4e7f).
+# Applies with git apply and compiles against the real client (see docs/testing/desktop-mosip-compile.md); never run.
+# Config key constants and alert texts (messages_en) for the liveness keys used in generateAlert.
+--- a/registration/registration-services/src/main/java/io/mosip/registration/constants/RegistrationConstants.java
++++ b/registration/registration-services/src/main/java/io/mosip/registration/constants/RegistrationConstants.java
+@@ -986,6 +986,11 @@
+ 	public static final String IRIS_RETRY_COUNT = "mosip.registration.num_of_iris_retries";
+ 	public static final String FACE_RETRY_COUNT = "mosip.registration.num_of_face_retries";
+ 	public static final String PHOTO_RETRY_COUNT = "mosip.registration.num_of_photo_retries";
++	/* mosip-vivid: full key list in io.mosip.vivid.desktop.DesktopLivenessConfig.Keys */
++	public static final String LIVENESS_ENABLED = "mosip.registration.liveness.enabled";
++	public static final String LIVENESS_RETRIES = "mosip.registration.liveness.retries";
++	public static final String LIVENESS_DIAGNOSTICS = "mosip.registration.liveness.diagnostics.enabled";
++	public static final String LIVENESS_MODEL_DIR = "mosip.registration.liveness.model.dir";
+ 
+ 	/*public static final String[] LEFTHAND_SEGMNTD_FILE_PATHS = new String[] { "/fingerprints/lefthand/leftIndex/",
+ 			"/fingerprints/lefthand/leftLittle/", "/fingerprints/lefthand/leftMiddle/",
+--- a/registration/registration-client/src/main/resources/messages_en.properties
++++ b/registration/registration-client/src/main/resources/messages_en.properties
+@@ -437,6 +437,12 @@
+ LOCAL_DEDUP_CHECK_FAILED= Biometrics Matched With Operator Biometrics, Please Try Again#TYPE#ERROR
+ 
+ STREAMING_ERROR = Unable To start Stream, Please Check Device Connectivity#TYPE#ERROR
++liveness.failure.generic = Face verification could not be completed. Please try again.#TYPE#ERROR
++liveness.failure.liveness = We could not verify face liveness. Please try again.#TYPE#ERROR
++liveness.failure.device_unavailable = The face capture device is not available. Please check the device and try again.#TYPE#ERROR
++liveness.failure.device_connection_failure = Could not connect to the face capture device. Please check the connection and try again.#TYPE#ERROR
++liveness.failure.max_retries_exceeded = Maximum attempts reached. Please contact the supervisor.#TYPE#ERROR
++liveness.failure.engine_error = Face verification is temporarily unavailable. Please try again or contact support.#TYPE#ERROR
+ 
+ EXCEPTION_PHOTO_REQUIRED =Exception Photo Required#TYPE#ERROR
+ 
