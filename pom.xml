@@ -11,7 +11,11 @@
   <licenses><license><name>MPL-2.0</name><url>https://www.mozilla.org/en-US/MPL/2.0/</url></license></licenses>
 
   <properties>
-    <maven.compiler.release>17</maven.compiler.release>
+    <!-- Main code of the modules that ship inside the Registration Clients targets Java 11: the Desktop client
+         1.2.0.x runs on a Zulu 11 JRE, and Android (minSdk 28, D8) needs Java 11 bytecode and APIs.
+         Tests may use Java 17. e2e-tests, testkit, device-mock and demo-desktop override release back to 17. -->
+    <maven.compiler.release>11</maven.compiler.release>
+    <maven.compiler.testRelease>17</maven.compiler.testRelease>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <junit.version>5.11.4</junit.version>
     <jackson.version>2.18.2</jackson.version>
@@ -19,8 +23,22 @@
   </properties>
 
   <modules>
-    <module>liveness-api</module>
     <module>device-api</module>
+    <module>liveness-api</module>
+    <module>policy</module>
+    <module>telemetry</module>
+    <module>model-bundle</module>
+    <module>liveness-core</module>
+    <module>liveness-engine-onnx</module>
+    <module>liveness-av</module>
+    <module>device-mock</module>
+    <module>device-sbi-stream</module>
+    <module>device-vendor-sdk</module>
+    <module>testkit</module>
+    <module>calibration</module>
+    <module>integration-desktop</module>
+    <module>e2e-tests</module>
+    <module>demo-desktop</module>
   </modules>
 
   <dependencyManagement>

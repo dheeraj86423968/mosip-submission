@@ -5,10 +5,11 @@ target/
 *.iml
 .vscode/
 .DS_Store
-models/*.onnx
-models/*.tflite
+**/models/*.onnx
+**/models/*.tflite
 !models/README.md
 corpus/
+!docs/corpus/
 *.mp4
 *.avi
 build/
