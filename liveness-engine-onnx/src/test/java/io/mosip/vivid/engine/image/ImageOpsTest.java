@@ -100,6 +100,34 @@ class ImageOpsTest {
     }
 
     @Test
+    void flipHorizontalMirrorsRowsAndIsAnInvolution() {
+        byte[] d = new byte[2 * 3 * 3];
+        for (int i = 0; i < d.length; i++) d[i] = (byte) i;
+        RgbImage img = new RgbImage(3, 2, d);
+        RgbImage f = ImageOps.flipHorizontal(img);
+        // first row: pixel 0 (0,1,2) moves to x = 2
+        assertThat(f.data()[6]).isEqualTo((byte) 0);
+        assertThat(f.data()[7]).isEqualTo((byte) 1);
+        assertThat(f.data()[0]).isEqualTo((byte) 6);
+        // second row keeps its row
+        assertThat(f.data()[9 + 6]).isEqualTo((byte) 9);
+        assertThat(ImageOps.flipHorizontal(f).data()).isEqualTo(d);
+    }
+
+    @Test
+    void silentFaceCropStaysInsideTheFrame() {
+        RgbImage img = new RgbImage(100, 80, new byte[100 * 80 * 3]);
+        // centred box, scale fits: 20x30 box * 2 = 40x60, upstream keeps the inclusive right/bottom edge
+        RgbImage a = ImageOps.cropFaceFit(img, 40, 25, 20, 30, 2.0);
+        assertThat(a.width()).isEqualTo(41);
+        assertThat(a.height()).isEqualTo(61);
+        // scale 4 would need 120 px of height: reduced to (80-1)/30, then shifted inside
+        RgbImage b = ImageOps.cropFaceFit(img, 0, 0, 20, 30, 4.0);
+        assertThat(b.height()).isLessThanOrEqualTo(80);
+        assertThat(b.width()).isLessThanOrEqualTo(100);
+    }
+
+    @Test
     void hsv() {
         float[] hsv = new float[3];
         ImageOps.rgbToHsv(255, 0, 0, hsv);

@@ -82,7 +82,7 @@ class LivenessSessionFactoryTest {
         FakeEngine engine = new FakeEngine();
         LivenessSessionFactory factory = new LivenessSessionFactory(engine);
         SessionContext ctx = factory.newContext(Workflow.RESIDENT, null, true, false);
-        assertThat(factory.open(ctx).policy().policyVersion()).isEqualTo("builtin-1.0");
+        assertThat(factory.open(ctx).policy().policyVersion()).isEqualTo("builtin-1.1");
         LivenessPolicy custom = LivenessPolicy.builder(Workflow.RESIDENT).policyVersion("custom").build();
         assertThat(factory.open(custom, ctx).policy().policyVersion()).isEqualTo("custom");
         assertThatThrownBy(() -> factory.open(LivenessPolicy.defaults(Workflow.OPERATOR), ctx)).isInstanceOf(IllegalArgumentException.class);

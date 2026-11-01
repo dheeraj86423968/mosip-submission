@@ -118,8 +118,8 @@ Booleans accept `Y/N/true/false/1/0`.
 | Key (prefix `mosip.registration.liveness.`) | Default |
 |---|---|
 | `enabled`, `<workflow>.enabled` | `true` (global `false` wins) |
-| `policy.version` | `builtin-1.0` (`global-param` once any key is synced) |
-| `passive.threshold` | 0.80 resident / 0.85 operator / 0.90 supervisor |
+| `policy.version` | `builtin-1.1` (`global-param` once any key is synced) |
+| `passive.threshold` | 0.997 for every workflow (0.80 / 0.85 / 0.90 before `builtin-1.1`; see `docs/testing/proxy-eval/improvement-2026-11.md`) |
 | `pad.hard_threshold` | 0.9 |
 | `passive.window_ms` / `passive.min_frames` | 2500 / 8 |
 | `active.mode` | `ON_LOW_CONFIDENCE` resident, `ALWAYS` operator/supervisor |

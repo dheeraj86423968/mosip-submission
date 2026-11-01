@@ -1,0 +1,30 @@
+{"name": "A12_w0_t0.996", "weights": {"moire": 0.0, "color_stats": 0.0}, "passiveThreshold": 0.996, "s1": ["A12"]}
+{"name": "A12_w0_t0.997", "weights": {"moire": 0.0, "color_stats": 0.0}, "passiveThreshold": 0.997, "s1": ["A12"]}
+{"name": "A12_w0_t0.998", "weights": {"moire": 0.0, "color_stats": 0.0}, "passiveThreshold": 0.998, "s1": ["A12"]}
+{"name": "A12_w0_t0.999", "weights": {"moire": 0.0, "color_stats": 0.0}, "passiveThreshold": 0.999, "s1": ["A12"]}
+{"name": "A12_w0_t0.9995", "weights": {"moire": 0.0, "color_stats": 0.0}, "passiveThreshold": 0.9995, "s1": ["A12"]}
+{"name": "A12_w05_t0.996", "weights": {"moire": 0.05, "color_stats": 0.05}, "passiveThreshold": 0.996, "s1": ["A12"]}
+{"name": "A12_w05_t0.997", "weights": {"moire": 0.05, "color_stats": 0.05}, "passiveThreshold": 0.997, "s1": ["A12"]}
+{"name": "A12_w05_t0.998", "weights": {"moire": 0.05, "color_stats": 0.05}, "passiveThreshold": 0.998, "s1": ["A12"]}
+{"name": "A12_w05_t0.999", "weights": {"moire": 0.05, "color_stats": 0.05}, "passiveThreshold": 0.999, "s1": ["A12"]}
+{"name": "A12_w05_t0.9995", "weights": {"moire": 0.05, "color_stats": 0.05}, "passiveThreshold": 0.9995, "s1": ["A12"]}
+{"name": "A12+A15_w0_t0.996", "weights": {"moire": 0.0, "color_stats": 0.0}, "passiveThreshold": 0.996, "s1": ["A12", "A15"]}
+{"name": "A12+A15_w0_t0.997", "weights": {"moire": 0.0, "color_stats": 0.0}, "passiveThreshold": 0.997, "s1": ["A12", "A15"]}
+{"name": "A12+A15_w0_t0.998", "weights": {"moire": 0.0, "color_stats": 0.0}, "passiveThreshold": 0.998, "s1": ["A12", "A15"]}
+{"name": "A12+A15_w0_t0.999", "weights": {"moire": 0.0, "color_stats": 0.0}, "passiveThreshold": 0.999, "s1": ["A12", "A15"]}
+{"name": "A12+A15_w0_t0.9995", "weights": {"moire": 0.0, "color_stats": 0.0}, "passiveThreshold": 0.9995, "s1": ["A12", "A15"]}
+{"name": "A12+A15_w05_t0.996", "weights": {"moire": 0.05, "color_stats": 0.05}, "passiveThreshold": 0.996, "s1": ["A12", "A15"]}
+{"name": "A12+A15_w05_t0.997", "weights": {"moire": 0.05, "color_stats": 0.05}, "passiveThreshold": 0.997, "s1": ["A12", "A15"]}
+{"name": "A12+A15_w05_t0.998", "weights": {"moire": 0.05, "color_stats": 0.05}, "passiveThreshold": 0.998, "s1": ["A12", "A15"]}
+{"name": "A12+A15_w05_t0.999", "weights": {"moire": 0.05, "color_stats": 0.05}, "passiveThreshold": 0.999, "s1": ["A12", "A15"]}
+{"name": "A12+A15_w05_t0.9995", "weights": {"moire": 0.05, "color_stats": 0.05}, "passiveThreshold": 0.9995, "s1": ["A12", "A15"]}
+{"name": "A15_w0_t0.996", "weights": {"moire": 0.0, "color_stats": 0.0}, "passiveThreshold": 0.996}
+{"name": "A15_w0_t0.997", "weights": {"moire": 0.0, "color_stats": 0.0}, "passiveThreshold": 0.997}
+{"name": "A15_w0_t0.998", "weights": {"moire": 0.0, "color_stats": 0.0}, "passiveThreshold": 0.998}
+{"name": "A15_w0_t0.999", "weights": {"moire": 0.0, "color_stats": 0.0}, "passiveThreshold": 0.999}
+{"name": "A15_w0_t0.9995", "weights": {"moire": 0.0, "color_stats": 0.0}, "passiveThreshold": 0.9995}
+{"name": "A15_w05_t0.996", "weights": {"moire": 0.05, "color_stats": 0.05}, "passiveThreshold": 0.996}
+{"name": "A15_w05_t0.997", "weights": {"moire": 0.05, "color_stats": 0.05}, "passiveThreshold": 0.997}
+{"name": "A15_w05_t0.998", "weights": {"moire": 0.05, "color_stats": 0.05}, "passiveThreshold": 0.998}
+{"name": "A15_w05_t0.999", "weights": {"moire": 0.05, "color_stats": 0.05}, "passiveThreshold": 0.999}
+{"name": "A15_w05_t0.9995", "weights": {"moire": 0.05, "color_stats": 0.05}, "passiveThreshold": 0.9995}

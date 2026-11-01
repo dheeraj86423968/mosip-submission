@@ -128,12 +128,18 @@ orchestrator and engine as bona fide presentations, against five digitally simul
 presentations). This is a digital proxy, not ISO/IEC 30107-3 physical-instrument testing; no media is in the
 repository. Full method and results: [`docs/testing/proxy-eval/`](docs/testing/proxy-eval/README.md).
 
-| Passive only (resident, threshold 0.80) | Result |
+| Passive only (resident, `builtin-1.0`, threshold 0.80) | Result |
 |---|---|
 | BPCER (real people rejected) | 5.7 % (2/35) |
 | APCER, simulated screen photo / screen replay | 28 % / 44 % |
 | APCER, simulated prints (flat, warped, cut-out) | 83–84 % |
 | With challenges | every attack fails (APCER 0 %) |
+
+**November 2026 follow-up** ([`improvement-2026-11.md`](docs/testing/proxy-eval/improvement-2026-11.md)): with fusion
+weights learned on 23 training people and the passive threshold recalibrated to 0.997, held-out print APCER fell from
+75–92 % to 17–25 % and screen APCER from 25–43 % to 0–8 %. Held-out BPCER was 1 of 13 (0 of 13 before), a change
+inside the confidence intervals. The original two-model Silent-Face ensemble was converted and evaluated, and did not
+help.
 
 Passive checks alone do not stop prints, so resident capture now challenges every time (`ALWAYS`), and the
 pulse signal (S4), which fired on real skin, no longer vetoes on its own. The evaluation also showed head-tilt
@@ -226,9 +232,9 @@ If the signature fails to verify, the client falls back to the compiled defaults
 
 | Workflow | Passive threshold | Active mode | Challenges (min–max) | Max attempts | On max attempts |
 |---|---|---|---|---|---|
-| RESIDENT | 0.80 | ALWAYS (`ON_LOW_CONFIDENCE` supported) | 2–3 | 3 | ASSISTED_CAPTURE_WITH_SUPERVISOR |
-| OPERATOR | 0.85 | ALWAYS | 2–3 | 3 | LOCK_AND_ALERT |
-| SUPERVISOR | 0.90 | ALWAYS | 3 | 2 | LOCK_AND_ALERT |
+| RESIDENT | 0.997 | ALWAYS (`ON_LOW_CONFIDENCE` supported) | 2–3 | 3 | ASSISTED_CAPTURE_WITH_SUPERVISOR |
+| OPERATOR | 0.997 | ALWAYS | 2–3 | 3 | LOCK_AND_ALERT |
+| SUPERVISOR | 0.997 | ALWAYS | 3 | 2 | LOCK_AND_ALERT |
 
 Every key, its default and its tightening direction are listed in [07-configuration](docs/design/07-configuration.md).
 
@@ -273,9 +279,12 @@ Every key, its default and its tightening direction are listed in [07-configurat
   landmarks track pitch poorly, and on real faces (proxy evaluation) talking alone moves pitch by 5–10° and vertical
   gaze is unusable, so these three are left out of the default challenge pool.
 - S8 depth/IR is tested on synthetic planes only; no depth or IR camera has been used.
-- Passive PAD is weak against prints (proxy APCER 83–84 %): only the CNN texture signal separates attacks, and
-  moiré did not separate the simulated screens. Security currently rests on challenge-response.
-- Signal weights for moiré, colour statistics, rPPG and parallax are hand-set, not trained.
+- Passive PAD still lets some prints through (held-out proxy APCER 17–25 % with `builtin-1.1`, down from 75–92 %):
+  only the CNN texture signal separates attacks, and security still rests on challenge-response. The 0.997
+  threshold was set on compressed web video with digital attacks and must be recalibrated on real webcam captures
+  and physical instruments; that is a signed-policy update, not a code change.
+- Moiré and colour weights were learned from 23 training people; rPPG and parallax weights are hand-set, because
+  neither signal has confidence inside the 2.5 s passive window.
 - Spoken-code liveness works with synthetic speech in English and Hindi, partly in Telugu, and not in Gujarati; its
   lip-sync threshold was tuned on synthetic lips and background speech defeats it. It is a prototype.
 - The nightly red-team workflow and the calibration loop have run locally only, never in CI or against a MOSIP

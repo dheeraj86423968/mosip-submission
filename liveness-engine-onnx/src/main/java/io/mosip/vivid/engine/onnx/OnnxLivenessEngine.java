@@ -65,7 +65,7 @@ public final class OnnxLivenessEngine implements LivenessEngine {
             if (config.isEnabled(Signals.CNN_TEXTURE)) {
                 for (AntiSpoofModelConfig a : config.antiSpoofModels()) {
                     OrtModel m = track(OrtModel.load(a.path(), config.threads(), config.executionProvider()));
-                    antiSpoof.add(new CnnTextureSignal.Model(m, a.inputSize(), a.cropScale(), a.bgr(), a.realClassIndex()));
+                    antiSpoof.add(new CnnTextureSignal.Model(m, a.inputSize(), a.cropScale(), a.bgr(), a.realClassIndex(), a.inputScale(), a.flip(), a.fitCrop()));
                 }
             }
             this.embedder = config.embeddingModel().map(p -> (FaceEmbedder) new SFaceEmbedder(track(OrtModel.load(p, config.threads(), config.executionProvider())))).orElse(null);

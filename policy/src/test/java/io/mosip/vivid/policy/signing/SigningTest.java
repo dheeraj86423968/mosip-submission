@@ -117,7 +117,7 @@ class SigningTest {
         assertThat(run("verify", pub.toString(), policy.toString(), sig.toString())).isZero();
         assertThat(lastOutput).contains("VALID");
 
-        Files.writeString(policy, PolicyLoader.builtinDefaultsJson().replace("0.80", "0.10"), StandardCharsets.UTF_8);
+        Files.writeString(policy, PolicyLoader.builtinDefaultsJson().replace("0.997", "0.10"), StandardCharsets.UTF_8);
         assertThat(run("verify", pub.toString(), policy.toString(), sig.toString())).isEqualTo(2);
         assertThat(lastOutput).contains("INVALID");
 

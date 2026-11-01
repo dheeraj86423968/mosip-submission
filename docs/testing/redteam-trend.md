@@ -154,6 +154,25 @@ than sharp bona fide frames, which shows how far this proxy is from real faces. 
 flipped variant moves an APCER by 8.3 points. The value of the run is the per-variant record: an engine or policy
 change that turns a rejected variant into an accepted one is caught by id and can be re-rendered exactly.
 
+### Baseline refresh, 1 Nov 2026 (`builtin-1.1`)
+
+The passive-PAD change in [`proxy-eval/improvement-2026-11.md`](proxy-eval/improvement-2026-11.md) (S1 crop 1.2x,
+moiré and colour weight 0.05, passive threshold 0.997) changes red-team decisions, so the baseline was regenerated
+with `tools/redteam/run-redteam.sh --update-baseline` after review. The gate threshold in the script follows the
+RESIDENT default and is now 0.997; at the old 0.80 the gate counted prints that the orchestrator rejects as below
+threshold (fused 0.89–0.97) as accepted.
+
+| Date | Commit | Source | Items (BF/attack) | PRINT | PRINT_WARPED | PRINT_CUTOUT | SCREEN_REPLAY | SCREEN_PHOTO | REPLAY_JITTER | LOWRES_REPLAY | Max APCER | BPCER | ACER | Challenge max APCER | Regressions | Run time |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 2026-11-01 | bdeb105-dirty | local | 108 (24/84) | 0/12 (0 %) | 0/12 (0 %) | 0/12 (0 %) | 0/11 (0 %) | 0/12 (0 %) | 0/12 (0 %) | 3/10 (30 %) | 30.0 % | 24/24 (100 %) | 65.0 % | 0.0 % | 0 | 282 s |
+
+Against the old baseline: no regression, 21 previously accepted attack variants now rejected, 10 bona fide flips.
+**Every drawn bona fide take is now rejected.** That is not a finding about real people: S1 already called 14 of the
+24 cartoons attacks, and the remaining ones score 0.84–0.98, below a threshold calibrated on real faces. The gate
+therefore still catches an attack variant that becomes accepted, but bona fide flips on drawn faces carry no
+information; BPCER here must not be read as a real-face rate. The e2e drawn-face harness pins the S1 crop at 1.5x for
+the same reason (`e2e-tests/.../SyntheticSubjectEngine.java`).
+
 ## 6. Built and not built (PLAN.md §17.5)
 
 | §17.5 element | Status |

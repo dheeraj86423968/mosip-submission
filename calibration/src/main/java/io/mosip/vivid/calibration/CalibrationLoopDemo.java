@@ -57,13 +57,17 @@ public final class CalibrationLoopDemo {
 
     public static Outcome run(Path dir, PrintStream out) throws IOException {
         Files.createDirectories(dir);
-        // 1. Policy key and the signed policy in force (the compiled defaults, RESIDENT threshold 0.80).
+        // 1. Policy key and the signed policy in force. The simulated fleet's score histograms are on the scale of the
+        //    previous built-in policy (builtin-1.0, RESIDENT threshold 0.80), so the policy in force is the compiled
+        //    defaults with that threshold and version; builtin-1.1 moved RESIDENT to 0.997 after the November 2026
+        //    proxy evaluation, which this simulation does not model.
         KeyPair ops = PolicyKeys.generateEc();
         Path pub = dir.resolve("policy.pub");
         Path priv = dir.resolve("policy.key");
         Files.writeString(pub, PolicyKeys.encodePublic(ops.getPublic()));
         Files.writeString(priv, PolicyKeys.encodePrivate(ops.getPrivate()));
-        SignedPolicy inForce = PolicySigner.signToEnvelope(PolicyLoader.builtinDefaultsJson(), ops.getPrivate(), "ops-2026");
+        SignedPolicy inForce = PolicySigner.signToEnvelope(
+                PolicyUpdater.apply(PolicyLoader.builtinDefaultsJson(), java.util.Map.of(Workflow.RESIDENT, 0.80), "builtin-1.0"), ops.getPrivate(), "ops-2026");
         Path inForceFile = dir.resolve("policy-in-force.envelope.json");
         Files.writeString(inForceFile, inForce.toEnvelopeJson());
         out.println("[1] policy in force " + new PolicyLoader().parse(inForce.policyJson()).version() + ", signed with ops-2026");
@@ -93,7 +97,7 @@ public final class CalibrationLoopDemo {
                 OfflineAuditQueue queue = new OfflineAuditQueue(machine.resolve("audit-queue.jsonl"));
                 PrivacyBudgetLedger ledger = new PrivacyBudgetLedger(machine.resolve("privacy-ledger.json"), 6.0, 1e-6);
                 releasers.add(new CalibrationReleaser(acc, DpMechanism.discreteLaplace("1"), ledger, queue, "machine-" + Integer.toHexString(prefix.hashCode()),
-                        centreId, new SecureRandom()));
+                        centreId, seeded(prefix)));
                 accumulators.add(acc);
                 queues.add(queue);
                 clients++;
@@ -178,5 +182,16 @@ public final class CalibrationLoopDemo {
         System.arraycopy(a, 0, out, 0, a.length);
         System.arraycopy(b, 0, out, a.length, b.length);
         return out;
+    }
+
+    /** Deterministic noise for the demo fleet, so its printed outcome is reproducible; production releasers use a real SecureRandom. */
+    private static SecureRandom seeded(String machine) {
+        try {
+            SecureRandom r = SecureRandom.getInstance("SHA1PRNG");
+            r.setSeed(("vivid-calibration-demo:" + machine).getBytes(java.nio.charset.StandardCharsets.UTF_8));
+            return r;
+        } catch (java.security.NoSuchAlgorithmException e) {
+            throw new IllegalStateException(e);
+        }
     }
 }

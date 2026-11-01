@@ -27,7 +27,8 @@ class EndToEndCalibrationLoopTest {
         assertThat(o.thresholdApplied()).as("one bounded loosening step").isEqualTo(0.75);
         assertThat(o.appliedVersion()).isEqualTo("builtin-1.0+cal.2026Q4.10011-dim");
         assertThat(o.tamperedFellBack()).isTrue();
-        assertThat(o.tamperedThreshold()).isEqualTo(0.80);
+        // a tampered policy falls back to the compiled defaults
+        assertThat(o.tamperedThreshold()).isEqualTo(io.mosip.vivid.api.LivenessPolicy.defaults(io.mosip.vivid.api.Workflow.RESIDENT).passiveThreshold());
         assertThat(o.releasesBeforeExhaustion()).isEqualTo(2);
         assertThat(o.epsilonSpentPerClient()).isEqualTo(6.0);
         assertThat(text).contains("10012-reference").contains("LOOSENING_NOT_AUTHORISED");

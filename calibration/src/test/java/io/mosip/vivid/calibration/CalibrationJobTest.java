@@ -1,5 +1,6 @@
 package io.mosip.vivid.calibration;
 
+import io.mosip.vivid.api.LivenessPolicy;
 import io.mosip.vivid.api.Workflow;
 import io.mosip.vivid.policy.PolicyException;
 import io.mosip.vivid.policy.PolicyLoader;
@@ -112,7 +113,8 @@ class CalibrationJobTest {
         var loaded = loader.loadVerified(upd.policyJson(), upd.signatureBase64(), k.getPublic(), "calibration");
         assertThat(loaded.report().usedFallback()).isFalse();
         assertThat(loader.toLivenessPolicy(loaded.document(), Workflow.RESIDENT).passiveThreshold()).isEqualTo(0.75);
-        assertThat(loader.toLivenessPolicy(loaded.document(), Workflow.OPERATOR).passiveThreshold()).isEqualTo(0.85);
+        assertThat(loader.toLivenessPolicy(loaded.document(), Workflow.OPERATOR).passiveThreshold())
+                .isEqualTo(LivenessPolicy.defaults(Workflow.OPERATOR).passiveThreshold());
         assertThat(loader.toLivenessPolicy(loaded.document(), Workflow.RESIDENT).maxRetries()).isEqualTo(3);
         assertThat(loaded.document().version()).isEqualTo("builtin-1.0+cal.t.c1");
 

@@ -13,7 +13,7 @@ manager via `telemetry`.
 
 ## 1. Resident face capture
 
-Policy defaults: `passiveThreshold 0.80`, `activeMode ALWAYS` (see 04 §2 for why; `ON_LOW_CONFIDENCE` is supported),
+Policy defaults: `passiveThreshold 0.997`, `activeMode ALWAYS` (see 04 §2 for why; `ON_LOW_CONFIDENCE` is supported),
 `minChallenges 2`, `maxChallenges 3`, `maxRetries 3`,
 `onMaxRetries ASSISTED_CAPTURE_WITH_SUPERVISOR`.
 
@@ -115,7 +115,7 @@ sequenceDiagram
 
 ## 2. Operator authentication
 
-Policy defaults: `passiveThreshold 0.85`, `activeMode ALWAYS`,
+Policy defaults: `passiveThreshold 0.997`, `activeMode ALWAYS`,
 `minChallenges 1`, `maxChallenges 2`, `maxRetries 3`,
 `onMaxRetries LOCK_AND_ALERT`.
 
@@ -176,7 +176,7 @@ models are local; only the audit upload is deferred.
 
 ## 3. Supervisor authentication
 
-Policy defaults: `passiveThreshold 0.90`, `activeMode ALWAYS`,
+Policy defaults: `passiveThreshold 0.997`, `activeMode ALWAYS`,
 `minChallenges 2`, `maxChallenges 3`, `maxRetries 2`,
 `onMaxRetries LOCK_AND_ALERT`.
 

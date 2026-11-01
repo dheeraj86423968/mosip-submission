@@ -60,11 +60,15 @@ public final class LivenessPolicy {
 
     /** Sensible compiled-in defaults so liveness is enforced even before the first config sync. */
     public static LivenessPolicy defaults(Workflow w) {
-        Builder b = builder(w).policyVersion("builtin-1.0");
+        // Fusion weights and passive thresholds: learned on the training people of the November 2026 proxy evaluation
+        // and confirmed on held-out people (docs/testing/proxy-eval/improvement-2026-11.md). Moire and colour got ~0
+        // weight in a non-negative logistic fit; 0.05 keeps their hard veto without letting them dilute S1.
+        Builder b = builder(w).policyVersion("builtin-1.1")
+                .signalWeight(Signals.MOIRE, 0.05).signalWeight(Signals.COLOR_STATS, 0.05);
         switch (w) {
-            case RESIDENT: b.passiveThreshold(0.80).activeMode(ActiveMode.ALWAYS).minChallenges(2).maxChallenges(3).maxRetries(3).onMaxRetries(OnMaxRetries.ASSISTED_CAPTURE_WITH_SUPERVISOR); break;
-            case OPERATOR: b.passiveThreshold(0.85).activeMode(ActiveMode.ALWAYS).minChallenges(2).maxChallenges(3).maxRetries(3).onMaxRetries(OnMaxRetries.LOCK_AND_ALERT); break;
-            case SUPERVISOR: b.passiveThreshold(0.90).activeMode(ActiveMode.ALWAYS).minChallenges(3).maxChallenges(3).maxRetries(2).onMaxRetries(OnMaxRetries.LOCK_AND_ALERT); break;
+            case RESIDENT: b.passiveThreshold(0.997).activeMode(ActiveMode.ALWAYS).minChallenges(2).maxChallenges(3).maxRetries(3).onMaxRetries(OnMaxRetries.ASSISTED_CAPTURE_WITH_SUPERVISOR); break;
+            case OPERATOR: b.passiveThreshold(0.997).activeMode(ActiveMode.ALWAYS).minChallenges(2).maxChallenges(3).maxRetries(3).onMaxRetries(OnMaxRetries.LOCK_AND_ALERT); break;
+            case SUPERVISOR: b.passiveThreshold(0.997).activeMode(ActiveMode.ALWAYS).minChallenges(3).maxChallenges(3).maxRetries(2).onMaxRetries(OnMaxRetries.LOCK_AND_ALERT); break;
         }
         return b.build();
     }

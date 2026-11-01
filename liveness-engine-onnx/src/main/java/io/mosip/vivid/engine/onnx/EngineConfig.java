@@ -42,6 +42,9 @@ import java.util.Set;
  * vivid.engine.antispoof.cropScale=1.5
  * vivid.engine.antispoof.colorOrder=RGB         # or BGR
  * vivid.engine.antispoof.realClassIndex=0
+ * vivid.engine.antispoof.inputScale=0.00392157  # multiplier for 0..255 pixels; preset: 1/255, or 1 for Silent-Face
+ * vivid.engine.antispoof.flip=false             # also score the mirrored crop and average (test-time augmentation)
+ * vivid.engine.antispoof.cropMode=square         # square (reflect-padded) | fit (Silent-Face: kept inside the frame)
  * vivid.engine.antispoof2.model=...             # optional second scale (same sub-keys)
  * vivid.engine.embedding.model=models/face_recognition_sface_2021dec_int8.onnx
  * vivid.engine.embedding.everyFrames=5
@@ -158,7 +161,10 @@ public final class EngineConfig {
                         intOf(p, key + ".inputSize", preset.inputSize()),
                         doubleOf(p, key + ".cropScale", preset.cropScale()),
                         order == null ? preset.bgr() : order.trim().equalsIgnoreCase("BGR"),
-                        intOf(p, key + ".realClassIndex", preset.realClassIndex())));
+                        intOf(p, key + ".realClassIndex", preset.realClassIndex()),
+                        (float) doubleOf(p, key + ".inputScale", preset.inputScale()),
+                        Boolean.parseBoolean(p.getProperty(PREFIX + key + ".flip", String.valueOf(preset.flip())).trim()),
+                        cropModeFit(p.getProperty(PREFIX + key + ".cropMode"), preset.fitCrop())));
             });
         }
         path(p, "embedding.model", baseDir).ifPresent(b::embeddingModel);
@@ -234,6 +240,15 @@ public final class EngineConfig {
                 .irFlatCv(doubleOf(p, "ir.flatCv", d.irFlatCv()))
                 .irMaxFusedProbability(doubleOf(p, "ir.maxFusedProbability", d.irMaxFusedProbability()))
                 .build();
+    }
+
+    private static boolean cropModeFit(String v, boolean def) {
+        if (v == null || v.isBlank()) return def;
+        switch (v.trim().toLowerCase(Locale.ROOT)) {
+            case "fit": return true;
+            case "square": return false;
+            default: throw new IllegalArgumentException("cropMode must be 'square' or 'fit', got '" + v + "'");
+        }
     }
 
     private static Optional<Path> path(Properties p, String key, Path base) {

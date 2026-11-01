@@ -63,6 +63,21 @@ public final class FaceContext {
         return c;
     }
 
+    /**
+     * Silent-Face crop ({@code CropImage._get_new_box} upstream): the box scaled by {@code scale} in each dimension, the
+     * scale reduced so the crop fits in the frame, the crop shifted inside the frame, resized to {@code size x size}
+     * without keeping the aspect ratio.
+     */
+    public RgbImage faceCropFit(double scale, int size) {
+        String key = "fit/" + scale + "/" + size;
+        RgbImage c = cropCache.get(key);
+        if (c == null) {
+            c = ImageOps.resize(ImageOps.cropFaceFit(frame, face.x(), face.y(), face.w(), face.h(), scale), size, size);
+            cropCache.put(key, c);
+        }
+        return c;
+    }
+
     /** Luma of the tight (scale 1.0) face crop at the given size. */
     public FloatImage grayFace(int size) {
         return grayFaceCache.computeIfAbsent(size, s -> ImageOps.toGray(faceCrop(1.0, s)));

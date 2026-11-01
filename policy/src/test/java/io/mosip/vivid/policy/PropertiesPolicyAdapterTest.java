@@ -17,7 +17,7 @@ class PropertiesPolicyAdapterTest {
     @Test
     void flattensToDocumentedKeys() {
         Properties p = adapter.toProperties(PolicyLoader.builtinDefaults());
-        assertThat(p.getProperty("mosip.registration.liveness.resident.passive.threshold")).isEqualTo("0.8");
+        assertThat(p.getProperty("mosip.registration.liveness.resident.passive.threshold")).isEqualTo("0.997");
         assertThat(p.getProperty("mosip.registration.liveness.resident.active.pool")).isEqualTo("BLINK,SMILE,TURN_LEFT,TURN_RIGHT,OPEN_MOUTH");
         assertThat(p.getProperty("mosip.registration.liveness.resident.active.mode")).isEqualTo("ALWAYS");
         assertThat(p.getProperty("mosip.registration.liveness.resident.signals.rppg.weight")).isEqualTo("0.8");

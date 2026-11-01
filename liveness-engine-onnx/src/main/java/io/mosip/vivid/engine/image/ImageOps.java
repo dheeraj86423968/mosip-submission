@@ -119,6 +119,41 @@ public final class ImageOps {
         return cropSquare(src, boxX + boxW / 2, boxY + boxH / 2, Math.max(boxW, boxH) * scale, pad);
     }
 
+    /**
+     * The Silent-Face-Anti-Spoofing crop ({@code CropImage._get_new_box}): the box scaled by {@code scale} about its
+     * centre in each dimension, with the scale reduced so the crop fits inside the frame, then shifted inside the
+     * frame. Coordinates are truncated and the right/bottom edge is inclusive, as upstream.
+     */
+    public static RgbImage cropFaceFit(RgbImage src, double boxX, double boxY, double boxW, double boxH, double scale) {
+        int srcW = src.width(), srcH = src.height();
+        double bw = Math.max(1, boxW), bh = Math.max(1, boxH);
+        double s = Math.min((srcH - 1) / bh, Math.min((srcW - 1) / bw, scale));
+        double nw = bw * s, nh = bh * s;
+        double cx = boxX + bw / 2, cy = boxY + bh / 2;
+        double l = cx - nw / 2, t = cy - nh / 2, r = cx + nw / 2, b = cy + nh / 2;
+        if (l < 0) { r -= l; l = 0; }
+        if (t < 0) { b -= t; t = 0; }
+        if (r > srcW - 1) { l -= r - srcW + 1; r = srcW - 1; }
+        if (b > srcH - 1) { t -= b - srcH + 1; b = srcH - 1; }
+        int x0 = (int) l, y0 = (int) t, x1 = (int) r, y1 = (int) b;
+        return crop(src, x0, y0, Math.max(1, x1 - x0 + 1), Math.max(1, y1 - y0 + 1), Padding.CLAMP);
+    }
+
+    /** Mirror image (left-right). */
+    public static RgbImage flipHorizontal(RgbImage src) {
+        int w = src.width(), h = src.height();
+        byte[] s = src.data();
+        byte[] out = new byte[s.length];
+        for (int y = 0; y < h; y++) {
+            int row = y * w * 3;
+            for (int x = 0; x < w; x++) {
+                int a = row + x * 3, b = row + (w - 1 - x) * 3;
+                out[b] = s[a]; out[b + 1] = s[a + 1]; out[b + 2] = s[a + 2];
+            }
+        }
+        return new RgbImage(w, h, out);
+    }
+
     private static int map(int v, int n, Padding pad) {
         if (v >= 0 && v < n) return v;
         switch (pad) {

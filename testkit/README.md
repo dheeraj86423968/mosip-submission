@@ -10,7 +10,7 @@ suite.
 | Package | What |
 |---|---|
 | `io.mosip.vivid.testkit.metrics` | `Iso30107Metrics`, `GroupSlices`, `Rate` (Wilson CI), `NonResponse`, `Iso30107Report` (JSON and self-contained HTML), `IsoReportMain` CLI |
-| `io.mosip.vivid.testkit.corpus` | `CorpusScoreMain` CLI (recorded corpus → `scores.jsonl`), `FrameTraceMain` CLI (per-frame signal and pose trace), `CorpusItem`, `CaptureLog` |
+| `io.mosip.vivid.testkit.corpus` | `CorpusScoreMain` CLI (recorded corpus → `scores.jsonl`), `FrameTraceMain` CLI (per-frame signal and pose trace), `PadReplayMain` CLI (analyse once, replay policy/S1 variants through the real orchestrator), `CorpusItem`, `CaptureLog` |
 | `io.mosip.vivid.testkit.conformance` | `FrameSourceConformanceTest`: a JUnit 5 contract every `FaceFrameSource` must pass |
 | `io.mosip.vivid.testkit.scenario` | `ScenarioRunner`, `ScenarioExpectation`, `ScenarioSuite`, `SuiteReport` |
 | `io.mosip.vivid.testkit.redteam` | `RedTeamCorpusMain` (synthetic attack corpus), `RedTeamRenderer`, `RedTeamVariant` (stable variant ids), `RedTeamGateMain` (APCER/BPCER/ACER trend, regression gate, fixtures) |
@@ -94,6 +94,19 @@ Same corpus layout. Each item goes frame by frame through one fresh `OnnxFrameAn
 learned neutral) and, for `NOD`, starts S5 tracking. One CSV row per frame: face count, quality, yaw, engine pitch,
 absolute pitch, nose drop and fraction, vertical gaze, eye and mouth aspect, smile, and every signal's attack
 probability and confidence. Measurements only, no pixels. Used by `docs/testing/proxy-eval/`.
+
+### Analyse once, replay many (`PadReplayMain`)
+
+```
+java -cp ... io.mosip.vivid.testkit.corpus.PadReplayMain dump --corpus <dir> --out dump.jsonl.gz --models <dir> \
+     [--log capture-log.csv] [--features frames.csv] [--view NAME=model.onnx[@cropScale][+flip][+fit|+square]]...
+java -cp ... io.mosip.vivid.testkit.corpus.PadReplayMain replay --dump dump.jsonl.gz... --configs configs.jsonl --out-dir <dir>
+```
+`dump` runs every frame once through the production analyzer and stores each `FrameAnalysis` (signals, quality,
+observation, embedding; no pixels), plus P(real) of each S1 candidate view on the analyzer's face box. `replay` runs
+each configuration line (`{"name":..,"s1":[views],"platt":[a,b],"weights":{..},"passiveThreshold":..,"padHardThreshold":..}`)
+through the real orchestrator in passive mode and writes one `scores.jsonl` per configuration. With no override the
+replay equals `CorpusScoreMain` exactly (checked on 228 items). Used by `docs/testing/proxy-eval/improvement-2026-11.md`.
 
 ## Red team (`redteam`)
 

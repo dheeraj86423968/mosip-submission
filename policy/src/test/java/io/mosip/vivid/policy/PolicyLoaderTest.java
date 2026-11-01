@@ -36,7 +36,7 @@ class PolicyLoaderTest {
             assertThat(fromDoc.maxRetries()).isEqualTo(api.maxRetries());
             assertThat(fromDoc.onMaxRetries()).isEqualTo(api.onMaxRetries());
             assertThat(fromDoc.challengePool()).isEqualTo(api.challengePool());
-            assertThat(fromDoc.policyVersion()).isEqualTo("builtin-1.0");
+            assertThat(fromDoc.policyVersion()).isEqualTo("builtin-1.1");
         }
         assertThat(PolicyLoader.builtinDefaultsJson()).contains("\"schemaVersion\"");
     }
@@ -139,7 +139,7 @@ class PolicyLoaderTest {
         assertThat(loaded.report().usedFallback()).isTrue();
         assertThat(loaded.report().signatureStatus()).isEqualTo(PolicyLoadReport.SignatureStatus.INVALID);
         assertThat(loaded.report().violations()).anyMatch(v -> v.contains("signature"));
-        assertThat(loaded.report().version()).isEqualTo("builtin-1.0");
+        assertThat(loaded.report().version()).isEqualTo("builtin-1.1");
         assertThat(loaded.effective(Workflow.RESIDENT).enabled()).isTrue();
     }
 

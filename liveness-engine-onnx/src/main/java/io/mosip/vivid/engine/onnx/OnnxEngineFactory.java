@@ -24,8 +24,11 @@ import java.util.stream.Stream;
  * </ol>
  * In the chosen directory an {@code engine.properties} file wins; otherwise models are recognised by file name:
  * {@code *yunet*} (detector), {@code *antispoof*}/{@code *minifasnet*} (S1, up to two), {@code *sface*}/{@code *arcface*}/
- * {@code *mobilefacenet*}/{@code *mbf*} (embedding). Production deployments should use {@link #fromStore}, which only
- * loads a signed, verified bundle.
+ * {@code *mobilefacenet*}/{@code *mbf*} (embedding). The original Silent-Face models ({@code 2.7_80x80_MiniFASNetV2.onnx},
+ * {@code 4_0_0_80x80_MiniFASNetV1SE.onnx}) are discovered only when no other anti-spoof model is present: on the
+ * November 2026 proxy evaluation, averaging them with the bundled model was worse than the bundled model alone
+ * (docs/testing/proxy-eval/improvement-2026-11.md). Use {@code engine.properties} to ensemble them explicitly.
+ * Production deployments should use {@link #fromStore}, which only loads a signed, verified bundle.
  */
 public final class OnnxEngineFactory {
     private static final Logger LOG = LoggerFactory.getLogger(OnnxEngineFactory.class);
@@ -79,15 +82,20 @@ public final class OnnxEngineFactory {
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
-        int antiSpoof = 0;
+        List<Path> antiSpoof = new ArrayList<>(), silentFace = new ArrayList<>();
         for (Path p : onnx) {
             String n = EngineConfig.Builder.lower(p);
             if (n.contains("yunet")) b.detectorModel(p);
-            else if ((n.contains("antispoof") || n.contains("minifasnet") || n.contains("anti_spoof")) && antiSpoof < 2) {
-                b.antiSpoofModel(AntiSpoofModelConfig.preset(p, 0));
-                antiSpoof++;
+            else if (n.contains("antispoof") || n.contains("minifasnet") || n.contains("anti_spoof")) {
+                (AntiSpoofModelConfig.isSilentFace(p) ? silentFace : antiSpoof).add(p);
             } else if (n.contains("sface") || n.contains("arcface") || n.contains("mobilefacenet") || n.contains("mbf")) b.embeddingModel(p);
         }
+        List<Path> chosen = antiSpoof.isEmpty() ? silentFace : antiSpoof;
+        if (!antiSpoof.isEmpty() && !silentFace.isEmpty()) {
+            LOG.info("ignoring Silent-Face models {} next to {} (see OnnxEngineFactory javadoc; configure engine.properties to ensemble them)",
+                    silentFace, antiSpoof);
+        }
+        for (Path p : chosen.subList(0, Math.min(2, chosen.size()))) b.antiSpoofModel(AntiSpoofModelConfig.preset(p, 0));
         LOG.info("discovered models in {}: {}", dir, onnx);
         return b;
     }

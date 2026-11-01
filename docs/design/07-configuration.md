@@ -24,7 +24,7 @@ sync without any change to the config framework.
   "workflows": {
     "RESIDENT": {
       "enabled": true,
-      "passiveThreshold": 0.80,
+      "passiveThreshold": 0.997,
       "padHardThreshold": 0.90,
       "passiveWindowMillis": 2500,
       "passiveMinFrames": 8,
@@ -50,8 +50,8 @@ sync without any change to the config framework.
         "parallax": { "enabled": true, "weight": 1.2 }
       }
     },
-    "OPERATOR":   { "enabled": true, "passiveThreshold": 0.85, "active": { "mode": "ALWAYS", "minChallenges": 2, "maxChallenges": 3 }, "maxRetries": 3, "onMaxRetries": "LOCK_AND_ALERT" },
-    "SUPERVISOR": { "enabled": true, "passiveThreshold": 0.90, "active": { "mode": "ALWAYS", "minChallenges": 3, "maxChallenges": 3 }, "maxRetries": 2, "onMaxRetries": "LOCK_AND_ALERT" }
+    "OPERATOR":   { "enabled": true, "passiveThreshold": 0.997, "active": { "mode": "ALWAYS", "minChallenges": 2, "maxChallenges": 3 }, "maxRetries": 3, "onMaxRetries": "LOCK_AND_ALERT" },
+    "SUPERVISOR": { "enabled": true, "passiveThreshold": 0.997, "active": { "mode": "ALWAYS", "minChallenges": 3, "maxChallenges": 3 }, "maxRetries": 2, "onMaxRetries": "LOCK_AND_ALERT" }
   },
   "device": { "minFps": 10, "maxQueuedFrames": 4, "stallTimeoutMillis": 3000, "reconnectAttempts": 5 },
   "diagnostics": { "mode": "OFF" },
@@ -72,7 +72,7 @@ under `signals.<id>.weight` and `signals.<id>.enabled`.
 mosip.registration.liveness.enabled=true
 mosip.registration.liveness.policy.version=2026.10-country-A
 mosip.registration.liveness.resident.enabled=true
-mosip.registration.liveness.resident.passiveThreshold=0.80
+mosip.registration.liveness.resident.passiveThreshold=0.997
 mosip.registration.liveness.resident.active.mode=ALWAYS
 mosip.registration.liveness.resident.active.minChallenges=2
 mosip.registration.liveness.resident.active.maxChallenges=3
@@ -81,9 +81,9 @@ mosip.registration.liveness.resident.active.timeoutMillis=8000
 mosip.registration.liveness.resident.maxRetries=3
 mosip.registration.liveness.resident.onMaxRetries=ASSISTED_CAPTURE_WITH_SUPERVISOR
 mosip.registration.liveness.resident.signals.rppg.weight=0.8
-mosip.registration.liveness.operator.passiveThreshold=0.85
+mosip.registration.liveness.operator.passiveThreshold=0.997
 mosip.registration.liveness.operator.active.mode=ALWAYS
-mosip.registration.liveness.supervisor.passiveThreshold=0.90
+mosip.registration.liveness.supervisor.passiveThreshold=0.997
 mosip.registration.liveness.supervisor.maxRetries=2
 mosip.registration.liveness.device.minFps=10
 mosip.registration.liveness.diagnostics.mode=OFF
@@ -139,7 +139,7 @@ Global keys:
 | Key | Type | Default | Direction (tightening) | Notes |
 |---|---|---|---|---|
 | `enabled` | boolean | `true` | `false→true` only | Master switch. `false` is honoured only from the signed document, and emits `POLICY_LOADED(enabled=false)` so it is visible in audit. |
-| `policy.version` | string | `builtin-1.0` | — | Recorded in every `LivenessResult`. |
+| `policy.version` | string | `builtin-1.1` | — | Recorded in every `LivenessResult`. |
 | `policy.json` / `policy.signature` | string | absent | — | Escape hatch for the full signed document. |
 | `device.minFps` | int | `10` | increase | Below this the session reports `DEGRADED` and `BLINK` is swapped for `BLINK_TWICE`. |
 | `device.maxQueuedFrames` | int | `4` | — | `StreamOptions.maxQueuedFrames`. |
@@ -163,7 +163,7 @@ compiled defaults from `LivenessPolicy.defaults()` and
 | Key | Type | RESIDENT | OPERATOR | SUPERVISOR | Direction (tightening) | Maps to |
 |---|---|---|---|---|---|---|
 | `<wf>.enabled` | boolean | `true` | `true` | `true` | `false→true` | `enabled()` |
-| `<wf>.passiveThreshold` | double [0,1] | `0.80` | `0.85` | `0.90` | increase | `passiveThreshold()` |
+| `<wf>.passiveThreshold` | double [0,1] | `0.997` | `0.997` | `0.997` | increase | `passiveThreshold()` |
 | `<wf>.padHardThreshold` | double [0,1] | `0.90` | `0.90` | `0.90` | decrease | `padHardThreshold()` |
 | `<wf>.passiveWindowMillis` | long | `2500` | `2500` | `2500` | increase | `passiveWindowMillis()` |
 | `<wf>.passiveMinFrames` | int | `8` | `8` | `8` | increase | `passiveMinFrames()` |

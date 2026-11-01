@@ -1,0 +1,7 @@
+{"name":"baseline"}
+{"name":"baseline_jsonweights","weights":{"moire":1.0,"color_stats":0.6,"rppg":0.8,"parallax":1.2}}
+{"name":"abl_s1crop12_only","s1":["A12"]}
+{"name":"abl_fusion_only","weights":{"moire":0.05,"color_stats":0.05},"passiveThreshold":0.997}
+{"name":"new","s1":["A12"],"weights":{"moire":0.05,"color_stats":0.05},"passiveThreshold":0.997}
+{"name":"alt_silentface_ens","s1":["B27","C40"]}
+{"name":"alt_flip","s1":["A15f"]}

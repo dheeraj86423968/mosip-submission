@@ -1,10 +1,10 @@
 {
   "schemaVersion": "1.0",
-  "version": "builtin-1.0",
+  "version": "builtin-1.1",
   "workflows": {
     "RESIDENT": {
       "enabled": true,
-      "passiveThreshold": 0.80,
+      "passiveThreshold": 0.997,
       "padHardThreshold": 0.90,
       "passiveWindowMs": 2500,
       "passiveMinFrames": 8,
@@ -26,8 +26,8 @@
       "identity": { "required": true, "driftThreshold": 0.45 },
       "signals": {
         "cnn_texture": { "enabled": true, "weight": 1.0 },
-        "moire": { "enabled": true, "weight": 1.0 },
-        "color_stats": { "enabled": true, "weight": 0.6 },
+        "moire": { "enabled": true, "weight": 0.05 },
+        "color_stats": { "enabled": true, "weight": 0.05 },
         "rppg": { "enabled": true, "weight": 0.8 },
         "parallax": { "enabled": true, "weight": 1.2 },
         "challenge_timing": { "enabled": true, "weight": 1.0 },
@@ -36,14 +36,14 @@
     },
     "OPERATOR": {
       "enabled": true,
-      "passiveThreshold": 0.85,
+      "passiveThreshold": 0.997,
       "active": { "mode": "ALWAYS", "minChallenges": 2, "maxChallenges": 3 },
       "maxRetries": 3,
       "onMaxRetries": "LOCK_AND_ALERT"
     },
     "SUPERVISOR": {
       "enabled": true,
-      "passiveThreshold": 0.90,
+      "passiveThreshold": 0.997,
       "active": { "mode": "ALWAYS", "minChallenges": 3, "maxChallenges": 3 },
       "maxRetries": 2,
       "onMaxRetries": "LOCK_AND_ALERT"

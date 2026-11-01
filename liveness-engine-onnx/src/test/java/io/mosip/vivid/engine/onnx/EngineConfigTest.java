@@ -67,7 +67,36 @@ class EngineConfigTest {
         assertThat(bundled.inputSize()).isEqualTo(128);
         assertThat(bundled.bgr()).isFalse();
         assertThat(bundled.realClassIndex()).isZero();
-        assertThat(bundled.cropScale()).isEqualTo(1.5);
+        assertThat(bundled.cropScale()).isEqualTo(1.2);
+        assertThat(bundled.inputScale()).isEqualTo(1f / 255f);
+        assertThat(bundled.flip()).isFalse();
+        // upstream Silent-Face to_tensor does not divide by 255
+        assertThat(AntiSpoofModelConfig.preset(Path.of("2.7_80x80_MiniFASNetV2.onnx"), 0).inputScale()).isEqualTo(1f);
+        assertThat(AntiSpoofModelConfig.preset(Path.of("4_0_0_80x80_MiniFASNetV1SE.onnx"), 0).inputScale()).isEqualTo(1f);
+        assertThat(AntiSpoofModelConfig.preset(Path.of("4_0_0_80x80_MiniFASNetV1SE.onnx"), 0).fitCrop()).isTrue();
+        assertThat(bundled.fitCrop()).isFalse();
+    }
+
+    @Test
+    void inputScaleAndFlipFromProperties() throws Exception {
+        Path props = tmp.resolve("engine.properties");
+        Files.writeString(props, String.join("\n",
+                "vivid.engine.detector.model=yunet.onnx",
+                "vivid.engine.antispoof.model=antispoof_minifasnetv2se_128.onnx",
+                "vivid.engine.antispoof.flip=true",
+                "vivid.engine.antispoof2.model=2.7_80x80_MiniFASNetV2.onnx",
+                "vivid.engine.antispoof2.inputScale=0.5",
+                "vivid.engine.antispoof2.cropMode=square"));
+        EngineConfig c = EngineConfig.load(props);
+        assertThat(c.antiSpoofModels().get(0).flip()).isTrue();
+        assertThat(c.antiSpoofModels().get(0).inputScale()).isEqualTo(1f / 255f);
+        assertThat(c.antiSpoofModels().get(1).flip()).isFalse();
+        assertThat(c.antiSpoofModels().get(1).inputScale()).isEqualTo(0.5f);
+        assertThat(c.antiSpoofModels().get(1).fitCrop()).isFalse();
+        assertThat(c.antiSpoofModels().get(0).fitCrop()).isFalse();
+        assertThat(c.antiSpoofModels().get(1).toString()).contains("80px").doesNotContain("raw");
+        assertThatThrownBy(() -> new AntiSpoofModelConfig(Path.of("m.onnx"), 80, 2.7, true, 1, 0f, false, false))
+                .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
@@ -80,6 +109,14 @@ class EngineConfigTest {
         EngineConfig c = OnnxEngineFactory.configFor(tmp);
         assertThat(c.detectorModel()).contains(tmp.resolve("face_detection_yunet_2023mar.onnx"));
         assertThat(c.antiSpoofModels()).hasSize(1);
+        // Silent-Face files are only used when no other anti-spoof model is present
+        Files.write(tmp.resolve("2.7_80x80_MiniFASNetV2.onnx"), new byte[1]);
+        Files.write(tmp.resolve("4_0_0_80x80_MiniFASNetV1SE.onnx"), new byte[1]);
+        assertThat(OnnxEngineFactory.configFor(tmp).antiSpoofModels()).extracting(m -> m.path().getFileName().toString())
+                .containsExactly("antispoof_x.onnx");
+        Files.delete(tmp.resolve("antispoof_x.onnx"));
+        assertThat(OnnxEngineFactory.configFor(tmp).antiSpoofModels()).extracting(m -> m.path().getFileName().toString())
+                .containsExactly("2.7_80x80_MiniFASNetV2.onnx", "4_0_0_80x80_MiniFASNetV1SE.onnx");
         assertThat(c.embeddingModel()).contains(tmp.resolve("face_recognition_sface.onnx"));
         assertThatThrownBy(() -> new OnnxLivenessEngine(EngineConfig.builder().build()))
                 .isInstanceOf(EngineException.class).hasMessageContaining("detector");

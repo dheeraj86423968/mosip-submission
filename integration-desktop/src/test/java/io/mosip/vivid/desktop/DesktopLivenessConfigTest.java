@@ -38,7 +38,7 @@ class DesktopLivenessConfigTest {
     void globalAndWorkflowOverridesAreAppliedInOrder() {
         Map<String, Object> m = new HashMap<>();
         m.put(ROOT + "passive.threshold", "0.70");
-        m.put(ROOT + "supervisor.passive.threshold", "0.95");
+        m.put(ROOT + "supervisor.passive.threshold", "0.998");
         m.put(ROOT + "challenge.pool", "BLINK, smile ;turn-left");
         m.put(ROOT + "active.mode", "always");
         m.put(ROOT + "on_max_retries", "lock-and-alert");
@@ -51,8 +51,8 @@ class DesktopLivenessConfigTest {
         DesktopLivenessConfig c = DesktopLivenessConfig.fromApplicationMap(m);
 
         // 0.70 would loosen the 0.80 default: local configuration may only tighten, so the default stands
-        assertThat(c.policy(Workflow.RESIDENT).passiveThreshold()).isEqualTo(0.80);
-        assertThat(c.policy(Workflow.SUPERVISOR).passiveThreshold()).isEqualTo(0.95);
+        assertThat(c.policy(Workflow.RESIDENT).passiveThreshold()).isEqualTo(LivenessPolicy.defaults(Workflow.RESIDENT).passiveThreshold()); // 0.70 would loosen
+        assertThat(c.policy(Workflow.SUPERVISOR).passiveThreshold()).isEqualTo(0.998);
         assertThat(c.policy(Workflow.RESIDENT).challengePool()).containsExactlyInAnyOrder(ChallengeType.BLINK, ChallengeType.SMILE, ChallengeType.TURN_LEFT);
         assertThat(c.policy(Workflow.RESIDENT).activeMode()).isEqualTo(LivenessPolicy.ActiveMode.ALWAYS);
         assertThat(c.policy(Workflow.RESIDENT).onMaxRetries()).isEqualTo(LivenessPolicy.OnMaxRetries.LOCK_AND_ALERT);
@@ -131,7 +131,7 @@ class DesktopLivenessConfigTest {
     @Test
     void localConfigurationCanTightenButNotLoosen() {
         Map<String, Object> m = new HashMap<>();
-        m.put(ROOT + "resident.passive.threshold", "0.90");        // stricter: applied
+        m.put(ROOT + "resident.passive.threshold", "0.998");       // stricter: applied
         m.put(ROOT + "resident.active.mode", "on_low_confidence");  // looser than ALWAYS: ignored
         m.put(ROOT + "resident.pad.hard_threshold", "0.99");        // looser veto: ignored
         m.put(ROOT + "resident.challenge.min", "3");                // stricter: applied
@@ -140,7 +140,7 @@ class DesktopLivenessConfigTest {
         m.put(ROOT + "resident.enabled", "false");                  // the on/off switch stays free
         LivenessPolicy p = DesktopLivenessConfig.fromApplicationMap(m).policy(Workflow.RESIDENT);
         LivenessPolicy d = LivenessPolicy.defaults(Workflow.RESIDENT);
-        assertThat(p.passiveThreshold()).isEqualTo(0.90);
+        assertThat(p.passiveThreshold()).isEqualTo(0.998);
         assertThat(p.activeMode()).isEqualTo(LivenessPolicy.ActiveMode.ALWAYS);
         assertThat(p.padHardThreshold()).isEqualTo(d.padHardThreshold());
         assertThat(p.minChallenges()).isEqualTo(3);

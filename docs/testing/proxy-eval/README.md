@@ -18,6 +18,13 @@ SFace), YuNet at the **production threshold of 0.7**. **Policy:** `builtin-1.0`,
 > challenge. That default has since been changed to `ALWAYS`, and S4 can no longer veto on its own (section 7). On real faces, pitch is only partly registered through YuNet landmarks, and
 > vertical gaze is not usable.
 
+> **Update, 1 Nov 2026.** A follow-up on the same corpus, rebuilt for 38 of the 39 people, with a subject-disjoint
+> train/held-out split, changed the passive defaults (`builtin-1.1`: S1 crop 1.2×, moiré and colour weight 0.05,
+> passive threshold 0.997). On held-out people, print APCER fell from 75–92 % to 17–25 % and screen APCER from
+> 25–43 % to 0–8 %, with BPCER at 1 of 13 against 0 of 13 (difference inside the intervals). The Silent-Face two-model
+> ensemble and mirrored-view TTA were evaluated and did not help. See
+> [`improvement-2026-11.md`](improvement-2026-11.md). The figures below are the original 24 Oct run.
+
 ## 1. Why a proxy
 
 The consented corpus in `docs/corpus-ethics.md` will not be collected for this submission. The substitute uses the

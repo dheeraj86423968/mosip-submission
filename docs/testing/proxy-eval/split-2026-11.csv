@@ -1,0 +1,42 @@
+# Subject-disjoint split for the November 2026 PAD improvement study (improvement-2026-11.md).
+# Order: participants sorted by sha256("mosip-vivid-proxy-split-2026-11|<id>"); the first 23 are train, the rest held out.
+# Fixed before any score was looked at. P18 is excluded: its Commons transcode no longer decodes at 30 fps in the window.
+participant_id,split
+P01,train
+P02,train
+P03,train
+P04,train
+P06,train
+P07,train
+P08,train
+P11,train
+P13,train
+P14,train
+P17,train
+P19,train
+P22,train
+P23,train
+P25,train
+P26,train
+P28,train
+P30,train
+P41,train
+P44,train
+P45,train
+P49,train
+P52,train
+P09,heldout
+P10,heldout
+P12,heldout
+P21,heldout
+P24,heldout
+P29,heldout
+P31,heldout
+P33,heldout
+P35,heldout
+P37,heldout
+P38,heldout
+P40,heldout
+P43,heldout
+P46,heldout
+P51,heldout

@@ -71,7 +71,7 @@ class AvOrchestratorEndToEndTest {
         Function<String, String> replayCode = shown -> String.format("%04d", (Integer.parseInt(shown) + 1 + rnd.nextInt(9998)) % 10_000);
 
         Rig(AvConfig cfg, DigitRecognizer recognizer, Function<String, short[]> voice) {
-            this(cfg, recognizer, voice, new SecureRandom());
+            this(cfg, recognizer, voice, seeded("code"));
         }
 
         Rig(AvConfig cfg, DigitRecognizer recognizer, Function<String, short[]> voice, SecureRandom codeRandom) {
@@ -92,7 +92,7 @@ class AvOrchestratorEndToEndTest {
                     .challengePool(EnumSet.of(ChallengeType.BLINK, ChallengeType.TURN_LEFT, ChallengeType.TURN_RIGHT))
                     .accessibilityPool(EnumSet.of(ChallengeType.HOLD_STILL)).maxRetries(4).build();
             assertThat(AvSetup.check(policy, true, t, cfg)).isEmpty();
-            factory = new LivenessSessionFactory(engine, w -> policy, audit::add, new LivenessMetrics(), clock, new SecureRandom(), t);
+            factory = new LivenessSessionFactory(engine, w -> policy, audit::add, new LivenessMetrics(), clock, seeded("session"), t);
         }
 
         void respond(SpokenCodePrompt p) {
@@ -231,5 +231,16 @@ class AvOrchestratorEndToEndTest {
         assumeTrue(ran > 0, "no Vosk model installed");
         java.nio.file.Files.createDirectories(java.nio.file.Paths.get("target", "av-eval"));
         java.nio.file.Files.write(java.nio.file.Paths.get("target", "av-eval", "e2e.txt"), report.toString().getBytes(java.nio.charset.StandardCharsets.UTF_8));
+    }
+
+    /** Seeded SHA1PRNG so challenge and code draws repeat from run to run. */
+    private static SecureRandom seeded(String salt) {
+        try {
+            SecureRandom r = SecureRandom.getInstance("SHA1PRNG");
+            r.setSeed(("vivid-av-e2e:" + salt).getBytes(java.nio.charset.StandardCharsets.UTF_8));
+            return r;
+        } catch (java.security.NoSuchAlgorithmException e) {
+            throw new IllegalStateException(e);
+        }
     }
 }

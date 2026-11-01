@@ -27,16 +27,28 @@ public final class CnnTextureSignal implements Signal {
         private final double cropScale;
         private final boolean bgr;
         private final int realClassIndex;
+        private final float inputScale;
+        private final boolean flip;
+        private final boolean fitCrop;
+
+        /** Model fed pixel values divided by 255 on a square crop, without a flipped view. */
+        public Model(OrtModel model, int inputSize, double cropScale, boolean bgr, int realClassIndex) {
+            this(model, inputSize, cropScale, bgr, realClassIndex, 1f / 255f, false, false);
+        }
 
         /**
          * @param inputSize      square input side (80 for Silent-Face models, 128 for the bundled export)
          * @param cropScale      face-box scale of the square crop (2.7 / 4.0 for Silent-Face, 1.5 for the bundled export)
          * @param bgr            feed BGR (Silent-Face, trained with OpenCV) instead of RGB
          * @param realClassIndex index of the "real" class in the output vector (1 for Silent-Face, 0 for the bundled export)
+         * @param inputScale     multiplier for 0..255 pixel values (1/255 for the bundled export, 1 for Silent-Face)
+         * @param flip           also score the horizontally mirrored crop and average the two probabilities
+         * @param fitCrop        upstream Silent-Face crop ({@link FaceContext#faceCropFit}) instead of a square crop
          */
-        public Model(OrtModel model, int inputSize, double cropScale, boolean bgr, int realClassIndex) {
+        public Model(OrtModel model, int inputSize, double cropScale, boolean bgr, int realClassIndex, float inputScale,
+                     boolean flip, boolean fitCrop) {
             this.model = Objects.requireNonNull(model); this.inputSize = inputSize; this.cropScale = cropScale;
-            this.bgr = bgr; this.realClassIndex = realClassIndex;
+            this.bgr = bgr; this.realClassIndex = realClassIndex; this.inputScale = inputScale; this.flip = flip; this.fitCrop = fitCrop;
         }
 
         public OrtModel model() { return model; }
@@ -44,10 +56,23 @@ public final class CnnTextureSignal implements Signal {
         public double cropScale() { return cropScale; }
         public boolean bgr() { return bgr; }
         public int realClassIndex() { return realClassIndex; }
+        public float inputScale() { return inputScale; }
+        public boolean flip() { return flip; }
+        public boolean fitCrop() { return fitCrop; }
 
-        /** Probability of "real" for a face crop. */
-        double probabilityReal(RgbImage crop) {
-            float[] tensor = ImageOps.toChw(crop, bgr, 1f / 255f, null, null);
+        /** This model's input crop for the frame's face. */
+        public RgbImage crop(FaceContext ctx) {
+            return fitCrop ? ctx.faceCropFit(cropScale, inputSize) : ctx.faceCrop(cropScale, inputSize);
+        }
+
+        /** Probability of "real" for a face crop of {@link #inputSize()}; with {@link #flip()} the mean over the crop and its mirror. */
+        public double probabilityReal(RgbImage crop) {
+            double p = probabilityRealOnce(crop);
+            return flip ? (p + probabilityRealOnce(ImageOps.flipHorizontal(crop))) / 2 : p;
+        }
+
+        private double probabilityRealOnce(RgbImage crop) {
+            float[] tensor = ImageOps.toChw(crop, bgr, inputScale, null, null);
             float[] logits = model.runFirst(tensor, new long[] {1, 3, inputSize, inputSize});
             if (realClassIndex >= logits.length) {
                 throw new IllegalStateException("model " + model.path() + " has " + logits.length + " outputs but realClassIndex=" + realClassIndex);
@@ -75,8 +100,7 @@ public final class CnnTextureSignal implements Signal {
     public SignalScore score(FaceContext ctx) {
         double sum = 0;
         for (Model m : models) {
-            RgbImage crop = ctx.faceCrop(m.cropScale(), m.inputSize());
-            sum += m.probabilityReal(crop);
+            sum += m.probabilityReal(m.crop(ctx));
         }
         double pReal = sum / models.size();
         lastProbabilityReal = pReal;

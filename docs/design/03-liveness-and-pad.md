@@ -46,13 +46,23 @@ coordinates.
 
 * **Measures.** Micro-texture, specular and colour artefacts a convolutional
   network learns to separate live skin from reproductions.
-* **Model.** MiniFASNet family (Silent-Face-Anti-Spoofing, Apache-2.0),
-  two-scale ensemble: crop at 2.7× and 4.0× the detector box, each 80×80,
-  three-class softmax (live, print, screen) in the original weights,
-  reduced to `p_attack = 1 − p_live`.
-* **Maths.** `p1 = ½ (softmax(f_2.7(x))_attack + softmax(f_4.0(x))_attack)`,
-  then Platt calibration `p1' = σ(a·logit(p1) + b)` with `(a, b)` fitted on
-  the validation split and shipped in the model bundle manifest.
+* **Model.** MiniFASNet family. The shipped default is the bundled
+  MiniFASNetV2-SE 128 px export (facenox/face-antispoof-onnx, Apache-2.0) on a
+  square crop of **1.2×** the detector box's longer side (1.5× until November
+  2026), `p1 = 1 − softmax(f(x))_real`.
+* **Evaluated and not enabled (November 2026).** The original two-scale
+  Silent-Face ensemble (MiniFASNetV2 at 2.7×, MiniFASNetV1SE at 4.0×, 80×80,
+  three-class softmax) was converted from the official Apache-2.0 weights and
+  run with the upstream preprocessing (BGR, raw 0..255 values, crop kept inside
+  the frame). Alone or averaged with the bundled model it separated the proxy
+  attacks less well than the bundled model on the training people, and so did
+  a mirrored-crop view (test-time augmentation) and a second crop scale. The
+  engine still supports up to two models averaged on `P(real)`, the upstream
+  crop (`cropMode=fit`) and the mirrored view (`flip`); see
+  `docs/testing/proxy-eval/improvement-2026-11.md`.
+* **Maths.** With several models, `P(real)` is averaged, then Platt calibration
+  `p1' = σ(a·logit(p1) + b)` with `(a, b)` from the model bundle manifest
+  (identity when no bundle is installed).
 * **Confidence.** `c1 = min(1, boxWidth / 0.25) · sharpnessQuality`.
 * **Targets.** Print (A4, glossy), screen replay (phone, tablet, laptop),
   paper mask. Partially: silicone mask.
@@ -340,8 +350,21 @@ fusedAttackProbability = σ(z / Σ_i w_i · c_i)
 fusedLivenessScore     = 1 − fusedAttackProbability
 ```
 
-* `w_i` is `LivenessPolicy.signalWeight(id)` (default 1.0; 0 disables the
-  signal; PLAN.md's resident default sets `rppg 0.8`, `parallax 1.2`).
+* `w_i` is `LivenessPolicy.signalWeight(id)` (absent means 1.0; 0 disables the
+  signal, including its veto). Built-in policy `builtin-1.1` (November 2026):
+  `cnn_texture 1.0`, `moire 0.05`, `color_stats 0.05`; the resident JSON default
+  keeps `rppg 0.8`, `parallax 1.2`. The S1/S2/S3 weights come from a
+  non-negative, L2-regularised logistic regression on per-person mean
+  `c·logit(p)` over the passive window, fitted on the training people of the
+  proxy evaluation: moiré and colour got weight ≈ 0 (unconstrained they came out
+  negative, which would make the fusion non-monotone). 0.05 keeps their hard
+  veto without diluting S1. rPPG and parallax have zero confidence in the 2.5 s
+  passive window, so their weights could not be learned there and were left
+  unchanged. With S1 dominating, the passive threshold moved from 0.80 to
+  **0.997** for every workflow (chosen on the training people, confirmed on
+  held-out people; see `docs/testing/proxy-eval/improvement-2026-11.md`).
+* The injection signal (weight 1.0, `p = 0`, `c = 0.3` on a clean source) is a
+  constant pull towards live in this mean; the threshold absorbs it.
 * `c_i` is the per-frame confidence, so a signal whose window has not filled
   contributes nothing rather than a prior.
 * Normalising by `Σ w_i c_i` keeps the fused value on the same scale whether
