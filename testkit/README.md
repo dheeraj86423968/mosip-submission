@@ -193,7 +193,7 @@ RSS as well. `tools/perf-lowres.sh` runs the 1-core and 2-core, 256/512 MiB matr
 
 - `junit-jupiter-api` has **compile** scope on purpose, because `FrameSourceConformanceTest` and
   `ScenarioSuite.dynamicTests` are shipped API for adapter and engine authors.
-- `mvn -q -pl testkit verify` runs 41 tests. Metrics are checked against hand-computed values: APCER PRINT 1/2,
+- `mvn -q -pl testkit verify` runs 56 tests (some skip without the ONNX models). Metrics are checked against hand-computed values: APCER PRINT 1/2,
   SCREEN_REPLAY 2/3, BPCER 1/4, BPCER@APCER≤10% = 1/2 at threshold 0.90, and BPCER@APCER≤5% 1/4 at 0.65 against
   ≤10% 0 at 0.50. Wilson bounds are checked against values computed independently. APNRR 3/8 and BPNRR 1/5 are
   checked on a fixture with non-responses. Slices are checked on a 10-participant fixture covering suppression, the

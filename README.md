@@ -163,36 +163,43 @@ CI re-runs TLC on every push.
 Prerequisites: JDK 17 or newer and Maven 3.9+ to build. The modules that ship inside the clients compile to Java 11
 bytecode, so they load on the Java 11 runtime of Registration Client 1.2.0.x. You need no hardware and no MOSIP server.
 
-The fastest way to see it working is the Attack Lab (models must be fetched first, see below):
-
 ```sh
-mvn -B -ntp install                                  # builds everything, runs all tests
-java -jar demo-desktop/target/vivid-demo.jar         # window: pick a workflow and an attack, watch the decision
-java -Djava.awt.headless=true -jar demo-desktop/target/vivid-demo.jar --record out --scenario demo-reel   # PNGs + AVI
+# 1. Fetch the three ONNX models (sources, licences and SHA-256 sums: liveness-engine-onnx/models/README.md)
+cd liveness-engine-onnx/models
+curl -fsSLo face_detection_yunet_2023mar.onnx   https://github.com/opencv/opencv_zoo/raw/main/models/face_detection_yunet/face_detection_yunet_2023mar.onnx
+curl -fsSLo antispoof_minifasnetv2se_128.onnx   https://github.com/facenox/face-antispoof-onnx/raw/main/models/best/98.20/best_model.onnx
+curl -fsSLo face_recognition_sface_2021dec.onnx https://github.com/opencv/opencv_zoo/raw/main/models/face_recognition_sface/face_recognition_sface_2021dec.onnx
+cd ../..
+
+# 2. Build all modules and run the tests (model-dependent tests skip when the models are absent)
+mvn -B -ntp install
+
+# 3. Run the Attack Lab: pick a workflow and a subject, switch attacks mid-session, watch the decision
+java -jar demo-desktop/target/vivid-demo.jar
+
+#    or record it headless: PNG screenshots and an MJPEG AVI
+java -Djava.awt.headless=true -jar demo-desktop/target/vivid-demo.jar --record out --scenario demo-reel
 ```
 
-Screenshots and a about 60-second silent recording are in [`docs/demo/`](docs/demo/) (the `.avi` is git-ignored and is
-shared with the submission). The mock device alone:
+Screenshots are in [`docs/demo/`](docs/demo/). The SBI-compatible mock device can also run on its own, for
+example to test an SBI client against it:
 
 ```sh
-# 1. Build (reactor: the two SPIs; then each module you want to run)
-mvn -B -ntp install
-mvn -B -ntp -f policy/pom.xml install
-mvn -B -ntp -f telemetry/pom.xml install
-mvn -B -ntp -f device-mock/pom.xml install
-mvn -B -ntp -f liveness-core/pom.xml install
+java -cp demo-desktop/target/vivid-demo.jar io.mosip.vivid.device.mock.sbi.MockSbiMain --list
+java -cp demo-desktop/target/vivid-demo.jar io.mosip.vivid.device.mock.sbi.MockSbiMain --port 4501 --scenario live-blink-smile-turn
 
-# 2. Start the mock SBI face device on 127.0.0.1:4501
-java -jar device-mock/target/device-mock-0.1.0-SNAPSHOT.jar --list                 # bundled scenarios
-java -jar device-mock/target/device-mock-0.1.0-SNAPSHOT.jar --port 4501 --scenario live-blink-smile-turn
-
-# 3. Switch the device to an attack while it runs (what attack-lab automates)
-curl -X POST http://127.0.0.1:4501/mock/scenario -d '{"scenario":"print-attack"}'
+# switch the running device to an attack, then inspect it
+curl -X POST http://127.0.0.1:4501/mock/scenario -d '{"name":"print-attack"}'
 curl http://127.0.0.1:4501/mock/status
 ```
 
-The bundled scenarios include `live-pass`, `live-blink-smile-turn`, `print-attack`, `screen-replay`,
-`video-replay`, `multiple-faces`, `no-face`, `stall` and `disconnect-mid-session`.
+The bundled scenarios are:
+- `live-pass` and `live-blink-smile-turn`;
+- `print-attack`, `screen-replay` and `video-replay`;
+- `multiple-faces` and `no-face`;
+- `stall` and `disconnect-mid-session`.
+
+`POST /mock/fault` injects device faults (see [docs/API.md](docs/API.md) §5).
 
 **Demo entry point: `demo-desktop`** (the Attack Lab). A judge picks a workflow and a subject (live person,
 printed photo, video replay, screen replay, injected stream) and can switch to an attack mid-session. The live

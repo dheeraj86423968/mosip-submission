@@ -171,7 +171,7 @@ bioValue (base64url ISO data), transactionId, timestamp, requestedScore, quality
 
 ## Tests
 
-`mvn -q -f device-sbi-stream/pom.xml install` runs 42 tests. 29 always run; 13 are opt-in against a live MockMDS:
+`mvn -q -f device-sbi-stream/pom.xml install` runs 51 tests. 38 always run, including 9 for the signed preview stream (`SignedPreviewTest`); 13 are opt-in against a live MockMDS:
 
 - **Multipart unit tests on hand-built byte streams:** standard framing; MockMDS framing; bare LF; missing,
   too-small and absurd Content-Length; zero-length parts; preamble and garbage; truncation → `EOFException`;

@@ -142,6 +142,6 @@ Content-Length: 81920
 
 ## Tests
 
-`mvn -q -f device-mock/pom.xml install` runs 26 tests. They cover scenario parsing (every bundled scenario
+`mvn -q -f device-mock/pom.xml install` runs 39 tests. They cover scenario parsing (every bundled scenario
 loads and renders), timeline maths, renderer determinism and overlays, frame-exact fault behaviour in-process,
 and the HTTP verbs, stream, capture and admin endpoints.

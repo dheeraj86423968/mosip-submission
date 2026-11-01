@@ -70,7 +70,7 @@ subjects. The subject selector is disabled. The defaults change to match real fa
 - Compiled-in workflow policies
 - Wall-clock time
 
-You can point it at `device-mock`'s SBI server (`java -jar device-mock/target/device-mock-*.jar --port 4501
+You can point it at `device-mock`'s SBI server (`java -cp demo-desktop/target/vivid-demo.jar io.mosip.vivid.device.mock.sbi.MockSbiMain --port 4501
 --scenario live-pass`). It has not been tried on vendor hardware.
 
 ## What the window shows
