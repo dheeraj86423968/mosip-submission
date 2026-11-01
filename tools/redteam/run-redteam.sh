@@ -13,6 +13,8 @@
 # Environment: MVN (default mvn), MVN_ARGS (extra Maven flags, e.g. "-o -q"), JAVA_OPTS (default -Xmx1g).
 # Exit codes: 0 ok or skipped (no models), 1 regression found, 2 pipeline error.
 set -euo pipefail
+# Any unexpected failure is a pipeline error (2), never confused with a regression (1).
+trap 'echo "run-redteam: pipeline error at line $LINENO (exit $?)" >&2; exit 2' ERR
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 OUT="$ROOT/target/redteam"
@@ -66,6 +68,8 @@ if [ -n "$missing" ]; then
 fi
 
 mkdir -p "$OUT"
+# Absolute: Maven resolves a relative -Dmdep.outputFile against the module directory, not the caller's.
+OUT="$(cd "$OUT" && pwd)"
 cd "$ROOT"
 if [ "$BUILD" = 1 ]; then
   # shellcheck disable=SC2086
@@ -110,6 +114,7 @@ if [ ! -f "$OUT/trend.jsonl" ] && [ -f "$TREND_SEED" ]; then cp "$TREND_SEED" "$
 EXTRA=()
 if [ "$UPDATE_BASELINE" = 1 ]; then EXTRA+=(--write-baseline "$BASELINE" --export-accepted "$OUT/known-bypasses"); fi
 echo "== gate"
+trap - ERR      # the gate's own exit code (0 ok, 1 regression) is handled below
 set +e
 "${JAVA[@]}" io.mosip.vivid.testkit.redteam.RedTeamGateMain --variants "$OUT/corpus/variants.jsonl" "${GATE_SCORES[@]}" \
   --threshold "$THRESHOLD" --detector-threshold "$DETECTOR" --baseline "$BASELINE" --fixtures-out "$OUT/fixtures" \

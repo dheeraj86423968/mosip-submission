@@ -149,7 +149,8 @@ jobs:
           retention-days: 90
 
       - name: Open or update the redteam-bypass issue
-        if: steps.run.outputs.exit == '1'
+        if: steps.run.outputs.exit == '1' && hashFiles('target/redteam/summary.md') != ''
+        continue-on-error: true
         env:
           GH_TOKEN: ${{ github.token }}
         run: |

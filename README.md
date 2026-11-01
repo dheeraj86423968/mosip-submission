@@ -1,14 +1,47 @@
 # mosip-vivid
 
-Face liveness and presentation attack detection (PAD) for the MOSIP Desktop and Android Registration Clients.
-It is vendor-neutral, works offline first, and was built for MOSIP Decode 2026, problem statement 04.
+[![ci](https://github.com/dheeraj86423968/mosip-submission/actions/workflows/ci.yml/badge.svg)](https://github.com/dheeraj86423968/mosip-submission/actions/workflows/ci.yml)
+[![redteam](https://github.com/dheeraj86423968/mosip-submission/actions/workflows/redteam.yml/badge.svg)](https://github.com/dheeraj86423968/mosip-submission/actions/workflows/redteam.yml)
+![Java 11 runtime](https://img.shields.io/badge/runtime-Java%2011%2B-blue)
+![License MPL-2.0](https://img.shields.io/badge/license-MPL--2.0-brightgreen)
+
+**Face liveness and presentation attack detection (PAD) for the MOSIP Desktop and Android Registration Clients.**
+MOSIP Decode 2026, Problem Statement 04. Team Cyber Warrior.
 
 mosip-vivid plugs into both Registration Clients through two small interfaces: a **frame source** for any
 L0/L1 device and a **liveness engine** that only scores frames. A single orchestrator fuses several independent
 anti-spoofing signals into one auditable decision. It runs a hands-free passive-to-active challenge flow for
 resident capture, operator authentication and supervisor authentication, with the same behaviour online and
 offline. A TLA+ model checks the state machine: no path reaches `PASSED` unless the policy's score, PAD,
-identity-continuity and challenge-count conditions all hold.
+identity-continuity and challenge-count conditions all hold, and the Java implementation is replayed against it.
+
+| Live person: accepted after random challenges | Printed photo: vetoed on the first frame | Video replay: an unprompted gesture fails the challenge |
+|---|---|---|
+| ![Live](docs/demo/03-live-result.png) | ![Print](docs/demo/04-print-attack-rejected.png) | ![Replay](docs/demo/05-replay-rejected.png) |
+
+### At a glance
+
+| | |
+|---|---|
+| Workflows | Resident face capture, operator login, supervisor authentication |
+| Desktop | 7 patches compile against `registration-client` `release-1.2.0.x`; client-side modules run on its Java 11 runtime |
+| Android | 8 patches apply to `android-registration-client` `release-1.2.x`; the patched app builds an APK; operator face matching against the enrolled face |
+| Devices | SBI 0.9.5 `/stream` + `RCAPTURE`; interoperates with MOSIP's MockMDS; optional signed preview stream; vendor SDK adapter template |
+| PAD signals | CNN texture, moire, colour, rPPG, parallax, challenge timing, identity continuity, depth/IR, injection |
+| Verification | 633 automated tests; TLA+ model checked and the Java replayed against it (about 200,000 steps); real-face proxy evaluation with ISO/IEC 30107-3 metrics |
+| Documentation | [API reference](docs/API.md), [design](docs/design/), [UX mockups](docs/ux/), [test results](docs/testing/) |
+
+### Try it in two minutes
+
+No hardware, MOSIP server or build is needed. Download `vivid-demo.jar` and `vivid-models.zip` from the
+[latest release](https://github.com/dheeraj86423968/mosip-submission/releases/latest), then:
+
+```sh
+unzip vivid-models.zip                     # creates ./models with the three ONNX models and their licences
+java -jar vivid-demo.jar --models models   # Java 17+; pick a workflow and an attack, watch the decision
+```
+
+To build from source instead, see [Quick start](#quick-start).
 
 ## Architecture
 
@@ -217,6 +250,7 @@ Every key, its default and its tightening direction are listed in [07-configurat
 | Platform reconnaissance | [docs/recon/](docs/recon/) |
 | Pitch outline, video script, submission checklist | [docs/submission/](docs/submission/) |
 | Upstream drafts: SBI change request, Registration Client PRs, MockMDS issue | [docs/upstream/](docs/upstream/) |
+| API reference: SPIs, session API, SBI endpoints, Android channel, configuration, audit events, CLI tools | [docs/API.md](docs/API.md) |
 
 ## Honest limits
 
