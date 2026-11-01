@@ -208,7 +208,7 @@ The DTOs mirror section 3. Source: `integration-android/vivid-android/pigeons/li
 
 Policy is one signed JSON document (`policy/src/main/resources/policy-default.json`). It can also be flattened into
 `mosip.registration.liveness.<workflow>.*` properties, which travel through the Registration Client's config sync.
-Local properties can only tighten the signed policy.
+Local properties can only tighten the policy: `PolicyTightening` (`liveness-core`) keeps the stricter value of each setting, ignores and logs a loosening value, and leaves the on/off switch free.
 
 Main keys, per workflow:
 - `enabled`
@@ -217,6 +217,7 @@ Main keys, per workflow:
 - `active.mode` (`NEVER`, `ON_LOW_CONFIDENCE` or `ALWAYS`; the default is `ALWAYS`)
 - `active.minChallenges`, `active.maxChallenges`, `active.pool` and `active.timeoutMillis`
 - `maxRetries` and `onMaxRetries`
+- `sessionTimeoutMillis` and `acquisitionTimeoutMillis` (default 15 s before `FACE_NOT_DETECTED`)
 - `signals.<id>.enabled`, `signals.<id>.weight` and `signals.<id>.hardThreshold`
 
 Engine keys use `vivid.engine.*`:
