@@ -37,15 +37,15 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 60
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - uses: actions/setup-java@v4
+      - uses: actions/setup-java@v6
         with:
           distribution: temurin
           java-version: '17'
 
       - name: Cache ~/.m2
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: ${{ github.workspace }}/.m2/repository
           key: m2-${{ runner.os }}-${{ hashFiles('**/pom.xml') }}
@@ -56,7 +56,7 @@ jobs:
       # the cache key follows that file, so a model change there invalidates the cache.
       - name: Cache ONNX models
         id: models-cache
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: liveness-engine-onnx/models/*.onnx
           key: onnx-models-${{ hashFiles('liveness-engine-onnx/models/README.md') }}
@@ -116,7 +116,7 @@ jobs:
 
       - name: Upload trend
         if: always() && steps.models.outputs.ok == 'true' && hashFiles('target/redteam/trend.jsonl') != ''
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: redteam-trend
           path: |
@@ -127,7 +127,7 @@ jobs:
       # Scores, reports and render parameters only; the synthetic frames are not uploaded (they re-render from variants.jsonl).
       - name: Upload report
         if: always() && steps.models.outputs.ok == 'true'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: redteam-report
           path: |
@@ -142,7 +142,7 @@ jobs:
 
       - name: Upload regression fixtures
         if: steps.run.outputs.exit == '1'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: redteam-regression-fixtures
           path: target/redteam/fixtures/*.json
