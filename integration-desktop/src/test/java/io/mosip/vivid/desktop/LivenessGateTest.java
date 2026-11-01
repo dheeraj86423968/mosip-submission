@@ -221,4 +221,22 @@ class LivenessGateTest {
         assertThat(ui.events).contains("failure:ENGINE_ERROR:liveness.failure.engine_error");
         gate.shutdown();
     }
+
+    @Test
+    void supervisorOverrideIsAuditedAndRunsAnAssistedSession() {
+        java.util.concurrent.atomic.AtomicBoolean assisted = new java.util.concurrent.atomic.AtomicBoolean();
+        LivenessSessionProvider provider = (ctx, policy) -> {
+            assisted.set(ctx.assistedCapture());
+            return new ScriptedSession(ctx, policy, s -> st(SessionState.Phase.PASSED, SessionState.Hint.CAPTURED_OK, null, null, 1, 3));
+        };
+        RecordingUi ui = new RecordingUi(); RecordingAudit audit = new RecordingAudit();
+        LivenessGate gate = new LivenessGate(provider, config(), audit);
+        gate.verify(Workflow.RESIDENT, new FakeSource(5, false), ui,
+                LivenessGate.Options.defaults().auditRefId("reg-9").supervisorOverride("super02", "locked-session-1"));
+        assertThat(assisted.get()).isTrue();
+        assertThat(audit.events).containsSubsequence(DesktopAuditEvent.SUPERVISOR_OVERRIDE, DesktopAuditEvent.SESSION_STARTED);
+        Map<String, String> d = audit.details.get(audit.events.indexOf(DesktopAuditEvent.SUPERVISOR_OVERRIDE));
+        assertThat(d).containsEntry("supervisor", "super02").containsEntry("overriddenSession", "locked-session-1");
+        gate.shutdown();
+    }
 }

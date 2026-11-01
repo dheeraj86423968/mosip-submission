@@ -50,7 +50,8 @@ class DesktopLivenessConfigTest {
         m.put("mosip.registration.face_threshold", "80"); // unrelated key must be ignored
         DesktopLivenessConfig c = DesktopLivenessConfig.fromApplicationMap(m);
 
-        assertThat(c.policy(Workflow.RESIDENT).passiveThreshold()).isEqualTo(0.70);
+        // 0.70 would loosen the 0.80 default: local configuration may only tighten, so the default stands
+        assertThat(c.policy(Workflow.RESIDENT).passiveThreshold()).isEqualTo(0.80);
         assertThat(c.policy(Workflow.SUPERVISOR).passiveThreshold()).isEqualTo(0.95);
         assertThat(c.policy(Workflow.RESIDENT).challengePool()).containsExactlyInAnyOrder(ChallengeType.BLINK, ChallengeType.SMILE, ChallengeType.TURN_LEFT);
         assertThat(c.policy(Workflow.RESIDENT).activeMode()).isEqualTo(LivenessPolicy.ActiveMode.ALWAYS);
@@ -58,7 +59,7 @@ class DesktopLivenessConfigTest {
         assertThat(c.policy(Workflow.RESIDENT).challengeTimeoutMillis()).isEqualTo(5000);
         assertThat(c.policy(Workflow.RESIDENT).signalWeight("rppg")).isEqualTo(0.0);
         assertThat(c.policy(Workflow.OPERATOR).signalWeight("rppg")).isEqualTo(0.5);
-        assertThat(c.policy(Workflow.OPERATOR).maxRetries()).isEqualTo(4);
+        assertThat(c.policy(Workflow.OPERATOR).maxRetries()).isEqualTo(3);   // 4 attempts would loosen the default of 3
         assertThat(c.policy(Workflow.OPERATOR).policyVersion()).isEqualTo("centre-7");
         assertThat(c.rawEntries()).doesNotContainKey("mosip.registration.face_threshold");
     }
@@ -125,5 +126,27 @@ class DesktopLivenessConfigTest {
         assertThat(c.streamOptions().stallTimeoutMillis()).isEqualTo(2500);
         assertThat(c.streamOptions().reconnectAttempts()).isEqualTo(5);
         assertThat(DesktopLivenessConfig.documentedDefaults()).containsKeys(ROOT + "enabled", ROOT + "retries", ROOT + "challenge.pool");
+    }
+
+    @Test
+    void localConfigurationCanTightenButNotLoosen() {
+        Map<String, Object> m = new HashMap<>();
+        m.put(ROOT + "resident.passive.threshold", "0.90");        // stricter: applied
+        m.put(ROOT + "resident.active.mode", "on_low_confidence");  // looser than ALWAYS: ignored
+        m.put(ROOT + "resident.pad.hard_threshold", "0.99");        // looser veto: ignored
+        m.put(ROOT + "resident.challenge.min", "3");                // stricter: applied
+        m.put(ROOT + "resident.challenge.pool", "BLINK,SMILE,NOD"); // NOD is not in the default pool: dropped
+        m.put(ROOT + "resident.identity.required", "false");        // looser: ignored
+        m.put(ROOT + "resident.enabled", "false");                  // the on/off switch stays free
+        LivenessPolicy p = DesktopLivenessConfig.fromApplicationMap(m).policy(Workflow.RESIDENT);
+        LivenessPolicy d = LivenessPolicy.defaults(Workflow.RESIDENT);
+        assertThat(p.passiveThreshold()).isEqualTo(0.90);
+        assertThat(p.activeMode()).isEqualTo(LivenessPolicy.ActiveMode.ALWAYS);
+        assertThat(p.padHardThreshold()).isEqualTo(d.padHardThreshold());
+        assertThat(p.minChallenges()).isEqualTo(3);
+        assertThat(p.maxChallenges()).isGreaterThanOrEqualTo(3);
+        assertThat(p.challengePool()).containsExactlyInAnyOrder(ChallengeType.BLINK, ChallengeType.SMILE);
+        assertThat(p.requireIdentityContinuity()).isTrue();
+        assertThat(p.enabled()).isFalse();
     }
 }

@@ -367,6 +367,7 @@ class SpecConformanceTest {
                     .challengePool(EnumSet.of(ChallengeType.SMILE, ChallengeType.OPEN_MOUTH, ChallengeType.RAISE_EYEBROWS,
                             ChallengeType.TURN_LEFT, ChallengeType.TURN_RIGHT))
                     .challengeTimeoutMillis(CHALLENGE_TIMEOUT_MS).sessionTimeoutMillis(SESSION_TIMEOUT_MS)
+                    .acquisitionTimeoutMillis(SESSION_TIMEOUT_MS)   // the spec has one attempt timer
                     .minActionLatencyMillis(MIN_LATENCY_MS).maxActionLatencyMillis(3000)
                     .maxRetries(c.maxRetries()).requireIdentityContinuity(true).identityDriftThreshold(0.45)
                     .build();

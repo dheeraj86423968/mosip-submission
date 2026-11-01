@@ -219,7 +219,7 @@ Policy is a single signed JSON document. It can also be flattened into `mosip.re
 travels through the existing Registration Client config sync. The defaults are compiled in, so liveness is enforced
 even before the first sync. Precedence is:
 1. The signed document.
-2. Local properties, which can only tighten the policy.
+2. Local properties, which can only tighten the policy (enforced by `PolicyTightening`; a value that would weaken the policy is ignored and logged. The on/off switch stays free).
 3. Compiled defaults.
 
 If the signature fails to verify, the client falls back to the compiled defaults, never to "disabled".

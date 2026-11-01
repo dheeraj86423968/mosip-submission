@@ -181,7 +181,7 @@ compiled defaults from `LivenessPolicy.defaults()` and
 | `<wf>.lockoutMillis` | long | — | `900000` | `900000` | increase | used by the integration for `LOCK_AND_ALERT` |
 | `<wf>.assistedThresholdDelta` | double | `0.05` | — | — | increase | added to `passiveThreshold` when `assistedCapture` |
 | `<wf>.sessionTimeoutMillis` | long | `60000` | `60000` | `60000` | decrease | `sessionTimeoutMillis()` |
-| `<wf>.acquisitionTimeoutMillis` | long | `15000` | `15000` | `15000` | decrease | time allowed in `FACE_ACQUIRING` before `FACE_NOT_DETECTED` / `POOR_FACE_QUALITY` |
+| `<wf>.acquisitionTimeoutMillis` | long | `15000` | `15000` | `15000` | decrease | `acquisitionTimeoutMillis()`; Desktop global parameter `mosip.registration.liveness[.<wf>].acquisition.timeout_ms` (the signed JSON uses the compiled default). Time allowed in `FACE_ACQUIRING` before `FACE_NOT_DETECTED` / `POOR_FACE_QUALITY` |
 | `<wf>.minFaceQuality` | double [0,1] | `0.40` | `0.40` | `0.40` | increase | `minFaceQuality()` |
 | `<wf>.identityDriftThreshold` | double | `0.45` | `0.45` | `0.45` | decrease | `identityDriftThreshold()` |
 | `<wf>.requireIdentityContinuity` | boolean | `true` | `true` | `true` | `false→true` | `requireIdentityContinuity()` |

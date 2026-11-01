@@ -345,6 +345,20 @@ class LivenessOrchestratorTest {
         assertThat(session.result().decision()).isEqualTo(LivenessResult.Decision.NOT_LIVE);
     }
 
+    /** The acquisition timeout ends a faceless attempt long before the session timeout (docs/design/08 row 4). */
+    @Test
+    void acquisitionTimeoutFailsFasterThanTheSessionTimeout() {
+        open(Scenarios.policy(Workflow.RESIDENT).sessionTimeoutMillis(60_000).acquisitionTimeoutMillis(15_000).build());
+        session.start();
+        session.deviceReady();
+        time.advance(14_000);
+        assertThat(session.tick().phase()).isEqualTo(Phase.FACE_ACQUIRING);
+        time.advance(1_500);
+        SessionState s = session.tick();
+        assertThat(s.phase()).isEqualTo(Phase.FAILED);
+        assertThat(s.failure()).contains(FailureReason.FACE_NOT_DETECTED);
+    }
+
     @Test
     void noFaceGuidanceThenTimeout() {
         open(Scenarios.policy(Workflow.RESIDENT).build());
@@ -513,6 +527,10 @@ class LivenessOrchestratorTest {
         assertThat(session.result().decision()).isEqualTo(LivenessResult.Decision.ERROR);
         assertThat(session.retry()).isTrue();
         analyzer.returnNullNext();
+        assertThat(session.feed(Frames.frame()).failure()).contains(FailureReason.INVALID_FRAME_DATA);
+        assertThat(session.retry()).isTrue();
+        // an analyzer that rejects the frame itself (undecodable JPEG, truncated buffer) is bad data, not an engine fault
+        analyzer.failNext(new IllegalArgumentException("truncated JPEG"));
         assertThat(session.feed(Frames.frame()).failure()).contains(FailureReason.INVALID_FRAME_DATA);
         assertThatThrownBy(() -> session.feed(null)).isInstanceOf(NullPointerException.class);
     }

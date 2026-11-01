@@ -33,6 +33,7 @@ public final class LivenessPolicy {
     private final int maxRetries;
     private final OnMaxRetries onMaxRetries;
     private final long sessionTimeoutMillis;
+    private final long acquisitionTimeoutMillis;        // time allowed in FACE_ACQUIRING before FACE_NOT_DETECTED / quality failure
     private final double minFaceQuality;
     private final double identityDriftThreshold;        // cosine distance above which identity continuity fails
     private final Map<String, Double> signalWeights;    // signalId -> weight in fusion; absent = 1.0; 0 disables
@@ -48,7 +49,7 @@ public final class LivenessPolicy {
         accessibilityPool = Collections.unmodifiableSet(b.accessibilityPool.isEmpty() ? EnumSet.noneOf(ChallengeType.class) : EnumSet.copyOf(b.accessibilityPool));
         requireDepthRevealingChallenge = b.requireDepthRevealingChallenge; challengeTimeoutMillis = b.challengeTimeoutMillis;
         minActionLatencyMillis = b.minActionLatencyMillis; maxActionLatencyMillis = b.maxActionLatencyMillis;
-        maxRetries = b.maxRetries; onMaxRetries = b.onMaxRetries; sessionTimeoutMillis = b.sessionTimeoutMillis;
+        maxRetries = b.maxRetries; onMaxRetries = b.onMaxRetries; sessionTimeoutMillis = b.sessionTimeoutMillis; acquisitionTimeoutMillis = b.acquisitionTimeoutMillis;
         minFaceQuality = b.minFaceQuality; identityDriftThreshold = b.identityDriftThreshold;
         signalWeights = Collections.unmodifiableMap(b.signalWeights); requireIdentityContinuity = b.requireIdentityContinuity;
         if (passiveThreshold < 0 || passiveThreshold > 1) throw new IllegalArgumentException("passiveThreshold must be in [0,1]");
@@ -87,6 +88,7 @@ public final class LivenessPolicy {
     public int maxRetries() { return maxRetries; }
     public OnMaxRetries onMaxRetries() { return onMaxRetries; }
     public long sessionTimeoutMillis() { return sessionTimeoutMillis; }
+    public long acquisitionTimeoutMillis() { return acquisitionTimeoutMillis; }
     public double minFaceQuality() { return minFaceQuality; }
     public double identityDriftThreshold() { return identityDriftThreshold; }
     public Map<String, Double> signalWeights() { return signalWeights; }
@@ -101,7 +103,7 @@ public final class LivenessPolicy {
         private Set<ChallengeType> accessibilityPool = EnumSet.of(ChallengeType.BLINK, ChallengeType.SMILE, ChallengeType.HOLD_STILL);
         private boolean requireDepthRevealingChallenge = true; private long challengeTimeoutMillis = 8000;
         private long minActionLatencyMillis = 150, maxActionLatencyMillis = 3000; private int maxRetries = 3;
-        private OnMaxRetries onMaxRetries = OnMaxRetries.RETRY_ONLY; private long sessionTimeoutMillis = 60000;
+        private OnMaxRetries onMaxRetries = OnMaxRetries.RETRY_ONLY; private long sessionTimeoutMillis = 60000; private long acquisitionTimeoutMillis = 15000;
         private double minFaceQuality = 0.4, identityDriftThreshold = 0.45; private Map<String, Double> signalWeights = new java.util.HashMap<>();
         private boolean requireIdentityContinuity = true;
         public Builder policyVersion(String v) { policyVersion = v; return this; }
@@ -123,6 +125,7 @@ public final class LivenessPolicy {
         public Builder maxRetries(int v) { maxRetries = v; return this; }
         public Builder onMaxRetries(OnMaxRetries v) { onMaxRetries = v; return this; }
         public Builder sessionTimeoutMillis(long v) { sessionTimeoutMillis = v; return this; }
+        public Builder acquisitionTimeoutMillis(long v) { acquisitionTimeoutMillis = v; return this; }
         public Builder minFaceQuality(double v) { minFaceQuality = v; return this; }
         public Builder identityDriftThreshold(double v) { identityDriftThreshold = v; return this; }
         public Builder signalWeights(Map<String, Double> v) { signalWeights = new java.util.HashMap<>(v); return this; }

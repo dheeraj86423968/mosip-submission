@@ -242,6 +242,7 @@ public final class PolicyLoader {
                 .maxRetries(p.maxRetries())
                 .onMaxRetries(p.onMaxRetries())
                 .sessionTimeoutMillis(p.sessionTimeoutMillis())
+                .acquisitionTimeoutMillis(p.acquisitionTimeoutMillis())
                 .minFaceQuality(p.minFaceQuality())
                 .identityDriftThreshold(p.identityDriftThreshold())
                 .signalWeights(p.signalWeights())

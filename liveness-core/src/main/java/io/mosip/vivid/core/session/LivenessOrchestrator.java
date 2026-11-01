@@ -114,6 +114,7 @@ public final class LivenessOrchestrator implements LivenessSession, DiagnosticSo
     private SessionState published;
     private long sessionStartNanos;
     private long attemptStartNanos;
+    private long acquiringSinceNanos;
     private long passiveStartNanos = -1;
     /** Watches for other distinctive actions during the current challenge; null when disabled or idle. */
     private UnpromptedActionMonitor unprompted;
@@ -208,6 +209,7 @@ public final class LivenessOrchestrator implements LivenessSession, DiagnosticSo
             if (phase == Phase.DEVICE_CONNECTING) {
                 phase = Phase.FACE_ACQUIRING;
                 hint = Hint.CENTER_FACE;
+                acquiringSinceNanos = time.nanoTime();
             } else if (hint == Hint.DEVICE_RECONNECTING) {
                 hint = Hint.NONE;
             }
@@ -289,6 +291,10 @@ public final class LivenessOrchestrator implements LivenessSession, DiagnosticSo
             FrameAnalysis analysis;
             try {
                 analysis = analyzer.analyze(frame);
+            } catch (IllegalArgumentException e) {
+                // the analyzer rejected the frame itself (undecodable, truncated, wrong size): see FrameAnalyzer#analyze
+                LOG.warn("invalid frame {}: {}", frame.sequence(), e.toString());
+                return fail(FailureReason.INVALID_FRAME_DATA, Hint.TRY_AGAIN);
             } catch (RuntimeException e) {
                 LOG.error("engine failed on frame {}: {}", frame.sequence(), e.toString());
                 return fail(FailureReason.ENGINE_ERROR, Hint.TRY_AGAIN);
@@ -350,6 +356,7 @@ public final class LivenessOrchestrator implements LivenessSession, DiagnosticSo
                 LOG.warn("analyzer reset failed: {}", e.toString());
             }
             attemptStartNanos = time.nanoTime();
+            acquiringSinceNanos = attemptStartNanos;
             phase = deviceLost ? Phase.DEVICE_CONNECTING : Phase.FACE_ACQUIRING;
             hint = Hint.TRY_AGAIN;
             metrics.retry();
@@ -650,7 +657,9 @@ public final class LivenessOrchestrator implements LivenessSession, DiagnosticSo
             fail(FailureReason.CHALLENGE_TIMEOUT, Hint.TRY_AGAIN);
             return true;
         }
-        if (attemptMs >= policy.sessionTimeoutMillis()) {
+        boolean acquisitionExpired = phase == Phase.FACE_ACQUIRING
+                && millis(now - acquiringSinceNanos) >= Math.min(policy.acquisitionTimeoutMillis(), policy.sessionTimeoutMillis());
+        if (acquisitionExpired || attemptMs >= policy.sessionTimeoutMillis()) {
             FailureReason reason = phase == Phase.FACE_ACQUIRING
                     ? Objects.requireNonNullElse(lastGateFailure, FailureReason.FACE_NOT_DETECTED)
                     : FailureReason.SESSION_TIMEOUT;

@@ -53,6 +53,8 @@ public final class LivenessGate {
         private boolean assistedCapture;
         private Locale locale;
         private String auditRefId;
+        private String supervisorId;
+        private String overriddenRef;
         public static Options defaults() { return new Options(); }
         public Options online(boolean v) { online = v; return this; }
         /** Operator declared the resident cannot perform motor challenges: policy's accessibility pool is used. */
@@ -60,6 +62,14 @@ public final class LivenessGate {
         public Options locale(Locale v) { locale = v; return this; }
         /** Audit reference (user id or registration id); defaults to the session id. */
         public Options auditRefId(String v) { auditRefId = v; return this; }
+        /**
+         * A supervisor who has just passed their own liveness authentication lifts a resident's liveness lock
+         * ({@code onMaxRetries = ASSISTED_CAPTURE_WITH_SUPERVISOR}). The new session is an assisted capture and must
+         * still pass on its own; the override itself is audited as {@code SUPERVISOR_OVERRIDE} with both references.
+         */
+        public Options supervisorOverride(String supervisorUserId, String lockedSessionRef) {
+            supervisorId = supervisorUserId; overriddenRef = lockedSessionRef; assistedCapture = true; return this;
+        }
     }
 
     private final LivenessSessionProvider sessions;
@@ -100,6 +110,10 @@ public final class LivenessGate {
         byte[] nonce = new byte[16];
         RANDOM.nextBytes(nonce);
         SessionContext ctx = new SessionContext(workflow, sessionId, nonce, opts.locale != null ? opts.locale : config.locale(), opts.online, opts.assistedCapture);
+        if (opts.supervisorId != null) {
+            audit.audit(DesktopAuditEvent.SUPERVISOR_OVERRIDE, refId, details("supervisor", opts.supervisorId,
+                    "overriddenSession", String.valueOf(opts.overriddenRef), "workflow", ctx.workflow().name()));
+        }
         Run run = new Run(ctx, policy, source, binding, refId);
         Run previous = current.getAndSet(run);
         if (previous != null) previous.cancel("superseded");

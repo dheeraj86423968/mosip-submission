@@ -3,6 +3,7 @@ package io.mosip.vivid.desktop;
 import io.mosip.vivid.api.ChallengeType;
 import io.mosip.vivid.api.LivenessPolicy;
 import io.mosip.vivid.api.Workflow;
+import io.mosip.vivid.core.policy.PolicyTightening;
 import io.mosip.vivid.device.StreamOptions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,6 +56,7 @@ public final class DesktopLivenessConfig {
         public static final String RETRIES = "retries";
         public static final String ON_MAX_RETRIES = "on_max_retries";
         public static final String SESSION_TIMEOUT_MS = "session.timeout_ms";
+        public static final String ACQUISITION_TIMEOUT_MS = "acquisition.timeout_ms";
         public static final String FACE_MIN_QUALITY = "face.min_quality";
         public static final String IDENTITY_DRIFT_THRESHOLD = "identity.drift_threshold";
         public static final String IDENTITY_REQUIRED = "identity.required";
@@ -188,9 +190,23 @@ public final class DesktopLivenessConfig {
         return policyDefault;
     }
 
-    /** Effective policy for the workflow: compiled-in defaults overridden by whatever keys are present. */
+    /**
+     * Effective policy for the workflow: the configured keys applied on top of the compiled-in defaults, where a key
+     * may only make liveness stricter ({@link PolicyTightening}). A value that would weaken the default is ignored and
+     * logged. {@code enabled} stays a free switch, as the problem statement requires.
+     */
     public LivenessPolicy policy(Workflow w) {
         LivenessPolicy d = LivenessPolicy.defaults(w);
+        LivenessPolicy local = configured(w, d);
+        PolicyTightening.Result r = PolicyTightening.tighten(d, local);
+        for (String loosened : r.rejected()) {
+            LOG.warn("liveness config: {} would weaken the {} policy; ignored", loosened, w);
+        }
+        return r.policy();
+    }
+
+    /** The policy exactly as configured, before tightening; used for diagnostics and by {@link #policy}. */
+    LivenessPolicy configured(Workflow w, LivenessPolicy d) {
         LivenessPolicy.Builder b = LivenessPolicy.builder(w)
                 .policyVersion(raw(w, Keys.POLICY_VERSION).orElse(values.isEmpty() ? d.policyVersion() : "global-param"))
                 .enabled(enabled(w))
@@ -210,6 +226,7 @@ public final class DesktopLivenessConfig {
                 .maxRetries(maxRetries(w))
                 .onMaxRetries(enumVal(w, Keys.ON_MAX_RETRIES, LivenessPolicy.OnMaxRetries.class, d.onMaxRetries()))
                 .sessionTimeoutMillis(longVal(w, Keys.SESSION_TIMEOUT_MS, d.sessionTimeoutMillis()))
+                .acquisitionTimeoutMillis(longVal(w, Keys.ACQUISITION_TIMEOUT_MS, d.acquisitionTimeoutMillis()))
                 .minFaceQuality(clamp01(dbl(w, Keys.FACE_MIN_QUALITY, d.minFaceQuality()), d.minFaceQuality()))
                 .identityDriftThreshold(dbl(w, Keys.IDENTITY_DRIFT_THRESHOLD, d.identityDriftThreshold()))
                 .requireIdentityContinuity(bool(w, Keys.IDENTITY_REQUIRED, d.requireIdentityContinuity()))

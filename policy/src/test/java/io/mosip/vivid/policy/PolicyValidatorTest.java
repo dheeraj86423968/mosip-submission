@@ -131,4 +131,11 @@ class PolicyValidatorTest {
                 .signals(Map.of(Signals.RPPG, new SignalPolicy(true, 0.5))).build()), DevicePolicy.defaults(), DiagnosticsPolicy.defaults());
         assertThat(validator.validate(doc)).isEmpty();
     }
+
+    @Test
+    void accessibilityPoolRejectsHeadMovementChallenges() {
+        List<String> v = validate("{\"schemaVersion\":\"1.0\",\"workflows\":{\"RESIDENT\":{\"active\":{\"accessibilityPool\":[\"BLINK\",\"TURN_LEFT\"]}}}}");
+        assertThat(v).anyMatch(s -> s.contains("accessibilityPool contains TURN_LEFT"));
+        assertThat(v).noneMatch(s -> s.contains("accessibilityPool contains BLINK"));
+    }
 }

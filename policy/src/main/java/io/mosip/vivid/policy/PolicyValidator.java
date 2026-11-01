@@ -141,6 +141,11 @@ public final class PolicyValidator {
                 && effective.challengePool().stream().noneMatch(ChallengeType::revealsDepth)) {
             out.add(p + "requireDepthRevealing is set but the pool has no depth-revealing challenge");
         }
+        for (ChallengeType t : effective.accessibilityPool()) {
+            if (t.requiresMotorAbility()) {
+                out.add(p + "accessibilityPool contains " + t + ", which requires head movement; the accessibility pool is for residents who cannot move their head");
+            }
+        }
         if (engine != null) {
             for (ChallengeType t : effective.challengePool()) {
                 if (!engine.supportedChallenges().contains(t)) {

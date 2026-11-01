@@ -30,17 +30,19 @@ class RealPipelineScenarioTest {
 
     @Test
     void defaultPolicy() throws Exception {
-        run("default-policy", LivenessPolicy::defaults);
+        run("default-policy", LivenessPolicy::defaults, true);
     }
 
     /** Same suite with active challenges always issued: the defence that a prompt-ignoring replay cannot pass. */
     @Test
     void alwaysChallengePolicy() throws Exception {
+        // One or two challenges only: a replay can match a single random prompt by chance, so this run checks the
+        // attacks that passive analysis and acquisition catch, not replay resistance (see InteractiveChallengeTest).
         run("always-challenge", w -> LivenessPolicy.builder(w).policyVersion("e2e-always")
-                .activeMode(LivenessPolicy.ActiveMode.ALWAYS).minChallenges(1).maxChallenges(2).build());
+                .activeMode(LivenessPolicy.ActiveMode.ALWAYS).minChallenges(1).maxChallenges(2).build(), false);
     }
 
-    private void run(String label, java.util.function.Function<Workflow, LivenessPolicy> policies) throws Exception {
+    private void run(String label, java.util.function.Function<Workflow, LivenessPolicy> policies, boolean replayMustFail) throws Exception {
         assumeTrue(SyntheticSubjectEngine.available(), "ONNX models not installed; see liveness-engine-onnx/models/README.md");
         try (LivenessEngine engine = SyntheticSubjectEngine.create()) {
             InMemoryAuditSink audit = new InMemoryAuditSink(5000);
@@ -49,7 +51,7 @@ class RealPipelineScenarioTest {
             io.mosip.vivid.testkit.scenario.LivenessSessionFactory sessions = ctx -> {
                 AtomicLong clock = new AtomicLong();
                 LivenessSessionFactory core = new LivenessSessionFactory(engine, policies, audit, metrics,
-                        TimeSource.of(clock::get), new SecureRandom(), ActionThresholds.defaults());
+                        TimeSource.of(clock::get), seeded(ctx.workflow().name()), ActionThresholds.defaults());
                 return new FrameClockSession(core.open(ctx), clock);
             };
 
@@ -63,6 +65,30 @@ class RealPipelineScenarioTest {
                     r.name(), r.run().decisionText(), r.passed(), r.run().framesFed(),
                     r.run().trace().stream().map(Object::toString).reduce((a, b) -> a + " | " + b).orElse("")));
             assertThat(report.errors()).as("no scenario may crash the pipeline").isZero();
+            // Attack and unusable-capture scenarios must never be accepted, whatever the policy.
+            java.util.Map<String, String> decisions = new java.util.HashMap<>();
+            report.results().forEach(r -> decisions.put(r.name(), r.run().decisionText()));
+            java.util.List<String> attacks = new java.util.ArrayList<>(java.util.List.of("print-attack", "screen-replay", "multiple-faces", "no-face"));
+            if (replayMustFail) attacks.add("video-replay");
+            for (String attack : attacks) {
+                decisions.entrySet().stream().filter(e -> e.getKey().contains(attack)).forEach(e ->
+                        assertThat(e.getValue()).as(label + ": " + e.getKey() + " must not be accepted").isNotEqualTo("LIVE"));
+            }
+            // The printed photo is vetoed by texture on its first frames.
+            decisions.entrySet().stream().filter(e -> e.getKey().contains("print-attack")).forEach(e ->
+                    assertThat(e.getValue()).as(label + ": " + e.getKey()).isEqualTo("ATTACK"));
+            assertThat(decisions.keySet()).as("bundled suite ran").anyMatch(n -> n.contains("print-attack"));
+        }
+    }
+
+    /** Challenge draws are seeded so the scenario outcomes are reproducible run to run. */
+    private static SecureRandom seeded(String salt) {
+        try {
+            SecureRandom r = SecureRandom.getInstance("SHA1PRNG");
+            r.setSeed(("e2e-scenarios-" + salt).getBytes(java.nio.charset.StandardCharsets.UTF_8));
+            return r;
+        } catch (java.security.NoSuchAlgorithmException e) {
+            throw new IllegalStateException(e);
         }
     }
 }
